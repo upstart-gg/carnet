@@ -10,7 +10,6 @@ on:
       - '.github/workflows/docs.yml'
       - 'package.json'
       - 'bun.lock'
-      - 'typedoc.json'
   workflow_dispatch:
   pull_request:
     branches: [main]

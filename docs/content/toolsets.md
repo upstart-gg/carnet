@@ -4,7 +4,7 @@ A toolset is a collection of related tools that work together to provide functio
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Toolset) for the complete `Toolset` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 

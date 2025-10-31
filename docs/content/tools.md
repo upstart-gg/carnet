@@ -4,7 +4,7 @@ A tool is the smallest unit - it represents a single capability or function avai
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Tool) for the complete `Tool` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 

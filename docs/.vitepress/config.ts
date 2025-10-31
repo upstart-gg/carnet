@@ -1,29 +1,4 @@
 import { defineConfig } from 'vitepress'
-import fs from 'fs'
-import path from 'path'
-
-// Import auto-generated API documentation sidebar from TypeDoc
-let apiSidebar = [
-  {
-    text: 'API Reference',
-    items: [
-      { text: 'Overview', link: '/api/' },
-    ],
-  },
-]
-
-try {
-  const sidebarPath = path.join(__dirname, '../api/reference/typedoc-sidebar.json')
-  if (fs.existsSync(sidebarPath)) {
-    const sidebarJson = JSON.parse(fs.readFileSync(sidebarPath, 'utf-8'))
-    if (Array.isArray(sidebarJson)) {
-      apiSidebar = sidebarJson
-    }
-  }
-} catch (e) {
-  // TypeDoc sidebar not generated yet, use fallback
-  console.warn('TypeDoc sidebar not found, using fallback API sidebar')
-}
 
 export default defineConfig({
   title: 'Carnet',
@@ -33,8 +8,6 @@ export default defineConfig({
   ignoreDeadLinks: [
     // Release process page will be completed later
     '/contributing/release-process',
-    // CarnetConfig is exported as AppConfig in the API
-    '/api/reference/type-aliases/CarnetConfig',
   ],
 
   head: [
@@ -91,7 +64,18 @@ export default defineConfig({
           ],
         },
       ],
-      '/api/': apiSidebar,
+      '/api/': [
+        {
+          text: 'API Reference',
+          items: [
+            { text: 'Overview', link: '/api/' },
+            { text: 'Carnet Class', link: '/api/carnet-class' },
+            { text: 'build Function', link: '/api/build-function' },
+            { text: 'validate Function', link: '/api/validate-function' },
+            { text: 'Type Definitions', link: '/api/types' },
+          ],
+        },
+      ],
       '/content/': [
         {
           text: 'Content Types',

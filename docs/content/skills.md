@@ -4,7 +4,7 @@ A skill is a collection of related toolsets that provide specific capabilities t
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Skill) for the complete `Skill` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 

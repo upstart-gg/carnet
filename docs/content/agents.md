@@ -4,7 +4,7 @@ An agent is the main entity in Carnet - it represents an AI agent with a system 
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Agent) for the complete `Agent` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 

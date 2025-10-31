@@ -4,7 +4,7 @@ The `carnet.config.json` configuration file defines how your Carnet project buil
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/CarnetConfig) for the complete `CarnetConfig` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Configuration Options
 

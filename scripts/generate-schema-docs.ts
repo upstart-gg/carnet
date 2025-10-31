@@ -8,7 +8,7 @@ The \`carnet.config.json\` configuration file defines how your Carnet project bu
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/CarnetConfig) for the complete \`CarnetConfig\` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Configuration Options
 
@@ -82,7 +82,7 @@ An agent is the main entity in Carnet - it represents an AI agent with a system 
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Agent) for the complete \`Agent\` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 
@@ -140,7 +140,7 @@ A skill is a collection of related toolsets that provide specific capabilities t
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Skill) for the complete \`Skill\` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 
@@ -190,7 +190,7 @@ A toolset is a collection of related tools that work together to provide functio
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Toolset) for the complete \`Toolset\` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 
@@ -260,7 +260,7 @@ A tool is the smallest unit - it represents a single capability or function avai
 
 ## TypeScript Type
 
-See the [API Reference](/api/reference/type-aliases/Tool) for the complete \`Tool\` type definition.
+See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 

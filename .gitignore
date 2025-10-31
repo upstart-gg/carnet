@@ -213,8 +213,6 @@ output-test/
 worker-configuration.d.ts
 
 # Auto-generated documentation
-docs/api/reference/
-docs/api-sidebar.json
 docs/configuration/config-file.md
 docs/content/agents.md
 docs/content/skills.md
