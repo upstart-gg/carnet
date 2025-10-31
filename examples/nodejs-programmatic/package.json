@@ -1,0 +1,12 @@
+{
+  "name": "carnet-nodejs-example",
+  "version": "1.0.0",
+  "description": "Node.js programmatic example for Carnet",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@upstart.gg/carnet": "latest"
+  }
+}
