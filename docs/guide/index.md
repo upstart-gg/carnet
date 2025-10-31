@@ -1,6 +1,6 @@
 # Getting Started with Carnet
 
-Carnet is a build system for managing AI agents through markdown files. This guide will help you get up and running in minutes.
+**Carnet** is both a specification and a build system for managing AI agents through markdown files. It defines a standard format for declaring agents, skills, toolsets, and tools—then provides tools to compile, validate, and use them in your applications. This guide will help you get up and running in minutes.
 
 ## What You'll Learn
 

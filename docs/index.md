@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Carnet"
-  text: "Build system for AI agents"
-  tagline: Define, validate, and manage AI agents through markdown files
+  text: "Specification & Build System for AI agents"
+  tagline: Define, validate, and manage AI agents through markdown files following the Carnet standard
   image:
     src: /logo.svg
     alt: Carnet
@@ -75,6 +75,8 @@ console.log(agent.prompt)
 ```
 
 ## Why Carnet?
+
+**Standard Specification** - Carnet defines a clear, language-agnostic specification for declaring AI agents, skills, and tools. This standardization makes your agent definitions portable and tool-agnostic.
 
 **Markdown-Based Content Management** - Agents, skills, and tools live in version-controlled markdown files, making them easy to manage alongside your code.
 
