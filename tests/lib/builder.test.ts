@@ -8,7 +8,7 @@ describe('builder', () => {
   const outputDir = path.join(__dirname, '../output-test')
 
   it('builds agent artifacts and manifest', async () => {
-    await build({ baseDir: fixtures, output: outputDir, app: {}, variables: {}, envPrefix: [] })
+    await build({ baseDir: fixtures, output: outputDir, app: { globalInitialSkills: [], globalSkills: [] }, variables: {}, envPrefix: [], include: [], exclude: [] })
     const manifestPath = path.join(outputDir, 'manifest.json')
     const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
     expect(manifest.agents).toBeDefined()

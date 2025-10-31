@@ -1,0 +1,17 @@
+{
+  "entryPoints": ["src/lib/index.ts"],
+  "out": "docs/api/reference",
+  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
+  "docsRoot": "./docs",
+  "tsconfig": "./tsconfig.json",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeProtected": false,
+  "sort": ["kind", "alphabetical"],
+  "categorizeByGroup": true,
+  "categoryOrder": ["Classes", "Functions", "Interfaces", "Types", "*"],
+  "entryModule": "@upstart-gg/carnet",
+  "cleanOutputDir": true,
+  "treatWarningsAsErrors": false
+}

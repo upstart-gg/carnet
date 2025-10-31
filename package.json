@@ -27,8 +27,11 @@
     "test": "bun test",
     "lint": "biome lint src",
     "format": "biome format --write src",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
+    "docs:gen:api": "typedoc",
+    "docs:gen:cli": "bun run scripts/generate-cli-docs.ts",
+    "docs:gen:schema": "bun run scripts/generate-schema-docs.ts",
+    "docs:dev": "bun run docs:gen:api && bun run docs:gen:cli && bun run docs:gen:schema && vitepress dev docs",
+    "docs:build": "bun run docs:gen:api && bun run docs:gen:cli && bun run docs:gen:schema && vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "changeset": "changeset",
     "version:packages": "changeset version",
@@ -61,6 +64,10 @@
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.7",
     "@types/bun": "latest",
+    "ts-morph": "^27.0.2",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typedoc-vitepress-theme": "^1.1.2",
     "vitepress": "^1.6.4"
   }
 }
