@@ -5,6 +5,8 @@ initialSkills:
   - foo
 skills:
   - bar
+prompt: |
+  You are a test agent. Use your skills to help the user.
 ---
 
 # Test Agent

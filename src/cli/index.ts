@@ -1,6 +1,5 @@
 import { Command } from 'commander'
 import { registerBuildCommand } from './commands/build'
-import { registerGraphCommand } from './commands/graph'
 import { registerInitCommand } from './commands/init'
 import { registerListCommand } from './commands/list'
 import { registerShowCommand } from './commands/show'
@@ -26,6 +25,5 @@ registerBuildCommand(program)
 registerValidateCommand(program)
 registerListCommand(program)
 registerShowCommand(program)
-registerGraphCommand(program)
 
 program.parse()

@@ -7,7 +7,6 @@ export function registerValidateCommand(program: Command) {
   program
     .command('validate')
     .description('Validate markdown files')
-    .option('--strict', 'enable strict validation')
     .action(async (options) => {
       const globalOptions = program.opts()
       await runValidateCommand({
@@ -19,7 +18,6 @@ export function registerValidateCommand(program: Command) {
 
 async function runValidateCommand(options: {
   content?: string
-  strict?: boolean
   config?: string
 }) {
   const config = await loadConfigFile(options.config)

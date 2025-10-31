@@ -29,23 +29,24 @@ async function runBuildCommand(options: {
   config?: string
 }) {
   const config = await loadConfigFile(options.config)
-  const buildOptions = {
-    contentDir: options.content || config.baseDir,
-    outputDir: options.output || config.output,
+  const buildConfig = {
+    ...config,
+    baseDir: options.content || config.baseDir,
+    output: options.output || config.output,
   }
 
   // Validate that content directory exists
   const { promises: fs } = await import('node:fs')
   try {
-    await fs.access(buildOptions.contentDir)
+    await fs.access(buildConfig.baseDir)
   } catch {
-    throw new Error(`Content directory does not exist: ${buildOptions.contentDir}`)
+    throw new Error(`Content directory does not exist: ${buildConfig.baseDir}`)
   }
 
   const runBuild = async () => {
     console.log(colors.info('Building Carnet project...'))
     try {
-      await build(config)
+      await build(buildConfig)
     } catch (error) {
       console.error(colors.error(`Build failed: ${(error as Error).message}`))
     }
@@ -55,10 +56,10 @@ async function runBuildCommand(options: {
 
   if (options.watch) {
     console.log(
-      colors.info(`\nWatching for changes in ${path.resolve(buildOptions.contentDir)}...`)
+      colors.info(`\nWatching for changes in ${path.resolve(buildConfig.baseDir)}...`)
     )
     try {
-      const watcher = watch(buildOptions.contentDir, { recursive: true })
+      const watcher = watch(buildConfig.baseDir, { recursive: true })
       for await (const event of watcher) {
         console.log(
           colors.dimmed(

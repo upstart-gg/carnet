@@ -1,0 +1,4 @@
+{
+  "baseDir": "./content",
+  "output": "./dist"
+}

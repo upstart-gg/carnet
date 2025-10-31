@@ -55,7 +55,13 @@ export async function build(options: CarnetConfig) {
     tools: Object.fromEntries(tools),
   }
 
-  if (!(await fs.stat(output)).isDirectory()) {
+  try {
+    const stats = await fs.stat(output)
+    if (!stats.isDirectory()) {
+      await fs.mkdir(output, { recursive: true })
+    }
+  } catch {
+    // Directory doesn't exist, create it
     await fs.mkdir(output, { recursive: true })
   }
 
