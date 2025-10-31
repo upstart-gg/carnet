@@ -30,10 +30,10 @@ my-agents/
     │   └── my-agent/AGENT.md
     ├── skills/
     │   └── example-skill/SKILL.md
-    ├── toolsets/
-    │   └── example-toolset/TOOLSET.md
-    └── tools/
-        └── example-tool/TOOL.md
+    └── toolsets/
+        └── example-toolset/
+            ├── TOOLSET.md
+            └── example-tool.md
 ```
 
 ## 3. Build Your Content

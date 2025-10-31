@@ -21,11 +21,11 @@ Agent
 An **Agent** is an AI assistant with a specific purpose and set of available skills.
 
 **Key attributes:**
-- `name` - Unique identifier
-- `description` - What the agent does
-- `initialSkills` - Skills auto-loaded for every interaction
-- `skills` - Skills available on-demand
-- `prompt` - The system prompt for the agent
+- `name` (frontmatter) - Unique identifier
+- `description` (frontmatter) - What the agent does
+- `initialSkills` (frontmatter) - Skills auto-loaded for every interaction
+- `skills` (frontmatter) - Skills available on-demand
+- `prompt` (markdown body) - The system prompt for the agent
 
 **Example use case:** A "coder" agent for code generation tasks.
 
@@ -34,10 +34,10 @@ An **Agent** is an AI assistant with a specific purpose and set of available ski
 A **Skill** is a capability that groups related tools and provides documentation.
 
 **Key attributes:**
-- `name` - Unique identifier
-- `description` - What the skill enables
-- `toolsets` - Collections of tools used by this skill
-- `content` - Documentation for the skill
+- `name` (frontmatter) - Unique identifier
+- `description` (frontmatter) - What the skill enables
+- `toolsets` (frontmatter) - Collections of tools used by this skill
+- `content` (markdown body) - Documentation for the skill
 
 **Example:** A "code-generation" skill that uses code formatting and analysis tools.
 
@@ -48,10 +48,10 @@ A **Skill** is a capability that groups related tools and provides documentation
 A **Toolset** is a collection of related tools for a specific domain.
 
 **Key attributes:**
-- `name` - Unique identifier
-- `description` - Domain or purpose
-- `tools` - Individual tools in this collection
-- `content` - Documentation for the toolset
+- `name` (frontmatter) - Unique identifier
+- `description` (frontmatter) - Domain or purpose
+- `tools` (frontmatter) - Individual tools in this collection
+- `content` (markdown body) - Documentation for the toolset
 
 **Example:** A "code-formatter" toolset containing formatting and linting tools.
 
@@ -60,9 +60,9 @@ A **Toolset** is a collection of related tools for a specific domain.
 A **Tool** is the smallest atomic unit - a single capability or function.
 
 **Key attributes:**
-- `name` - Unique identifier
-- `description` - What the tool does
-- `content` - How to use it
+- `name` (frontmatter) - Unique identifier
+- `description` (frontmatter) - What the tool does
+- `content` (markdown body) - How to use it
 
 **Example:** A "prettier" tool for code formatting.
 
