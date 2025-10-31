@@ -36,7 +36,7 @@ export class Carnet {
     return this.manifest.agents
   }
 
-  getAgent(name: string) {
+  getAgent(name: string, _options: { rewritePrompt?: boolean } = { rewritePrompt: true }) {
     return this.manifest.agents[name]
   }
 
