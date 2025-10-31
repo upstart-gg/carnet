@@ -136,7 +136,7 @@ Use for:
 
 ## File Organization
 
-Each entity lives in its own directory with a markdown file:
+Agents, skills, and toolsets live in their own directories. Tools are defined as markdown files within their parent toolset directory:
 
 ```
 content/
@@ -144,16 +144,20 @@ content/
 │   └── my-agent/AGENT.md
 ├── skills/
 │   └── my-skill/SKILL.md
-├── toolsets/
-│   └── my-toolset/TOOLSET.md
-└── tools/
-    └── my-tool/TOOL.md
+└── toolsets/
+    └── my-toolset/
+        ├── TOOLSET.md
+        ├── my-tool-1.md
+        ├── my-tool-2.md
+        └── my-tool-3.md
 ```
 
 **Naming conventions:**
-- Directories: lowercase with hyphens (`my-agent`, `code-formatter`)
+- Directories: lowercase with hyphens (`my-agent`, `code-formatter`, `my-toolset`)
 - Entity names: match directory name
-- Files: UPPERCASE (`AGENT.md`, `SKILL.md`)
+- Files: UPPERCASE for TOOLSET/AGENT/SKILL (`AGENT.md`, `SKILL.md`, `TOOLSET.md`), lowercase for tools (`my-tool.md`)
+
+**Key point:** Tools are not in a separate `tools/` directory. Instead, each tool is a markdown file directly inside its parent toolset directory.
 
 ## The Build Process
 

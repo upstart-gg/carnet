@@ -74,9 +74,14 @@ description: Format code
 content/
 ├── agents/[name]/AGENT.md
 ├── skills/[name]/SKILL.md
-├── toolsets/[name]/TOOLSET.md
-└── tools/[name]/TOOL.md
+└── toolsets/[name]/
+    ├── TOOLSET.md
+    ├── [tool-1].md
+    ├── [tool-2].md
+    └── [tool-3].md
 ```
+
+**Note:** Tools are defined as markdown files inside their parent toolset directory, not in a separate top-level tools directory.
 
 ## Learn More
 
