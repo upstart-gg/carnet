@@ -1,12 +1,9 @@
 import { parseArgs } from 'node:util'
 import { colors } from './colors'
 import { buildCommand } from './commands/build'
-import { generateTypesCommand } from './commands/generate-types'
 import { graphCommand } from './commands/graph'
 import { initCommand } from './commands/init'
 import { listCommand } from './commands/list'
-import { newCommand } from './commands/new'
-import { promptCommand } from './commands/prompt'
 import { showCommand } from './commands/show'
 import { validateCommand } from './commands/validate'
 
@@ -14,12 +11,9 @@ const commands = [
   initCommand,
   buildCommand,
   validateCommand,
-  newCommand,
-  promptCommand,
   listCommand,
   showCommand,
   graphCommand,
-  generateTypesCommand,
 ]
 
 const { values, positionals } = parseArgs({

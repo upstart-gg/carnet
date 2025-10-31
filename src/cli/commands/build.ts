@@ -1,18 +1,17 @@
 import { watch } from 'node:fs/promises'
 import path from 'node:path'
+import { loadConfigFile } from '@lib/config'
 import { build } from '../../lib/builder'
-import { loadConfig } from '../../lib/loadConfig'
 import { colors } from '../colors'
 
 export const buildCommand = {
   name: 'build',
   description: 'Build markdown files into JSON artifacts',
   async run(values: { content?: string; output?: string; strict?: boolean; watch?: boolean }) {
-    const config = await loadConfig()
+    const config = await loadConfigFile()
     const buildOptions = {
       contentDir: values.content || config.baseDir,
       outputDir: values.output || config.output,
-      strict: values.strict || config.validation.strict,
     }
 
     // Validate that content directory exists
@@ -26,7 +25,7 @@ export const buildCommand = {
     const runBuild = async () => {
       console.log(colors.info('Building Carnet project...'))
       try {
-        await build(buildOptions)
+        await build(config)
       } catch (error) {
         console.error(colors.error(`Build failed: ${(error as Error).message}`))
       }

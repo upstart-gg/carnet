@@ -1,12 +1,12 @@
 import { validate } from '../../lib/builder'
-import { loadConfig } from '../../lib/loadConfig'
+import { loadConfigFile } from '../../lib/config'
 import { colors } from '../colors'
 
 export const validateCommand = {
   name: 'validate',
   description: 'Validate markdown files',
   async run(values: { content?: string; strict?: boolean }) {
-    const config = await loadConfig()
+    const config = await loadConfigFile()
     const contentDir = values.content || config.baseDir
 
     // Validate that content directory exists
