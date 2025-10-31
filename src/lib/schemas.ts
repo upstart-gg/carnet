@@ -11,6 +11,10 @@ export const appConfigSchema = z
       .default([])
       .describe('Skills available to all agents globally during their lifecycle, loaded on demand'),
   })
+  .default({
+    globalInitialSkills: [],
+    globalSkills: [],
+  })
   .describe('Application config')
 
 export const configSchema = z.object({

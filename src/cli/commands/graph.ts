@@ -1,8 +1,42 @@
+import type { Command } from 'commander'
 import type { z } from 'zod'
 import { discoverAgents, discoverSkills, discoverToolsets } from '../../lib/discovery'
 import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
 import type { Agent, Skill, Toolset } from '../../lib/types'
+
+export function registerGraphCommand(program: Command) {
+  program
+    .command('graph [agent]')
+    .description('Visualize dependency graph')
+    .action(async (agent, options) => {
+      const globalOptions = program.opts()
+      await runGraphCommand(agent, {
+        ...globalOptions,
+        ...options,
+      })
+    })
+}
+
+async function runGraphCommand(agentName: string | undefined, options: { content?: string }) {
+  const contentDir = options.content || './content'
+  const agents = await collect<Agent>(discoverAgents(contentDir), agentSchema)
+  const skills = await collect<Skill>(discoverSkills(contentDir), skillSchema)
+  const toolsets = await collect<Toolset>(discoverToolsets(contentDir), toolsetSchema)
+
+  console.log('graph TD')
+
+  if (agentName) {
+    const agent = agents.find((a) => a.name === agentName)
+    if (agent) {
+      generateGraph(agent, skills, toolsets)
+    }
+  } else {
+    for (const agent of agents) {
+      generateGraph(agent, skills, toolsets)
+    }
+  }
+}
 
 async function collect<T>(iterator: AsyncIterable<string>, schema: z.ZodType<T>): Promise<T[]> {
   const results: T[] = []
@@ -10,39 +44,6 @@ async function collect<T>(iterator: AsyncIterable<string>, schema: z.ZodType<T>)
     results.push(await parseMarkdownFile(file, schema))
   }
   return results
-}
-
-export const graphCommand = {
-  name: 'graph',
-  description: 'Visualize dependency graph',
-  async run(agentNameOrOptions?: string | { content?: string }, options?: { content?: string }) {
-    let agentName: string | undefined
-    let contentDir: string
-
-    if (typeof agentNameOrOptions === 'string') {
-      agentName = agentNameOrOptions
-      contentDir = options?.content || './content'
-    } else {
-      agentName = undefined
-      contentDir = agentNameOrOptions?.content || './content'
-    }
-    const agents = await collect<Agent>(discoverAgents(contentDir), agentSchema)
-    const skills = await collect<Skill>(discoverSkills(contentDir), skillSchema)
-    const toolsets = await collect<Toolset>(discoverToolsets(contentDir), toolsetSchema)
-
-    console.log('graph TD')
-
-    if (agentName) {
-      const agent = agents.find((a) => a.name === agentName)
-      if (agent) {
-        generateGraph(agent, skills, toolsets)
-      }
-    } else {
-      for (const agent of agents) {
-        generateGraph(agent, skills, toolsets)
-      }
-    }
-  },
 }
 
 function generateGraph(agent: Agent, skills: Skill[], _toolsets: Toolset[]) {

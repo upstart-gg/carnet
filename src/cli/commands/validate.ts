@@ -1,29 +1,44 @@
+import type { Command } from 'commander'
 import { validate } from '../../lib/builder'
 import { loadConfigFile } from '../../lib/config'
 import { colors } from '../colors'
 
-export const validateCommand = {
-  name: 'validate',
-  description: 'Validate markdown files',
-  async run(values: { content?: string; strict?: boolean }) {
-    const config = await loadConfigFile()
-    const contentDir = values.content || config.baseDir
+export function registerValidateCommand(program: Command) {
+  program
+    .command('validate')
+    .description('Validate markdown files')
+    .option('--strict', 'enable strict validation')
+    .action(async (options) => {
+      const globalOptions = program.opts()
+      await runValidateCommand({
+        ...globalOptions,
+        ...options,
+      })
+    })
+}
 
-    // Validate that content directory exists
-    const { promises: fs } = await import('node:fs')
-    try {
-      await fs.access(contentDir)
-    } catch {
-      throw new Error(`Content directory does not exist: ${contentDir}`)
-    }
+async function runValidateCommand(options: {
+  content?: string
+  strict?: boolean
+  config?: string
+}) {
+  const config = await loadConfigFile(options.config)
+  const contentDir = options.content || config.baseDir
 
-    console.log(colors.info('Validating Carnet project...'))
-    try {
-      await validate(contentDir)
-      console.log(colors.success('Validation successful!'))
-    } catch (error) {
-      console.error(colors.error(`Validation failed: ${(error as Error).message}`))
-      process.exit(1)
-    }
-  },
+  // Validate that content directory exists
+  const { promises: fs } = await import('node:fs')
+  try {
+    await fs.access(contentDir)
+  } catch {
+    throw new Error(`Content directory does not exist: ${contentDir}`)
+  }
+
+  console.log(colors.info('Validating Carnet project...'))
+  try {
+    await validate(contentDir)
+    console.log(colors.success('Validation successful!'))
+  } catch (error) {
+    console.error(colors.error(`Validation failed: ${(error as Error).message}`))
+    process.exit(1)
+  }
 }
