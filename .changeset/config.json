@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.1/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "upstart-gg/carnet" }],
+  "linked": [],
+  "fixed": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  },
+  "snapshot": {
+    "prereleaseTemplate": "snapshot-{tag}"
+  }
+}

@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "package.json"
+      - "bun.lock"
+      - ".changeset/**"
+  workflow_dispatch:
+
+env:
+  TURBO_SCM_BASE: origin/main
+
+jobs:
+  release:
+    if: github.repository == 'upstart-gg/carnet'
+    name: Publish Packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build packages
+        run: bun run build
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: bun run publish:packages
+          version: bun run version:packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Add Latest Tag to Release
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          PUBLISHED_PACKAGES=${{ steps.changesets.outputs.publishedPackages }}
+          if [ ! -z "$PUBLISHED_PACKAGES" ]; then
+            echo "$PUBLISHED_PACKAGES" | jq -r '.[].name' | while read -r PKG; do
+              VERSION=$(npm view "$PKG" version)
+              GIT_TAG="${PKG#@upstart-gg/}@${VERSION}"
+              echo "Tagging release: $GIT_TAG"
+              git tag -f -a "$GIT_TAG" -m "Release: $GIT_TAG"
+              git push origin "$GIT_TAG" -f
+            done
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
