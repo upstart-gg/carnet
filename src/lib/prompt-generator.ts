@@ -1,15 +1,13 @@
 import type {
   Agent,
-  GeneratedPrompt,
   GenerateAgentPromptOptions,
+  GeneratedPrompt,
   Skill,
   SkillMetadata,
-  Toolset,
-  ToolsetMetadata,
-  Tool,
   ToolMetadata,
+  ToolsetMetadata,
 } from './types'
-import { VariableInjector } from './variable-injector'
+import type { VariableInjector } from './variable-injector'
 
 /**
  * PromptGenerator assembles LLM-ready prompts for agents
@@ -37,13 +35,9 @@ export class PromptGenerator {
     agent: Agent,
     initialSkills: Skill[],
     availableSkills: SkillMetadata[],
-    options: GenerateAgentPromptOptions = {},
+    options: GenerateAgentPromptOptions = {}
   ): GeneratedPrompt {
-    const {
-      variables = {},
-      includeInitialSkills = true,
-      includeSkillCatalog = true,
-    } = options
+    const { variables = {}, includeInitialSkills = true, includeSkillCatalog = true } = options
 
     // Inject variables into agent prompt
     const agentPrompt = this.variableInjector.inject(agent.prompt, variables)

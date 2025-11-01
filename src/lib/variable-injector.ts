@@ -6,10 +6,12 @@ export class VariableInjector {
   private readonly envPrefixes: string[]
   private readonly customVariables: Record<string, string>
 
-  constructor(options: {
-    variables?: Record<string, string>
-    envPrefixes?: string[]
-  } = {}) {
+  constructor(
+    options: {
+      variables?: Record<string, string>
+      envPrefixes?: string[]
+    } = {}
+  ) {
     this.customVariables = options.variables ?? {}
     this.envPrefixes = options.envPrefixes ?? ['CARNET_', 'PUBLIC_']
   }
@@ -32,7 +34,7 @@ export class VariableInjector {
     // Replace {{ VAR_NAME }} syntax with variable values
     return content.replace(/\{\{\s*([A-Z_][A-Z0-9_]*)\s*\}\}/g, (match, varName) => {
       if (varName in allVariables) {
-        return allVariables[varName]
+        return String(allVariables[varName])
       }
       // Return the original placeholder if variable not found
       // This allows for graceful degradation

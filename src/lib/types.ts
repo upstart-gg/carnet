@@ -15,6 +15,11 @@ export type Toolset = z.infer<typeof toolsetSchema>
 export type Tool = z.infer<typeof toolSchema>
 export type Manifest = z.infer<typeof manifestSchema>
 
+// Metadata types for progressive loading
+export type SkillMetadata = Pick<Skill, 'name' | 'description' | 'toolsets'>
+export type ToolsetMetadata = Pick<Toolset, 'name' | 'description' | 'tools'>
+export type ToolMetadata = Pick<Tool, 'name' | 'description'>
+
 export interface GeneratePromptOptions {
   includeSkills?: string[]
   excludeSkills?: string[]
@@ -32,24 +37,6 @@ export interface GenerateAgentPromptOptions {
   variables?: Record<string, string>
   includeInitialSkills?: boolean // default: true
   includeSkillCatalog?: boolean // default: true
-}
-
-// Metadata types for progressive loading
-export interface SkillMetadata {
-  name: string
-  description: string
-  toolsets: string[]
-}
-
-export interface ToolsetMetadata {
-  name: string
-  description: string
-  tools: string[]
-}
-
-export interface ToolMetadata {
-  name: string
-  description: string
 }
 
 // Generated prompt return type

@@ -1,4 +1,5 @@
 import { existsSync, promises as fs } from 'node:fs'
+import { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
 import type {
   ContentRetrievalOptions,
@@ -9,12 +10,11 @@ import type {
   ToolMetadata,
   ToolsetMetadata,
 } from './types'
-import { PromptGenerator } from './prompt-generator'
 import { VariableInjector } from './variable-injector'
 
+export { PromptGenerator } from './prompt-generator'
 export * from './types'
 export { VariableInjector } from './variable-injector'
-export { PromptGenerator } from './prompt-generator'
 
 export class Carnet {
   protected manifest: Manifest
@@ -30,7 +30,7 @@ export class Carnet {
     options: {
       variables?: Record<string, string>
       envPrefixes?: string[]
-    } = {},
+    } = {}
   ) {
     this.manifest = this.validateManifest(manifest)
     this.cwd = cwd
@@ -47,7 +47,7 @@ export class Carnet {
       variables?: Record<string, string>
       envPrefixes?: string[]
     },
-    cwd?: string,
+    cwd?: string
   ): Promise<Carnet> {
     if (!existsSync(manifestPath)) {
       throw new Error(`Manifest file not found: ${manifestPath}`)
@@ -229,15 +229,13 @@ export class Carnet {
       .filter((tool) => tool !== undefined)
   }
 
-  // NEW API: Prompt generation for LLM consumption
-
   /**
    * Generate a complete, LLM-ready prompt for an agent
    * Includes initial skills, skill catalog, and loading instructions
    */
   generateAgentPrompt(
     agentName: string,
-    options: GenerateAgentPromptOptions = {},
+    options: GenerateAgentPromptOptions = {}
   ): GeneratedPrompt {
     const agent = this.manifest.agents[agentName]
     if (!agent) {
@@ -252,11 +250,6 @@ export class Carnet {
     // Get available skills metadata (includes initial + dynamic skills)
     const availableSkills = this.listAvailableSkills(agentName)
 
-    return this.promptGenerator.generateAgentPrompt(
-      agent,
-      initialSkills,
-      availableSkills,
-      options,
-    )
+    return this.promptGenerator.generateAgentPrompt(agent, initialSkills, availableSkills, options)
   }
 }
