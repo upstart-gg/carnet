@@ -19,13 +19,13 @@ Installation is covered in the [Quick Start Guide](/guide/quick-start).
 import { Carnet } from '@upstart-gg/carnet'
 
 // Load from file
-const carnet = await Carnet.fromFile('./path/to/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./path/to/carnet.manifest.json')
 
 // Or load directly from an object
 const carnet = new Carnet(manifestObject)
 
 // With options
-const carnet = await Carnet.fromFile(
+const carnet = await Carnet.fromManifest(
   './carnet.manifest.json',
   {
     variables: { API_KEY: 'my-key' },

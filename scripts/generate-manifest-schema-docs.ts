@@ -209,7 +209,7 @@ The manifest has the following top-level properties:
 \`\`\`typescript
 import { Carnet } from '@upstart-gg/carnet'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const agent = carnet.getAgent('my-agent')
 \`\`\`
 

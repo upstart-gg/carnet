@@ -148,7 +148,7 @@ description: Integration with our REST API
 
 Variables are resolved in this order (first match wins):
 
-1. **Programmatic override** - Variables passed to `carnet.fromFile()` or `generateAgentPrompt()`
+1. **Programmatic override** - Variables passed to `carnet.fromManifest()` or `generateAgentPrompt()`
 2. **Environment variables** - Variables from process.env matching configured prefixes
 3. **Configuration file** - Variables defined in `carnet.config.json`
 4. **Not found** - Variable name is left as-is if not found
@@ -173,7 +173,7 @@ export CARNET_THEME=dark
 
 **Programmatic:**
 ```typescript
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json', {
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json', {
   variables: { THEME: 'high-contrast' }
 })
 ```
@@ -278,7 +278,7 @@ In content, conditionally describe features:
 import { Carnet } from '@upstart-gg/carnet'
 
 // Load with config variables
-const carnet = await Carnet.fromFile(
+const carnet = await Carnet.fromManifest(
   './dist/carnet.manifest.json',
   {
     variables: {

@@ -443,11 +443,11 @@ describe('Carnet - Enhanced API', () => {
     })
   })
 
-  describe('fromFile', () => {
-    it('should support options in fromFile', async () => {
-      // This test verifies that fromFile properly passes options to constructor
+  describe('fromManifest', () => {
+    it('should support options in fromManifest', async () => {
+      // This test verifies that fromManifest properly passes options to constructor
       // We can't actually test file loading without a real file, but we verify the signature exists
-      expect(Carnet.fromFile).toBeDefined()
+      expect(Carnet.fromManifest).toBeDefined()
     })
   })
 

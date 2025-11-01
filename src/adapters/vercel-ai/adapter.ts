@@ -13,7 +13,7 @@ import { z } from 'zod'
  * import { streamText } from 'ai'
  * import { openai } from '@ai-sdk/openai'
  *
- * const carnet = await Carnet.fromFile('./carnet.manifest.json')
+ * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
  * const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
  *
  * const result = await streamText({

@@ -1,3 +1,63 @@
+/* Brand color theme - Upstart primary purple */
+:root {
+  /* Primary brand colors */
+  --vp-c-brand: #7270c6;
+  --vp-c-brand-light: #8186d3;
+  --vp-c-brand-lighter: #b8c2e9;
+  --vp-c-brand-dark: #5b57ab;
+  --vp-c-brand-darker: #4b498a;
+
+  /* Override VitePress default colors with brand */
+  --vp-c-green: #7270c6;
+  --vp-c-green-light: #8186d3;
+  --vp-c-green-lighter: #b8c2e9;
+  --vp-c-green-dark: #5b57ab;
+  --vp-c-green-darker: #4b498a;
+
+  /* Link and button colors */
+  --vp-button-brand-bg: #7270c6;
+  --vp-button-brand-hover-bg: #5b57ab;
+  --vp-button-brand-active-bg: #4b498a;
+
+  /* Home page hero colors */
+  --vp-home-hero-name-color: #7270c6;
+}
+
+html.dark {
+  --vp-c-brand: #8186d3;
+  --vp-c-brand-light: #b8c2e9;
+  --vp-c-brand-lighter: #5b57ab;
+  --vp-c-brand-dark: #7270c6;
+  --vp-c-brand-darker: #4b498a;
+
+  --vp-c-green: #8186d3;
+  --vp-c-green-light: #b8c2e9;
+  --vp-c-green-lighter: #5b57ab;
+  --vp-c-green-dark: #7270c6;
+  --vp-c-green-darker: #4b498a;
+
+  --vp-home-hero-name-color: #8186d3;
+}
+
+/* Logo sizing for navbar */
+.VPNavBarTitle img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Alternative selector for logo in navbar */
+.VPNav .VPNavBarTitle img {
+  height: 60px;
+  width: auto;
+}
+
+/* Logo link container */
+.VPNavBarTitle {
+  display: flex;
+  align-items: center;
+}
+
 .plugin-tabs--content {
   & div[class*="language-"] {
     /* biome-ignore lint/complexity/noImportantStyles: code blocks */

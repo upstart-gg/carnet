@@ -9,7 +9,7 @@ import type { AdapterOptions } from '../shared/types'
  * import { CarnetAnthropicAdapter } from '@upstart-gg/carnet/adapters/anthropic'
  * import Anthropic from '@anthropic-ai/sdk'
  *
- * const carnet = await Carnet.fromFile('./carnet.manifest.json')
+ * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
  * const adapter = new CarnetAnthropicAdapter(carnet, 'my-agent')
  *
  * const client = new Anthropic()

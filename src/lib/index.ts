@@ -41,7 +41,7 @@ export class Carnet {
     this.promptGenerator = new PromptGenerator(this.variableInjector)
   }
 
-  static async fromFile(
+  static async fromManifest(
     manifestPath: string,
     options?: {
       variables?: Record<string, string>

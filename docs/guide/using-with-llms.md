@@ -39,7 +39,7 @@ import { CarnetVercelAdapter } from '@upstart-gg/carnet/adapters/vercel-ai'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
 
 const result = await streamText({
@@ -60,7 +60,7 @@ import { Carnet } from '@upstart-gg/carnet'
 import { CarnetOpenAIAdapter } from '@upstart-gg/carnet/adapters/openai'
 import OpenAI from 'openai'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const adapter = new CarnetOpenAIAdapter(carnet, 'my-agent')
 
 const client = new OpenAI({
@@ -87,7 +87,7 @@ import { Carnet } from '@upstart-gg/carnet'
 import { CarnetAnthropicAdapter } from '@upstart-gg/carnet/adapters/anthropic'
 import Anthropic from '@anthropic-ai/sdk'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const adapter = new CarnetAnthropicAdapter(carnet, 'my-agent')
 
 const client = new Anthropic({
@@ -137,7 +137,7 @@ import { openai } from '@ai-sdk/openai'
 import { streamText } from 'ai'
 
 // Load your Carnet agent
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json', {
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json', {
   variables: {
     COMPANY: 'My Company'
   }
@@ -177,7 +177,7 @@ import { streamText, tool } from 'ai'
 import { z } from 'zod'
 
 // Load Carnet
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 
 // Create progressive loading tools for the agent
 const carnetTools = {
@@ -294,7 +294,7 @@ import { Carnet } from '@upstart-gg/carnet'
 import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const agentPrompt = carnet.generateAgentPrompt('assistant')
 
 interface Message {
@@ -348,7 +348,7 @@ import { openai } from '@ai-sdk/openai'
 import { streamText, tool } from 'ai'
 import { z } from 'zod'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const agentPrompt = carnet.generateAgentPrompt('researcher', {
   includeSkillCatalog: true
 })
@@ -397,7 +397,7 @@ for await (const chunk of result.textStream) {
 import { Carnet } from '@upstart-gg/carnet'
 import OpenAI from 'openai'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const agentPrompt = carnet.generateAgentPrompt('coder')
 
 const openai = new OpenAI({
@@ -428,7 +428,7 @@ await stream.finalMessage()
 import { Carnet } from '@upstart-gg/carnet'
 import Anthropic from '@anthropic-ai/sdk'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 const agentPrompt = carnet.generateAgentPrompt('analyst')
 
 const client = new Anthropic({
@@ -508,7 +508,7 @@ execute: async ({ skillName }) => {
 Use variables for LLM-facing context:
 
 ```typescript
-const carnet = await Carnet.fromFile(
+const carnet = await Carnet.fromManifest(
   './dist/carnet.manifest.json',
   {
     variables: {

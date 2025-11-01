@@ -9,7 +9,7 @@ import type { AdapterOptions } from '../shared/types'
  * import { CarnetOpenAIAdapter } from '@upstart-gg/carnet/adapters/openai'
  * import OpenAI from 'openai'
  *
- * const carnet = await Carnet.fromFile('./carnet.manifest.json')
+ * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
  * const adapter = new CarnetOpenAIAdapter(carnet, 'my-agent')
  *
  * const client = new OpenAI()

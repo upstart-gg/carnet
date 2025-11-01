@@ -100,7 +100,7 @@ export class PromptGenerator {
 To load a skill that is not yet available, use the \`loadSkill\` tool with the skill name.
 
 Example:
-- To use the "components" skill, call \`loadSkill("components")\`
+- To use the "skill-xxx" skill, call \`loadSkill("skill-xxx")\`
 - To use a toolset within a skill, first load the skill, then call \`loadToolset("toolset-name")\`
 - To use a tool within a toolset, first load the toolset, then the tool will be available to you
 

@@ -9,7 +9,7 @@ All examples start with Carnet initialization:
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
 
-const carnet = await Carnet.fromFile(
+const carnet = await Carnet.fromManifest(
   './carnet.manifest.json',
   {
     variables: {
@@ -221,7 +221,7 @@ Simulate a complete workflow:
 
 ```typescript
 // 1. Initialize
-const carnet = await Carnet.fromFile('./carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
 
 // 2. Create initial agent prompt
 const initialPrompt = carnet.generateAgentPrompt('coder')

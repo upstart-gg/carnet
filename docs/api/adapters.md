@@ -60,7 +60,7 @@ import { CarnetVercelAdapter } from '@upstart-gg/carnet/adapters/vercel-ai'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 
-const carnet = await Carnet.fromFile('./carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
 const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
 
 const result = await streamText({
@@ -83,7 +83,7 @@ import { Carnet } from '@upstart-gg/carnet'
 import { CarnetOpenAIAdapter } from '@upstart-gg/carnet/adapters/openai'
 import OpenAI from 'openai'
 
-const carnet = await Carnet.fromFile('./carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
 const adapter = new CarnetOpenAIAdapter(carnet, 'code-reviewer')
 
 const client = new OpenAI()
@@ -108,7 +108,7 @@ import { Carnet } from '@upstart-gg/carnet'
 import { CarnetAnthropicAdapter } from '@upstart-gg/carnet/adapters/anthropic'
 import Anthropic from '@anthropic-ai/sdk'
 
-const carnet = await Carnet.fromFile('./carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
 const adapter = new CarnetAnthropicAdapter(carnet, 'analyst')
 
 const client = new Anthropic()

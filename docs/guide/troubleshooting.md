@@ -264,10 +264,10 @@ description: string (required)
 
 ### "Manifest file not found"
 
-**Error:** When loading manifest with Carnet.fromFile()
+**Error:** When loading manifest with Carnet.fromManifest()
 
 ```typescript
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
 // Error: Manifest file not found
 ```
 

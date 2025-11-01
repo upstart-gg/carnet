@@ -23,12 +23,12 @@ Follow this learning path:
 1. **[Installation](/guide/installation)** - Set up Carnet for your platform
 2. **[Quick Start](/guide/quick-start)** - Build your first agent in 5 minutes
 3. **[Core Concepts](/guide/concepts)** - Understand agents, skills, toolsets, and tools
-4. **[Examples](/guide/examples)** - See real-world patterns and use cases
+4. **[Examples](/guide/example-projects)** - See real-world patterns and use cases
 5. **[CLI Reference](/cli/)** - Command reference when you need it
 6. **[API Reference](/api/)** - For programmatic usage in your applications
 
 ## Need Help?
 
-- See [Examples](/guide/examples) for working projects
+- See [Examples](/guide/example-projects) for working projects
 - Visit [GitHub Issues](https://github.com/upstart-gg/carnet/issues)
 - Start a [Discussion](https://github.com/upstart-gg/carnet/discussions)

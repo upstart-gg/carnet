@@ -12,7 +12,7 @@ export default defineConfig({
   ],
 
   head: [
-    ['meta', { name: 'theme-color', content: '#3c3c3d' }],
+    ['meta', { name: 'theme-color', content: '#7270c6' }],
     ['meta', { name: 'og:type', content: 'website' }],
     ['meta', { name: 'og:locale', content: 'en' }],
   ],
@@ -20,8 +20,8 @@ export default defineConfig({
   lastUpdated: true,
 
   themeConfig: {
-    logo: '/logo.svg',
-    siteTitle: 'Carnet',
+    logo: '/carnet.png',
+    siteTitle: false,
 
     nav: [
       { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
@@ -107,9 +107,7 @@ export default defineConfig({
         },
         {
           text: 'Reference',
-          items: [
-            { text: 'Type Definitions', link: '/api/types' },
-          ],
+          items: [{ text: 'Type Definitions', link: '/api/types' }],
         },
       ],
       '/content/': [
@@ -142,9 +140,7 @@ export default defineConfig({
       '/contributing/': [
         {
           text: 'Contributing',
-          items: [
-            { text: 'Overview', link: '/contributing/' },
-          ],
+          items: [{ text: 'Overview', link: '/contributing/' }],
         },
       ],
     },
