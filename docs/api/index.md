@@ -2,6 +2,32 @@
 
 Use Carnet programmatically in your Node.js, Bun, or Deno applications.
 
+## Getting Started
+
+Choose your integration path:
+
+### 🎯 Recommended: Framework Adapters
+
+**For most users**, use our pre-built adapters with your preferred LLM SDK:
+
+- **[Vercel AI SDK](/api/adapters)** - Powerful streaming, tool calling, and multi-model support
+- **[OpenAI SDK](/api/adapters)** - Direct integration with OpenAI's function calling
+- **[Anthropic SDK](/api/adapters)** - Full Claude tool use capability
+
+Adapters reduce integration boilerplate from 75+ lines to just 3 lines with zero configuration.
+
+### 🔧 Advanced: Manual API
+
+For advanced use cases, interact directly with the Carnet API to:
+- Build custom adapters
+- Integrate with frameworks we don't support yet
+- Implement specialized workflows
+- Debug or understand Carnet internals
+
+See the [Advanced API Reference](#advanced-api-reference) below.
+
+---
+
 ## Overview
 
 Carnet provides a comprehensive API for managing agents, skills, toolsets, and tools with:
@@ -34,42 +60,28 @@ const carnet = await Carnet.fromManifest(
 )
 ```
 
-## API Documentation
+## Advanced Topics
 
-The API is organized into several categories:
+For developers building custom adapters or integrating with unsupported frameworks:
 
-### [Content Retrieval](./methods/content-retrieval.md)
-Methods to retrieve full content with automatic variable injection:
-- `getSkillContent()` - Get skill content
-- `getToolsetContent()` - Get toolset content
-- `getToolContent()` - Get tool content
-
-### [Metadata Retrieval](./methods/metadata-retrieval.md)
-Lightweight methods for progressive loading and discovery:
-- `getSkillMetadata()` - Get skill metadata without content
-- `getToolsetMetadata()` - Get toolset metadata without content
-- `getToolMetadata()` - Get tool metadata without content
-
-### [Listing Methods](./methods/listing.md)
-Methods to list available items and their relationships:
-- `listAvailableSkills()` - List all skills for an agent
-- `listSkillToolsets()` - List toolsets in a skill
-- `listToolsetTools()` - List tools in a toolset
+### [Advanced Examples](./examples.md)
+Real-world examples of direct API usage for custom implementations.
 
 ### [Prompt Generation](./methods/prompt-generation.md)
-Generate LLM-ready prompts:
-- `generateAgentPrompt()` - Generate complete agent prompt with skills and catalog
+How to generate LLM-ready prompts programmatically.
 
-## Concepts
+### [Content Retrieval](./methods/content-retrieval.md)
+Methods to load skill, toolset, and tool content with variable injection.
 
 ### [Variable Injection](./concepts/variable-injection.md)
-Learn how to inject variables into content with Mustache-style syntax, variable precedence, and environment variable filtering.
+How to inject variables into content using Mustache-style syntax.
 
 ### [Progressive Loading](./concepts/progressive-loading.md)
-Understand how to efficiently load content on-demand for LLM agents with metadata-first discovery.
+Efficient on-demand loading patterns for LLM agents.
 
-### [Examples](./examples.md)
-Working examples showing how to use the API in common scenarios.
+**Full API Reference** (for adapter developers):
+- [Metadata Retrieval](./methods/metadata-retrieval.md) - Load metadata without full content
+- [Listing Methods](./methods/listing.md) - List agents, skills, toolsets, and tools
 
 ## Error Handling
 
@@ -83,8 +95,20 @@ try {
 }
 ```
 
-## See Also
+## Quick Links
 
-- [Quick Start](/guide/quick-start) - Get started with Carnet
-- [Using with LLMs](/guide/using-with-llms) - LLM integration patterns
-- [Example Projects](/guide/example-projects) - Working repository examples
+### Adapters (Recommended)
+- **[Framework Adapters](/api/adapters)** - Pre-built adapters for Vercel AI, OpenAI, and Anthropic
+- **[Using with LLMs](/guide/using-with-llms)** - Complete integration guide
+
+### Getting Started
+- **[Quick Start](/guide/quick-start)** - Get started with Carnet
+- **[Installation](/guide/installation)** - Setup instructions
+
+### Examples & Learning
+- **[Example Projects](/guide/example-projects)** - Working code examples
+- **[Patterns & Best Practices](/guide/patterns)** - Common usage patterns
+
+### Reference
+- **[Configuration](/configuration/)** - Config file and CLI options
+- **[Content Schema](/configuration/manifest-schema)** - Entity structure and format

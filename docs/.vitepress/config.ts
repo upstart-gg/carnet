@@ -27,7 +27,6 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
       { text: 'CLI', link: '/cli/', activeMatch: '/cli/' },
       { text: 'API', link: '/api/', activeMatch: '/api/' },
-      { text: 'Content Types', link: '/content/', activeMatch: '/content/' },
       { text: 'Configuration', link: '/configuration/', activeMatch: '/configuration/' },
       {
         text: 'More',
@@ -106,22 +105,6 @@ export default defineConfig({
           ],
         },
       ],
-      '/content/': [
-        {
-          text: 'Content Types',
-          items: [
-            { text: 'Overview', link: '/content/' },
-            { text: 'Agents', link: '/content/agents' },
-            { text: 'Skills', link: '/content/skills' },
-            { text: 'Toolsets', link: '/content/toolsets' },
-            { text: 'Tools', link: '/content/tools' },
-          ],
-        },
-        {
-          text: 'Manifest',
-          items: [{ text: 'Schema', link: '/content/manifest-schema' }],
-        },
-      ],
       '/configuration/': [
         {
           text: 'Configuration',
@@ -131,6 +114,19 @@ export default defineConfig({
             { text: 'Variables', link: '/configuration/variables' },
             { text: 'Patterns', link: '/configuration/patterns' },
           ],
+        },
+        {
+          text: 'Content Structure',
+          items: [
+            { text: 'Agents', link: '/configuration/content-structure/agents' },
+            { text: 'Skills', link: '/configuration/content-structure/skills' },
+            { text: 'Toolsets', link: '/configuration/content-structure/toolsets' },
+            { text: 'Tools', link: '/configuration/content-structure/tools' },
+          ],
+        },
+        {
+          text: 'Output',
+          items: [{ text: 'Manifest Schema', link: '/configuration/manifest-schema' }],
         },
       ],
       '/contributing/': [

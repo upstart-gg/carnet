@@ -1,5 +1,6 @@
 import type { Command } from 'commander'
 import type { z } from 'zod'
+import { loadConfigFile } from '../../lib/config'
 import { discoverAgents, discoverSkills, discoverToolsets } from '../../lib/discovery'
 import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
@@ -24,7 +25,8 @@ async function runListCommand(
   agentName: string | undefined,
   options: { dir?: string; depth?: string; config?: string }
 ) {
-  const contentDir = options.dir || './carnet'
+  const config = await loadConfigFile(options.config)
+  const contentDir = options.dir || config.baseDir
   const maxDepth = Math.max(1, parseInt(options.depth || '3', 10))
   const agents = await collect<Agent>(discoverAgents(contentDir), agentSchema)
   const skills = await collect<Skill>(discoverSkills(contentDir), skillSchema)

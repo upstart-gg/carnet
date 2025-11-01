@@ -49,11 +49,13 @@ interface GenerateAgentPromptOptions {
 
 ```typescript
 const prompt = carnet.generateAgentPrompt('coder', {
-  includeInitialSkills: true,
-  includeSkillCatalog: true,
+  includeInitialSkills: true,  // default
+  includeSkillCatalog: true,   // default
 })
 
 console.log(prompt.content)
+
+// Or simply: carnet.generateAgentPrompt('coder')
 ```
 
 ### Minimal Prompt

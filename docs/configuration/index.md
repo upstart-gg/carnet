@@ -59,6 +59,17 @@ Glob patterns to exclude.
 - Type: string[]
 - Examples: `**/draft/**`, `**/*.example.md`
 
+## Content Structure
+
+Before building, you need to organize your agents, skills, toolsets, and tools in the content directory. See these guides to understand how to structure your content:
+
+- [Agents](/configuration/content-structure/agents) - AI agents with prompts and skills
+- [Skills](/configuration/content-structure/skills) - Capabilities that group tools
+- [Toolsets](/configuration/content-structure/toolsets) - Collections of related tools
+- [Tools](/configuration/content-structure/tools) - Individual capabilities or functions
+
+After you've structured your content, the `carnet build` command compiles everything into a production-ready manifest. See the [Manifest Schema](/configuration/manifest-schema) for details on the compiled output.
+
 ## Learn More
 
 - [Config File](/configuration/config-file) - Detailed configuration options

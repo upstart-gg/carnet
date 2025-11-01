@@ -217,7 +217,7 @@ graph TD
 
 ## Next Steps
 
-- Learn how to [create content](/content/)
+- Learn how to [structure content](/configuration/content-structure/agents)
 - Explore [CLI commands](/cli/)
 - Check the [API reference](/api/)
 - See [configuration options](/configuration/)

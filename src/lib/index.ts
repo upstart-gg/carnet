@@ -16,6 +16,21 @@ export { PromptGenerator } from './prompt-generator'
 export * from './types'
 export { VariableInjector } from './variable-injector'
 
+/**
+ * Main Carnet class for loading and using AI agent manifests
+ *
+ * Provides methods to:
+ * - Load agent, skill, toolset, and tool definitions
+ * - Generate agent prompts with variable injection
+ * - Retrieve content with variable substitution
+ *
+ * @example
+ * ```typescript
+ * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+ * const agent = carnet.getAgent('myAgent')
+ * const prompt = carnet.generateAgentPrompt('myAgent')
+ * ```
+ */
 export class Carnet {
   protected manifest: Manifest
   protected cwd: string
@@ -24,6 +39,14 @@ export class Carnet {
 
   static MANIFEST_FILENAME = 'carnet.manifest.json'
 
+  /**
+   * Create a new Carnet instance
+   * @param manifest The parsed manifest object containing agents, skills, toolsets, and tools
+   * @param cwd Current working directory for relative file paths (defaults to process.cwd())
+   * @param options Configuration options for variable injection
+   * @param options.variables Custom variables to inject into prompts
+   * @param options.envPrefixes Environment variable prefixes to allow (e.g., ['CARNET_', 'PUBLIC_'])
+   */
   constructor(
     manifest: Manifest,
     cwd: string = process.cwd(),
@@ -41,6 +64,18 @@ export class Carnet {
     this.promptGenerator = new PromptGenerator(this.variableInjector)
   }
 
+  /**
+   * Load a Carnet instance from a manifest file
+   * @param manifestPath Path to the carnet.manifest.json file
+   * @param options Configuration options for variable injection
+   * @param cwd Current working directory (defaults to process.cwd())
+   * @returns A new Carnet instance
+   * @throws Error if manifest file not found or invalid
+   * @example
+   * ```typescript
+   * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+   * ```
+   */
   static async fromManifest(
     manifestPath: string,
     options?: {
@@ -65,31 +100,62 @@ export class Carnet {
     return parsed.data
   }
 
-  // Original API (kept for compatibility)
+  /**
+   * Get all agents from the manifest
+   * @returns Record of agent name to agent definition
+   */
   get agents(): Manifest['agents'] {
     return this.manifest.agents
   }
 
+  /**
+   * Get a single agent by name
+   * @param name The name of the agent to retrieve
+   * @returns The agent definition, or undefined if not found
+   */
   getAgent(name: string, _options: { rewritePrompt?: boolean } = { rewritePrompt: true }) {
     return this.manifest.agents[name]
   }
 
+  /**
+   * Get a skill by name
+   * @param name The name of the skill to retrieve
+   * @returns The skill definition, or undefined if not found
+   */
   getSkill(name: string) {
     return this.manifest.skills[name]
   }
 
+  /**
+   * Get a toolset by name
+   * @param name The name of the toolset to retrieve
+   * @returns The toolset definition, or undefined if not found
+   */
   getToolset(name: string) {
     return this.manifest.toolsets[name]
   }
 
+  /**
+   * Get a tool by name
+   * @param name The name of the tool to retrieve
+   * @returns The tool definition, or undefined if not found
+   */
   getTool(name: string) {
     return this.manifest.tools[name]
   }
 
-  // NEW API: Content retrieval with variable injection
+  // Content retrieval with variable injection
 
   /**
    * Get skill content with optional variable injection
+   * @param name The name of the skill to retrieve
+   * @param options Retrieval options (raw: skip variable injection)
+   * @returns The skill content with variables injected (unless raw is true)
+   * @throws Error if skill not found
+   * @example
+   * ```typescript
+   * const skillContent = carnet.getSkillContent('research', { variables: { topic: 'AI' } })
+   * ```
    */
   getSkillContent(name: string, options: ContentRetrievalOptions = {}): string {
     const skill = this.manifest.skills[name]
@@ -106,6 +172,10 @@ export class Carnet {
 
   /**
    * Get toolset content with optional variable injection
+   * @param name The name of the toolset to retrieve
+   * @param options Retrieval options (raw: skip variable injection)
+   * @returns The toolset content with variables injected (unless raw is true)
+   * @throws Error if toolset not found
    */
   getToolsetContent(name: string, options: ContentRetrievalOptions = {}): string {
     const toolset = this.manifest.toolsets[name]
@@ -122,6 +192,10 @@ export class Carnet {
 
   /**
    * Get tool content with optional variable injection
+   * @param name The name of the tool to retrieve
+   * @param options Retrieval options (raw: skip variable injection)
+   * @returns The tool content with variables injected (unless raw is true)
+   * @throws Error if tool not found
    */
   getToolContent(name: string, options: ContentRetrievalOptions = {}): string {
     const tool = this.manifest.tools[name]
@@ -136,10 +210,14 @@ export class Carnet {
     return this.variableInjector.inject(tool.content, options.variables)
   }
 
-  // NEW API: Metadata retrieval for progressive loading
+  // Metadata retrieval for progressive loading
 
   /**
    * Get skill metadata (name, description, toolsets) without full content
+   * Useful for listing available skills without loading full content
+   * @param name The name of the skill
+   * @returns Metadata object with name, description, and toolsets list
+   * @throws Error if skill not found
    */
   getSkillMetadata(name: string): SkillMetadata {
     const skill = this.manifest.skills[name]
@@ -231,7 +309,28 @@ export class Carnet {
 
   /**
    * Generate a complete, LLM-ready prompt for an agent
-   * Includes initial skills, skill catalog, and loading instructions
+   *
+   * Creates a comprehensive prompt that includes:
+   * - Agent description and base prompt
+   * - Initial skills with full content
+   * - Catalog of available skills for on-demand loading
+   * - Instructions for progressive skill loading
+   * - Variable substitution
+   *
+   * @param agentName The name of the agent
+   * @param options Generation options
+   * @param options.includeSkillCatalog Whether to include the skill catalog (default: true)
+   * @param options.includeInitialSkills Whether to include initial skills content (default: true)
+   * @param options.variables Custom variables for injection
+   * @returns Generated prompt object with content and metadata
+   * @throws Error if agent not found
+   * @example
+   * ```typescript
+   * const prompt = carnet.generateAgentPrompt('researcher', {
+   *   variables: { domain: 'science' }
+   * })
+   * // Use prompt.content with your LLM
+   * ```
    */
   generateAgentPrompt(
     agentName: string,

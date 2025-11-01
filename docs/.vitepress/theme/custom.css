@@ -41,14 +41,14 @@ html.dark {
 
 /* Logo sizing for navbar */
 .VPNavBarTitle img {
-  height: 60px;
+  height: 50px;
   width: auto;
   object-fit: contain;
 }
 
 /* Alternative selector for logo in navbar */
 .VPNav .VPNavBarTitle img {
-  height: 60px;
+  height: 50px;
   width: auto;
 }
 

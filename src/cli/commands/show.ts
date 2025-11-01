@@ -1,6 +1,7 @@
 import path from 'node:path'
 import type { Command } from 'commander'
 import type { z } from 'zod'
+import { loadConfigFile } from '../../lib/config'
 import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
 import { colors } from '../colors'
@@ -18,8 +19,9 @@ export function registerShowCommand(program: Command) {
     })
 }
 
-async function runShowCommand(type: string, name: string, options: { dir?: string }) {
-  const contentDir = options.dir || './carnet'
+async function runShowCommand(type: string, name: string, options: { dir?: string; config?: string }) {
+  const config = await loadConfigFile(options.config)
+  const contentDir = options.dir || config.baseDir
   let filePath: string
   let schema: z.ZodType<unknown>
 

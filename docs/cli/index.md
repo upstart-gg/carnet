@@ -1,6 +1,15 @@
 # CLI Commands
 
-Carnet provides a command-line interface for managing your agent content.
+Carnet provides a command-line interface for managing your agent content
+and building the final manifest. This guide covers the available commands,
+
+## Key Features
+
+- **No Config Required** - Works with built-in defaults immediately
+- **Config File Optional** - Use `carnet.config.json` for persistent settings
+- **Full CLI Control** - All configuration options available as CLI flags
+- **Configuration Precedence** - CLI options override config file and environment variables
+- **Repeatable Options** - Use options multiple times: `--variables KEY=VALUE --variables KEY2=VALUE2`
 
 ## Global Options
 
@@ -13,6 +22,27 @@ carnet [command] [options]
 **Available globally:**
 - `-c, --config <path>` - Path to `carnet.config.json` (default: `./carnet.config.json`)
 - `-d, --dir <dir>` - Content directory (default: `./carnet`)
+
+## Configuration Precedence
+
+When you specify the same setting in multiple ways, Carnet uses this priority order:
+
+1. **CLI options** (highest priority) - What you type on the command line
+2. **Environment variables** (e.g., `CARNET_OUTPUT=./build`)
+3. **Config file** (`carnet.config.json`)
+4. **Schema defaults** (lowest priority) - Built-in sensible defaults
+
+Example:
+
+```bash
+# Config file says: output: "./dist"
+# But CLI option wins:
+carnet build --output ./build   # Uses ./build (CLI wins)
+
+# Environment variable overrides config but not CLI:
+CARNET_OUTPUT=./app carnet build        # Uses ./app (env var)
+CARNET_OUTPUT=./app carnet build --output ./custom  # Uses ./custom (CLI wins)
+```
 
 ## Available Commands
 
@@ -58,6 +88,17 @@ yarn dlx @upstart-gg/carnet init my-project
 :::
 
 ### Build Your Content
+
+Without config file (CLI-only):
+```bash
+# Uses defaults: ./carnet → ./dist
+carnet build
+
+# Override with CLI options
+carnet build --output ./build --variables API_KEY=secret
+```
+
+With config file:
 ```bash
 carnet build
 carnet build --watch         # Watch for changes
@@ -65,8 +106,16 @@ carnet build -o ./output     # Custom output directory
 ```
 
 ### Lint Content
+
+Without config file:
 ```bash
 carnet lint
+```
+
+With options:
+```bash
+carnet lint --exclude "**/draft/**"
+carnet lint --variables ENV=prod
 ```
 
 ### List Agents

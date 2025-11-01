@@ -14,7 +14,7 @@
 
 - [Documentation](./docs/index.md)
 - [API Reference](./docs/api/)
-- [Examples](./examples/)
+- [Examples & Patterns](./docs/guide/example-projects.md)
 
 ## License
 

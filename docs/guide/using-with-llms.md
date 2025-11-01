@@ -144,9 +144,7 @@ const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json', {
 })
 
 // Generate initial prompt for agent
-const agentPrompt = carnet.generateAgentPrompt('coder', {
-  includeSkillCatalog: true
-})
+const agentPrompt = carnet.generateAgentPrompt('coder')
 
 // Stream response
 const result = await streamText({
@@ -258,9 +256,7 @@ const carnetTools = {
 }
 
 // Generate agent prompt
-const agentPrompt = carnet.generateAgentPrompt('coder', {
-  includeSkillCatalog: true
-})
+const agentPrompt = carnet.generateAgentPrompt('coder')
 
 // Stream with tools
 const result = await streamText({
@@ -349,9 +345,7 @@ import { streamText, tool } from 'ai'
 import { z } from 'zod'
 
 const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
-const agentPrompt = carnet.generateAgentPrompt('researcher', {
-  includeSkillCatalog: true
-})
+const agentPrompt = carnet.generateAgentPrompt('researcher')
 
 // Define tools for the agent to call
 const tools = {
@@ -463,7 +457,7 @@ Don't include all skill content in initial prompt:
 ```typescript
 // ✓ Good - Metadata only, content loaded on demand
 const prompt = carnet.generateAgentPrompt('agent', {
-  includeSkillCatalog: true,
+  // includeSkillCatalog: true (default)
   includeInitialSkills: true  // Only initial skills have full content
 })
 

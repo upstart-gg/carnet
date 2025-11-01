@@ -1,109 +1,125 @@
-# Example Projects
+# Example Projects & Patterns
 
-Explore complete working examples in the Carnet repository.
+Learn how to use Carnet through patterns and real-world scenarios.
 
-## Available Examples
+## Framework Adapters (Recommended)
 
-The Carnet repository includes several complete example projects in the `examples/` directory:
+For most LLM integration use cases, start with a framework adapter:
 
-### basic-cli
-Simple command-line usage of the Carnet CLI.
+### Vercel AI SDK
+The most powerful adapter with streaming support and tool calling.
 
-**Use this to:**
-- Learn basic CLI commands
-- Understand the build process
-- See minimal project structure
+```typescript
+import { Carnet } from '@upstart-gg/carnet'
+import { CarnetVercelAdapter } from '@upstart-gg/carnet/adapters/vercel-ai'
+import { streamText } from 'ai'
+import { openai } from '@ai-sdk/openai'
 
-### nodejs-programmatic
-Using Carnet as a library in Node.js with the JavaScript API.
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
 
-**Use this to:**
-- Learn programmatic API usage
-- Integrate Carnet into your application
-- Understand progressive loading patterns
-- Work with variable injection
-
-### ci-cd
-Integrating Carnet into CI/CD pipelines.
-
-**Use this to:**
-- Automate manifest building
-- Validate content in pipelines
-- Integrate with GitHub Actions or similar
-- Set up automated testing
-
-### my-app
-A comprehensive real-world example with multiple agents and complex hierarchy.
-
-**Use this to:**
-- See production-ready structure
-- Learn advanced patterns
-- Understand scaling to larger projects
-- See best practices in action
-
-## Running Examples
-
-### Setup
-```bash
-cd examples/nodejs-programmatic
-npm install
-# or
-bun install
+const result = await streamText({
+  model: openai('gpt-4'),
+  ...adapter.getConfig(),
+  messages: [{ role: 'user', content: 'Help me!' }]
+})
 ```
 
-### Build
+See [Framework Adapters](/api/adapters) for complete examples with OpenAI and Anthropic.
+
+## CLI Usage
+
+### Basic Workflow
+
+Build without a config file:
 ```bash
-npm run build
-# Generates dist/carnet.manifest.json
+# Uses defaults
+carnet build
+
+# With custom options
+carnet build --output ./build --variables API_KEY=secret
 ```
 
-### Run
+Lint before building:
 ```bash
-npm run start
-# Executes the example code
+carnet lint
+carnet build
 ```
 
-## Progressive Loading Example
+### CI/CD Integration
 
-The `nodejs-programmatic` example includes a complete progressive loading demonstration:
-
-**examples/progressive-loading.ts**
-
-This example shows:
-- Loading a Carnet manifest from file
-- Generating initial agent prompts
-- Progressive loading of skills and tools
-- Variable injection
-- Tool calling patterns for LLM integration
-
-Run it:
+Automate builds in your pipeline:
 ```bash
-bun run examples/progressive-loading.ts
+# Validate content
+carnet lint --config ./carnet.prod.json || exit 1
+
+# Build for production
+carnet build --config ./carnet.prod.json --output ./dist
+
+# Optional: verify structure
+carnet list
 ```
 
-See the [Progressive Loading](/api/concepts/progressive-loading) API documentation for details on the pattern.
+See [Build Command](/cli/build) and [Lint Command](/cli/lint) for all options.
 
-## Using Examples as Templates
+## Programmatic API
 
-### 1. Copy an Example
+### Progressive Loading Pattern
 
-```bash
-cp -r examples/nodejs-programmatic my-project
-cd my-project
-npm install
+Load skill metadata first, then content on-demand:
+
+```typescript
+import { Carnet } from '@upstart-gg/carnet'
+
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+
+// 1. Get agent and its available skills
+const agent = carnet.getAgent('my-agent')
+const metadata = carnet.getSkillMetadata('my-skill')
+
+// 2. Generate initial prompt with skill catalog (default)
+const prompt = carnet.generateAgentPrompt('my-agent')
+
+// 3. Load skills on-demand as needed
+const skillContent = carnet.getSkillContent('my-skill')
 ```
 
-### 2. Customize
+See [Progressive Loading](/api/concepts/progressive-loading) for details.
 
-- Modify agent definitions in `content/agents/`
-- Add your own skills in `content/skills/`
-- Create toolsets and tools as needed
+### Variable Injection
 
-### 3. Build and Test
+Inject custom variables into all content:
 
-```bash
-npm run build
-npm start
+```typescript
+const carnet = await Carnet.fromManifest('./carnet.manifest.json', {
+  variables: {
+    API_KEY: 'secret-key',
+    COMPANY_NAME: 'My Company'
+  }
+})
+
+// All loaded content has variables substituted
+const skill = carnet.getSkillContent('my-skill')
+// {{ API_KEY }} → secret-key
+// {{ COMPANY_NAME }} → My Company
+```
+
+See [Variable Injection](/api/concepts/variable-injection) for advanced patterns.
+
+### Custom Tool Definition
+
+Build your own tool definitions programmatically:
+
+```typescript
+const toolset = carnet.getToolsetContent('my-toolset')
+const tools = carnet.listToolsetTools('my-toolset')
+
+// Use in your LLM SDK
+const myTools = tools.map(tool => ({
+  name: tool.name,
+  description: tool.description,
+  // ... define tool schema and handler
+}))
 ```
 
 ## See Also

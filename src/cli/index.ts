@@ -1,9 +1,9 @@
 import { Command } from 'commander'
 import { registerBuildCommand } from './commands/build'
 import { registerInitCommand } from './commands/init'
+import { registerLintCommand } from './commands/lint'
 import { registerListCommand } from './commands/list'
 import { registerShowCommand } from './commands/show'
-import { registerLintCommand } from './commands/lint'
 
 const program = new Command()
 
