@@ -7,5 +7,9 @@
   &:has(> div[class*="language-"]) {
     /* biome-ignore lint/complexity/noImportantStyles: code blocks */
     padding: 0 !important;
+
+    & > p {
+      margin: 1rem;
+    }
   }
 }

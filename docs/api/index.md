@@ -4,25 +4,16 @@ Use Carnet programmatically in your Node.js, Bun, or Deno applications.
 
 ## Overview
 
-Carnet provides a comprehensive API for managing agents, skills, toolsets, and tools. The library is designed to support:
+Carnet provides a comprehensive API for managing agents, skills, toolsets, and tools with:
 
 - **Dynamic content retrieval** with automatic variable injection
 - **Progressive loading** for LLM agents with metadata-first discovery
 - **Prompt generation** for creating LLM-ready agent prompts
-- **Variable injection** from custom variables and environment variables
 - **Type safety** with full TypeScript support
 
-## Installation
+Installation is covered in the [Quick Start Guide](/guide/quick-start).
 
-```bash
-npm install @upstart-gg/carnet
-# or
-bun add @upstart-gg/carnet
-```
-
-## Quick Start
-
-### Loading a Manifest
+## Loading a Manifest
 
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
@@ -33,7 +24,7 @@ const carnet = await Carnet.fromFile('./path/to/carnet.manifest.json')
 // Or load directly from an object
 const carnet = new Carnet(manifestObject)
 
-// With variable injection options
+// With options
 const carnet = await Carnet.fromFile(
   './carnet.manifest.json',
   {
@@ -42,19 +33,6 @@ const carnet = await Carnet.fromFile(
   }
 )
 ```
-
-### Constructor Options
-
-```typescript
-interface CarnetOptions {
-  variables?: Record<string, string>      // Custom variables for injection
-  envPrefixes?: string[]                  // Environment variable prefixes to allow
-}
-```
-
-**Default behavior:**
-- `envPrefixes` defaults to `['CARNET_', 'PUBLIC_']` if not specified
-- Variables are merged and prioritized as: additional vars > constructor vars > env vars
 
 ## API Documentation
 
@@ -93,9 +71,8 @@ Understand how to efficiently load content on-demand for LLM agents with metadat
 ### [Type Definitions](./types.md)
 Complete TypeScript type definitions for all API methods and interfaces.
 
-## Complete Example
-
-For a complete working example combining all features, see [Examples](./examples.md).
+### [Examples](./examples.md)
+Working examples showing how to use the API in common scenarios.
 
 ## Error Handling
 
@@ -111,5 +88,6 @@ try {
 
 ## See Also
 
-- [Progressive Loading Example](../../examples/progressive-loading.ts)
-- [Library Enhancements Documentation](../../LIBRARY_ENHANCEMENTS.md)
+- [Quick Start](/guide/quick-start) - Get started with Carnet
+- [Using with LLMs](/guide/using-with-llms) - LLM integration patterns
+- [Example Projects](/guide/example-projects) - Working repository examples

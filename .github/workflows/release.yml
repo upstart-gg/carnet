@@ -10,9 +10,6 @@ on:
       - ".changeset/**"
   workflow_dispatch:
 
-env:
-  TURBO_SCM_BASE: origin/main
-
 jobs:
   release:
     if: github.repository == 'upstart-gg/carnet'

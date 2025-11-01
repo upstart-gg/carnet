@@ -49,20 +49,17 @@ You should see a tree view of your agents, skills, and toolsets.
 
 ## 5. Use in Your Code
 
-```typescript
-import { Carnet } from '@upstart-gg/carnet'
+See [Using with LLMs](/guide/using-with-llms) for complete integration examples with SDKs from Vercel, OpenAI, Anthropic, and more.
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
-const agent = carnet.getAgent('my-agent')
-console.log(agent.prompt)
-```
 
 ## Next Steps
 
 - Learn about [Core Concepts](/guide/concepts)
-- Explore [CLI Commands](/cli/)
+- Explore [Using with LLMs](/guide/using-with-llms) - Full LLM integration guide
+- Check [Patterns](/guide/patterns) - Architectural patterns
+- See [Example Projects](/guide/example-projects) - Working examples
+- Browse [CLI Commands](/cli/)
 - Check [API Reference](/api/)
-- See real-world [Examples](/guide/examples)
 
 ## Tips
 

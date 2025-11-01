@@ -12,7 +12,19 @@
       "types": "./dist/schema/index.d.ts",
       "import": "./dist/schema/index.js"
     },
-    "./schema/config.schema.json": "./schema/config.schema.json"
+    "./schema/config.schema.json": "./schema/config.schema.json",
+    "./adapters/vercel-ai": {
+      "types": "./dist/adapters/vercel-ai/index.d.ts",
+      "import": "./dist/adapters/vercel-ai/index.js"
+    },
+    "./adapters/openai": {
+      "types": "./dist/adapters/openai/index.d.ts",
+      "import": "./dist/adapters/openai/index.js"
+    },
+    "./adapters/anthropic": {
+      "types": "./dist/adapters/anthropic/index.d.ts",
+      "import": "./dist/adapters/anthropic/index.js"
+    }
   },
   "bin": {
     "carnet": "./dist/cli/index.js"
@@ -58,6 +70,22 @@
     "commander": "14.0.2",
     "gray-matter": "4.0.3",
     "zod": "4.1.12"
+  },
+  "peerDependencies": {
+    "ai": ">=5.0.0",
+    "openai": ">=4.0.0",
+    "@anthropic-ai/sdk": ">=0.20.0"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    },
+    "@anthropic-ai/sdk": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.2",

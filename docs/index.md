@@ -46,54 +46,21 @@ features:
 ## Quick Installation
 
 ```bash
-# Global installation (recommended for CLI)
 npm install -g @upstart-gg/carnet
-
-# Or use without installing
-npx @upstart-gg/carnet init my-agents
-cd my-agents
-npm install
+# or npx @upstart-gg/carnet init my-agents
 ```
 
-## Your First Agent
+## Get Started
 
-```bash
-carnet init my-agents
-cd my-agents
-carnet build
-carnet list
-```
+See the [Quick Start Guide](/guide/quick-start) to build your first agent in 5 minutes, or check the [Installation Guide](/guide/installation) for detailed setup instructions.
 
-## Use in Your Code
+## Key Features
 
-**JavaScript/TypeScript:**
-```typescript
-import { Carnet } from '@upstart-gg/carnet'
-
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
-const agent = carnet.getAgent('my-agent')
-console.log(agent.prompt)
-```
-
-**Any Language:**
-The compiled manifest is a standard JSON file that any application can read and parse:
-```json
-// dist/carnet.manifest.json
-{
-  "agents": [
-    {
-      "name": "my-agent",
-      "description": "...",
-      "prompt": "...",
-      "skills": [...]
-    }
-  ],
-  "skills": [...],
-  "toolsets": [...]
-}
-```
-
-Whether you're building with Node.js, Python, Go, or any other language, the manifest format is consistent and portable.
+- **Markdown-Based** - Define agents in version-controlled markdown files
+- **Build-Time Safety** - Validate all references before deployment
+- **JSON Manifests** - Compile to fast-loading JSON for any language
+- **Progressive Loading** - Efficiently load agent capabilities on demand
+- **LLM-Ready** - Designed for AI agent frameworks and LLM integrations
 
 ## Why Carnet?
 

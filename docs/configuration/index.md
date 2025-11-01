@@ -41,12 +41,13 @@ Global agent configuration.
 ### variables
 Template variables for content substitution.
 - Type: Record<string, string>
-- Use in markdown: `{{ VARIABLE_NAME }}`
+- See [Variables](/configuration/variables) for details
 
-### envPrefix
-Environment variable prefixes for substitution.
+### envPrefixes
+Environment variable prefixes allowed for substitution.
 - Default: `["CARNET_", "PUBLIC_"]`
 - Type: string[]
+- See [Variables](/configuration/variables) for details
 
 ### include
 Glob patterns to include.
@@ -60,6 +61,6 @@ Glob patterns to exclude.
 
 ## Learn More
 
-- [Config File](/configuration/config-file) - Detailed options
-- [Variables](/configuration/variables) - Template variables
-- [Advanced](/configuration/advanced) - Advanced configuration
+- [Config File](/configuration/config-file) - Detailed configuration options
+- [Variables](/configuration/variables) - Template variables and environment substitution
+- [Configuration Patterns](/configuration/patterns) - Common configuration patterns and best practices

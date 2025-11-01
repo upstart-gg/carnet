@@ -42,13 +42,28 @@ export default defineConfig({
     sidebar: {
       '/guide/': [
         {
-          text: 'Guide',
+          text: 'Getting Started',
           items: [
-            { text: 'Getting Started', link: '/guide/' },
+            { text: 'Overview', link: '/guide/' },
             { text: 'Installation', link: '/guide/installation' },
             { text: 'Quick Start', link: '/guide/quick-start' },
+          ],
+        },
+        {
+          text: 'Learning',
+          items: [
             { text: 'Core Concepts', link: '/guide/concepts' },
-            { text: 'Examples', link: '/guide/examples' },
+            { text: 'Patterns', link: '/guide/patterns' },
+            { text: 'Using with LLMs', link: '/guide/using-with-llms' },
+          ],
+        },
+        {
+          text: 'Reference',
+          items: [
+            { text: 'Organizing Projects', link: '/guide/organizing-projects' },
+            { text: 'Example Projects', link: '/guide/example-projects' },
+            { text: 'Tips & Tricks', link: '/guide/tips-and-tricks' },
+            { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           ],
         },
       ],
@@ -70,6 +85,7 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'Overview', link: '/api/' },
+            { text: 'Framework Adapters', link: '/api/adapters' },
             { text: 'Examples', link: '/api/examples' },
           ],
         },
@@ -119,7 +135,7 @@ export default defineConfig({
             { text: 'Overview', link: '/configuration/' },
             { text: 'carnet.config.json', link: '/configuration/config-file' },
             { text: 'Variables', link: '/configuration/variables' },
-            { text: 'Advanced', link: '/configuration/advanced' },
+            { text: 'Patterns', link: '/configuration/patterns' },
           ],
         },
       ],
@@ -128,7 +144,6 @@ export default defineConfig({
           text: 'Contributing',
           items: [
             { text: 'Overview', link: '/contributing/' },
-            { text: 'Development', link: '/contributing/development' },
           ],
         },
       ],
