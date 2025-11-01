@@ -68,9 +68,6 @@ Learn how to inject variables into content with Mustache-style syntax, variable 
 ### [Progressive Loading](./concepts/progressive-loading.md)
 Understand how to efficiently load content on-demand for LLM agents with metadata-first discovery.
 
-### [Type Definitions](./types.md)
-Complete TypeScript type definitions for all API methods and interfaces.
-
 ### [Examples](./examples.md)
 Working examples showing how to use the API in common scenarios.
 

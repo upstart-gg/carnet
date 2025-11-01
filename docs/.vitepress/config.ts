@@ -105,10 +105,6 @@ export default defineConfig({
             { text: 'Progressive Loading', link: '/api/concepts/progressive-loading' },
           ],
         },
-        {
-          text: 'Reference',
-          items: [{ text: 'Type Definitions', link: '/api/types' }],
-        },
       ],
       '/content/': [
         {
