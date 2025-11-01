@@ -82,7 +82,11 @@ export const toolsetSchema = z
 
 export const toolSchema = z
   .object({
-    name: z.string().min(1).describe('The name of the tool'),
+    name: z
+      .string()
+      // Should match a valid function name pattern
+      .regex(/^[a-zA-Z][a-zA-Z0-9_]*$/)
+      .describe('The name of the tool'),
     description: z.string().min(1).describe('A brief description of the tool'),
     content: z.string().describe('Full markdown content of the tool'),
   })

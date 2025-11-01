@@ -2,111 +2,114 @@
 
 Use Carnet programmatically in your Node.js, Bun, or Deno applications.
 
-## Quick Start
+## Overview
 
-```typescript
-import { Carnet, build, validate } from '@upstart-gg/carnet'
+Carnet provides a comprehensive API for managing agents, skills, toolsets, and tools. The library is designed to support:
 
-// Load manifest
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
-
-// Access agents
-const agent = carnet.getAgent('my-agent')
-console.log(agent.prompt)
-
-// Build programmatically
-await build({
-  baseDir: './content',
-  output: './dist'
-})
-
-// Validate
-await validate('./content')
-```
-
-## Main Components
-
-### Carnet Class
-Load and access compiled agents, skills, toolsets, and tools.
-
-[Read more →](/api/carnet-class)
-
-### build()
-Build markdown files into compiled manifest.
-
-[Read more →](/api/build-function)
-
-### validate()
-Validate content without building.
-
-[Read more →](/api/validate-function)
-
-### Types
-TypeScript types for all Carnet entities.
-
-[Read more →](/api/types)
+- **Dynamic content retrieval** with automatic variable injection
+- **Progressive loading** for LLM agents with metadata-first discovery
+- **Prompt generation** for creating LLM-ready agent prompts
+- **Variable injection** from custom variables and environment variables
+- **Type safety** with full TypeScript support
 
 ## Installation
 
 ```bash
 npm install @upstart-gg/carnet
+# or
 bun add @upstart-gg/carnet
-pnpm add @upstart-gg/carnet
 ```
 
-## Node Versions
+## Quick Start
 
-- Node.js 22+
-- Bun 1.0+
-- Deno 2.0+
+### Loading a Manifest
 
-## Examples
-
-### Load and Query
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
 
-const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
+// Load from file
+const carnet = await Carnet.fromFile('./path/to/carnet.manifest.json')
 
-// Get all agents
-const agents = carnet.agents
+// Or load directly from an object
+const carnet = new Carnet(manifestObject)
 
-// Get specific agent
-const coder = carnet.getAgent('coder')
-
-// List all skills
-for (const skill of Object.values(carnet.skills)) {
-  console.log(skill.name, skill.description)
-}
-```
-
-### Build
-```typescript
-import { build } from '@upstart-gg/carnet'
-
-await build({
-  baseDir: './content',
-  output: './dist',
-  variables: {
-    API_KEY: process.env.API_KEY
+// With variable injection options
+const carnet = await Carnet.fromFile(
+  './carnet.manifest.json',
+  {
+    variables: { API_KEY: 'my-key' },
+    envPrefixes: ['MYAPP_', 'PUBLIC_'],
   }
-})
+)
 ```
 
-### Validate
-```typescript
-import { validate } from '@upstart-gg/carnet'
+### Constructor Options
 
-try {
-  await validate('./content')
-  console.log('✓ All valid!')
-} catch (error) {
-  console.error('✗ Validation failed:', error.message)
+```typescript
+interface CarnetOptions {
+  variables?: Record<string, string>      // Custom variables for injection
+  envPrefixes?: string[]                  // Environment variable prefixes to allow
 }
 ```
 
-## Related
+**Default behavior:**
+- `envPrefixes` defaults to `['CARNET_', 'PUBLIC_']` if not specified
+- Variables are merged and prioritized as: additional vars > constructor vars > env vars
 
-- [CLI Reference](/cli/)
-- [Configuration](/configuration/)
-- [Content Types](/content/)
+## API Documentation
+
+The API is organized into several categories:
+
+### [Content Retrieval](./methods/content-retrieval.md)
+Methods to retrieve full content with automatic variable injection:
+- `getSkillContent()` - Get skill content
+- `getToolsetContent()` - Get toolset content
+- `getToolContent()` - Get tool content
+
+### [Metadata Retrieval](./methods/metadata-retrieval.md)
+Lightweight methods for progressive loading and discovery:
+- `getSkillMetadata()` - Get skill metadata without content
+- `getToolsetMetadata()` - Get toolset metadata without content
+- `getToolMetadata()` - Get tool metadata without content
+
+### [Listing Methods](./methods/listing.md)
+Methods to list available items and their relationships:
+- `listAvailableSkills()` - List all skills for an agent
+- `listSkillToolsets()` - List toolsets in a skill
+- `listToolsetTools()` - List tools in a toolset
+
+### [Prompt Generation](./methods/prompt-generation.md)
+Generate LLM-ready prompts:
+- `generateAgentPrompt()` - Generate complete agent prompt with skills and catalog
+
+## Concepts
+
+### [Variable Injection](./concepts/variable-injection.md)
+Learn how to inject variables into content with Mustache-style syntax, variable precedence, and environment variable filtering.
+
+### [Progressive Loading](./concepts/progressive-loading.md)
+Understand how to efficiently load content on-demand for LLM agents with metadata-first discovery.
+
+### [Type Definitions](./types.md)
+Complete TypeScript type definitions for all API methods and interfaces.
+
+## Complete Example
+
+For a complete working example combining all features, see [Examples](./examples.md).
+
+## Error Handling
+
+All methods throw an error if the requested item is not found:
+
+```typescript
+try {
+  const skill = carnet.getSkillContent('nonExistent')
+} catch (error) {
+  console.error(error.message)  // "Skill not found: nonExistent"
+}
+```
+
+## See Also
+
+- [Progressive Loading Example](../../examples/progressive-loading.ts)
+- [Library Enhancements Documentation](../../LIBRARY_ENHANCEMENTS.md)

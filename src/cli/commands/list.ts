@@ -10,6 +10,7 @@ export function registerListCommand(program: Command) {
     .command('list [agent]')
     .alias('ls')
     .description('List agents with their skills and toolsets in tree format')
+    .option('--depth <level>', 'limit tree depth (1 for agents only, 2 for agents + skills, 3+ for full tree)', '3')
     .action(async (agent, options) => {
       const globalOptions = program.opts()
       await runListCommand(agent, {
@@ -19,8 +20,12 @@ export function registerListCommand(program: Command) {
     })
 }
 
-async function runListCommand(agentName: string | undefined, options: { content?: string }) {
-  const contentDir = options.content || './content'
+async function runListCommand(
+  agentName: string | undefined,
+  options: { dir?: string; depth?: string; config?: string }
+) {
+  const contentDir = options.dir || './carnet'
+  const maxDepth = Math.max(1, parseInt(options.depth || '3', 10))
   const agents = await collect<Agent>(discoverAgents(contentDir), agentSchema)
   const skills = await collect<Skill>(discoverSkills(contentDir), skillSchema)
   const toolsets = await collect<Toolset>(discoverToolsets(contentDir), toolsetSchema)
@@ -28,11 +33,11 @@ async function runListCommand(agentName: string | undefined, options: { content?
   if (agentName) {
     const agent = agents.find((a) => a.name === agentName)
     if (agent) {
-      generateTree(agent, skills, toolsets)
+      generateTree(agent, skills, toolsets, maxDepth)
     }
   } else {
     for (const agent of agents) {
-      generateTree(agent, skills, toolsets)
+      generateTree(agent, skills, toolsets, maxDepth)
     }
   }
 }
@@ -45,13 +50,24 @@ async function collect<T>(iterator: AsyncIterable<string>, schema: z.ZodType<T>)
   return results
 }
 
-function generateTree(agent: Agent, skills: Skill[], _toolsets: Toolset[]) {
+function generateTree(agent: Agent, skills: Skill[], _toolsets: Toolset[], maxDepth: number = 3) {
   console.log(`${agent.name}`)
+
+  // Depth 1: only show agent name
+  if (maxDepth < 2) {
+    return
+  }
+
   const skillsList = agent.skills
   skillsList.forEach((skillName, index) => {
     const isLast = index === skillsList.length - 1
     const prefix = isLast ? '└── ' : '├── '
     console.log(`${prefix}${skillName}`)
+
+    // Depth 2: only show skills
+    if (maxDepth < 3) {
+      return
+    }
 
     const skill = skills.find((s) => s.name === skillName)
     if (skill && skill.toolsets.length > 0) {

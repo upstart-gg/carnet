@@ -22,7 +22,7 @@ export function registerBuildCommand(program: Command) {
 }
 
 async function runBuildCommand(options: {
-  content?: string
+  dir?: string
   output?: string
   strict?: boolean
   watch?: boolean
@@ -31,7 +31,7 @@ async function runBuildCommand(options: {
   const config = await loadConfigFile(options.config)
   const buildConfig = {
     ...config,
-    baseDir: options.content || config.baseDir,
+    baseDir: options.dir || config.baseDir,
     output: options.output || config.output,
   }
 

@@ -3,7 +3,7 @@ import { registerBuildCommand } from './commands/build'
 import { registerInitCommand } from './commands/init'
 import { registerListCommand } from './commands/list'
 import { registerShowCommand } from './commands/show'
-import { registerValidateCommand } from './commands/validate'
+import { registerLintCommand } from './commands/lint'
 
 const program = new Command()
 
@@ -17,12 +17,12 @@ program
 // Global options
 program
   .option('-c, --config <path>', 'path to the carnet config file')
-  .option('--content <dir>', 'content directory (default: ./content)')
+  .option('-d, --dir <dir>', 'content directory (default: ./carnet)')
 
 // Register commands
 registerInitCommand(program)
 registerBuildCommand(program)
-registerValidateCommand(program)
+registerLintCommand(program)
 registerListCommand(program)
 registerShowCommand(program)
 

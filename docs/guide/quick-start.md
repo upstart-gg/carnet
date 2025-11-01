@@ -4,26 +4,19 @@ Get up and running with Carnet in 5 minutes.
 
 ## 1. Install Carnet
 
-Choose your preferred method:
+See the [Installation Guide](/guide/installation) for detailed instructions.
 
-```bash
-# Global installation (recommended)
-npm install -g @upstart-gg/carnet
-
-# Or use without installing
-npx @upstart-gg/carnet init my-agents
-```
 
 ## 2. Initialize a Project
 
 ```bash
-carnet init my-agents
-cd my-agents
+carnet init my-app
+cd my-app
 ```
 
 This creates:
 ```
-my-agents/
+my-app/
 ├── carnet.config.json
 └── content/
     ├── agents/
@@ -43,6 +36,8 @@ carnet build
 ```
 
 This generates `dist/carnet.manifest.json` with all your agents compiled.
+
+See [*carnet build* usage](/cli/build) for options.
 
 ## 4. View Your Structure
 

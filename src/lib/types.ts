@@ -20,3 +20,42 @@ export interface GeneratePromptOptions {
   excludeSkills?: string[]
   variables?: Record<string, string>
 }
+
+// Runtime content retrieval options
+export interface ContentRetrievalOptions {
+  variables?: Record<string, string>
+  raw?: boolean // default: false (inject variables)
+}
+
+// Agent prompt generation options
+export interface GenerateAgentPromptOptions {
+  variables?: Record<string, string>
+  includeInitialSkills?: boolean // default: true
+  includeSkillCatalog?: boolean // default: true
+}
+
+// Metadata types for progressive loading
+export interface SkillMetadata {
+  name: string
+  description: string
+  toolsets: string[]
+}
+
+export interface ToolsetMetadata {
+  name: string
+  description: string
+  tools: string[]
+}
+
+export interface ToolMetadata {
+  name: string
+  description: string
+}
+
+// Generated prompt return type
+export interface GeneratedPrompt {
+  content: string
+  agent: Agent
+  initialSkills: Skill[]
+  availableSkills: SkillMetadata[]
+}

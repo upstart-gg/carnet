@@ -4,6 +4,7 @@ import path from 'node:path'
 interface CommandMetadata {
   name: string
   description: string
+  aliases: string[]
   arguments: Array<{ name: string }>
   options: Array<{ flags: string; description: string }>
 }
@@ -33,6 +34,7 @@ async function extractCliCommands(): Promise<Map<string, CommandMetadata>> {
 function extractCommandMetadata(fileContent: string): CommandMetadata | null {
   let name = ''
   let description = ''
+  const aliases: string[] = []
   const arguments_: Array<{ name: string }> = []
   const options: Array<{ flags: string; description: string }> = []
 
@@ -52,14 +54,20 @@ function extractCommandMetadata(fileContent: string): CommandMetadata | null {
     }
   }
 
+  // Extract aliases from .alias('...')
+  const aliasMatches = [...fileContent.matchAll(/\.alias\('([^']+)'\)/g)]
+  for (const match of aliasMatches) {
+    aliases.push(match[1])
+  }
+
   // Extract description from .description('...')
   const descMatch = fileContent.match(/\.description\('([^']+)'\)/)
   if (descMatch) {
     description = descMatch[1]
   }
 
-  // Extract options from .option('-flag', '...')
-  const optMatches = [...fileContent.matchAll(/\.option\('([^']+)',\s*'([^']+)'\)/g)]
+  // Extract options from .option('-flag', '...') or .option('-flag', '...', 'default')
+  const optMatches = [...fileContent.matchAll(/\.option\('([^']+)',\s*'([^']+)'(?:,\s*'[^']*')?\)/g)]
   for (const match of optMatches) {
     options.push({
       flags: match[1],
@@ -72,24 +80,42 @@ function extractCommandMetadata(fileContent: string): CommandMetadata | null {
   return {
     name,
     description,
+    aliases,
     arguments: arguments_,
     options,
   }
 }
 
 async function generateCommandDocs(commands: Map<string, CommandMetadata>) {
+  // Global options that apply to all commands
+  const globalOptions = [
+    { flags: '-c, --config <path>', description: 'path to the carnet config file' },
+    { flags: '-d, --dir <dir>', description: 'content directory (default: ./carnet)' },
+  ]
+
   for (const [name, metadata] of commands) {
     const argsText = metadata.arguments.length
       ? `\n\n## Arguments\n\n${metadata.arguments.map(a => `- \`${a.name}\``).join('\n')}`
       : ''
 
-    const optionsText = metadata.options.length
-      ? `\n\n## Options\n\n| Option | Description |\n|--------|-------------|\n${metadata.options.map(o => `| \`${o.flags}\` | ${o.description} |`).join('\n')}`
+    // Combine command-specific and global options
+    const allOptions = [...metadata.options, ...globalOptions]
+    const optionsText = allOptions.length
+      ? `\n\n## Options\n\n| Option | Description |\n|--------|-------------|\n${allOptions.map(o => `| \`${o.flags}\` | ${o.description} |`).join('\n')}`
       : ''
 
     const argsUsage = metadata.arguments.length
       ? ` ${metadata.arguments.map(a => `[${a.name}]`).join(' ')}`
       : ''
+
+    // Build usage examples with aliases
+    let usageExamples = `\`\`\`bash\ncarnet ${name}${argsUsage}`
+    if (metadata.aliases.length > 0) {
+      for (const alias of metadata.aliases) {
+        usageExamples += `\ncarnet ${alias}${argsUsage}`
+      }
+    }
+    usageExamples += '\n```'
 
     const markdown = `# \`carnet ${name}\`
 
@@ -97,9 +123,7 @@ ${metadata.description}
 
 ## Usage
 
-\`\`\`bash
-carnet ${name}${argsUsage}
-\`\`\`${argsText}${optionsText}
+${usageExamples}${argsText}${optionsText}
 `
 
     const docsDir = 'docs/cli'

@@ -1,32 +1,31 @@
 # Getting Started with Carnet
 
-**Carnet** is both a specification and a build system for managing AI agents through markdown files. It defines a standard format for declaring agents, skills, toolsets, and tools—then provides tools to compile, validate, and use them in your applications. This guide will help you get up and running in minutes.
+**Carnet** is both a specification and a build system for managing AI agents through markdown files. It defines a standard format for declaring agents, skills, toolsets, and tools—then provides tools to compile, validate, and use them in your applications.
 
-## What You'll Learn
+## How Carnet Works
 
-- How to install Carnet
-- How to initialize a new project
-- How to define your first agent
-- How to build and validate your content
-- How to use agents in your code
+Carnet follows a simple three-step workflow:
+
+1. **Define** - Write markdown files describing your agents, skills, toolsets, and tools
+2. **Build** - Use the Carnet CLI to parse and compile these markdown files into a manifest
+3. **Use** - Load the manifest in your application and retrieve prompts, skills, and configurations
+
+The key insight: markdown files are human-editable and version-controllable, while the compiled manifest is optimized for production runtime use.
+
+### Language-Agnostic Design
+
+While Carnet provides a JavaScript/TypeScript library for convenient access, the compiled manifest is a **standard JSON file** that any language can parse. Whether you're using Node.js, Python, Go, Rust, or any other runtime, you can read and use the Carnet manifest directly. This makes Carnet truly language-agnostic.
 
 ## Next Steps
 
-1. **[Installation](/guide/installation)** - Install Carnet for your platform
+Follow this learning path:
+
+1. **[Installation](/guide/installation)** - Set up Carnet for your platform
 2. **[Quick Start](/guide/quick-start)** - Build your first agent in 5 minutes
 3. **[Core Concepts](/guide/concepts)** - Understand agents, skills, toolsets, and tools
-4. **[Examples](/guide/examples)** - See real-world examples
-
-## Recommended Reading Order
-
-If you're new to Carnet, follow this order:
-
-1. Start with [Installation](/guide/installation) to set up Carnet
-2. Follow the [Quick Start](/guide/quick-start) tutorial
-3. Learn about [Core Concepts](/guide/concepts) to understand the architecture
-4. Explore [Examples](/guide/examples) for real-world patterns
-5. Check [CLI Reference](/cli/) when you need command documentation
-6. Review [API Reference](/api/) for programmatic usage
+4. **[Examples](/guide/examples)** - See real-world patterns and use cases
+5. **[CLI Reference](/cli/)** - Command reference when you need it
+6. **[API Reference](/api/)** - For programmatic usage in your applications
 
 ## Need Help?
 

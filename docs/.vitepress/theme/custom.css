@@ -1,0 +1,11 @@
+.plugin-tabs--content {
+  & div[class*="language-"] {
+    /* biome-ignore lint/complexity/noImportantStyles: code blocks */
+    background-color: transparent !important;
+  }
+
+  &:has(> div[class*="language-"]) {
+    /* biome-ignore lint/complexity/noImportantStyles: code blocks */
+    padding: 0 !important;
+  }
+}

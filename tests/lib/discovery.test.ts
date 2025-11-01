@@ -20,6 +20,6 @@ describe('discovery', () => {
   it('finds tool files in a toolset dir', async () => {
     const toolFiles = await toArray(discoverTools(fixtures))
     expect(Array.isArray(toolFiles)).toBe(true)
-    expect(toolFiles.some((f) => f.endsWith('tool-foo.md'))).toBe(true)
+    expect(toolFiles.some((f) => f.endsWith('toolFoo.md'))).toBe(true)
   })
 })

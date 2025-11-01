@@ -218,8 +218,9 @@ docs/content/agents.md
 docs/content/skills.md
 docs/content/toolsets.md
 docs/content/tools.md
+docs/content/manifest-schema.md
 docs/cli/init.md
 docs/cli/build.md
-docs/cli/validate.md
+docs/cli/lint.md
 docs/cli/list.md
 docs/cli/show.md

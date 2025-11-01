@@ -12,7 +12,7 @@ carnet [command] [options]
 
 **Available globally:**
 - `-c, --config <path>` - Path to `carnet.config.json` (default: `./carnet.config.json`)
-- `--content <dir>` - Content directory (overrides config)
+- `-d, --dir <dir>` - Content directory (default: `./carnet`)
 
 ## Available Commands
 
@@ -20,16 +20,42 @@ carnet [command] [options]
 |---------|---------|
 | [`init`](/cli/init) | Initialize a new Carnet project |
 | [`build`](/cli/build) | Build markdown files into manifest |
-| [`validate`](/cli/validate) | Validate content without building |
+| [`lint`](/cli/lint) | Lint content without building |
 | [`list`](/cli/list) | Display agents in tree format |
 | [`show`](/cli/show) | Display entity details |
 
 ## Quick Reference
 
 ### Initialize a Project
+
+:::tabs
+== Local Installation
 ```bash
 carnet init my-project
 ```
+
+== npx
+```bash
+npx @upstart-gg/carnet init my-project
+```
+
+== bunx
+```bash
+bunx @upstart-gg/carnet init my-project
+```
+
+== pnpmx
+```bash
+pnpmx @upstart-gg/carnet init my-project
+```
+
+== yarn dlx
+```bash
+yarn dlx @upstart-gg/carnet init my-project
+```
+
+
+:::
 
 ### Build Your Content
 ```bash
@@ -38,9 +64,9 @@ carnet build --watch         # Watch for changes
 carnet build -o ./output     # Custom output directory
 ```
 
-### Validate Content
+### Lint Content
 ```bash
-carnet validate
+carnet lint
 ```
 
 ### List Agents
@@ -64,8 +90,8 @@ carnet show tool my-tool
 # Watch for changes during development
 carnet build --watch
 
-# In another terminal, validate continuously
-watch -n 2 carnet validate
+# In another terminal, lint continuously
+watch -n 2 carnet lint
 
 # View current structure
 carnet list
@@ -73,8 +99,8 @@ carnet list
 
 ### CI/CD Integration
 ```bash
-# Validate before building
-carnet validate || exit 1
+# Lint before building
+carnet lint || exit 1
 
 # Build for deployment
 carnet build --output ./dist
@@ -88,8 +114,8 @@ carnet list
 # Build with specific config
 carnet build --config ./config.prod.json --output ./dist
 
-# Validate the output
-carnet validate --config ./config.prod.json
+# Lint the output
+carnet lint --config ./config.prod.json
 ```
 
 ## Help & Documentation

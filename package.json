@@ -29,8 +29,9 @@
     "format": "biome format --write src",
     "docs:gen:cli": "bun run scripts/generate-cli-docs.ts",
     "docs:gen:schema": "bun run scripts/generate-schema-docs.ts",
-    "docs:dev": "bun run docs:gen:cli && bun run docs:gen:schema && vitepress dev docs",
-    "docs:build": "bun run docs:gen:cli && bun run docs:gen:schema && vitepress build docs",
+    "docs:gen:manifest": "bun run scripts/generate-manifest-schema-docs.ts",
+    "docs:dev": "bun run docs:gen:cli && bun run docs:gen:schema && bun run docs:gen:manifest && vitepress dev docs",
+    "docs:build": "bun run docs:gen:cli && bun run docs:gen:schema && bun run docs:gen:manifest && vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "changeset": "changeset",
     "version:packages": "changeset version",
@@ -64,6 +65,7 @@
     "@changesets/cli": "^2.29.7",
     "@types/bun": "latest",
     "ts-morph": "^27.0.2",
-    "vitepress": "^1.6.4"
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-tabs": "^0.7.3"
   }
 }

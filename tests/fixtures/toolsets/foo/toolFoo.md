@@ -1,5 +1,5 @@
 ---
-name: tool-foo
+name: toolFoo
 description: A test tool for foo operations
 ---
 

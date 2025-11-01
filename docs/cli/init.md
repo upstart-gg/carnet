@@ -11,3 +11,10 @@ carnet init [dir]
 ## Arguments
 
 - `dir`
+
+## Options
+
+| Option | Description |
+|--------|-------------|
+| `-c, --config <path>` | path to the carnet config file |
+| `-d, --dir <dir>` | content directory (default: ./carnet) |

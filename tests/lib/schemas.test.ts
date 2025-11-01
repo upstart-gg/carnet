@@ -4,7 +4,7 @@ import { agentSchema, skillSchema, toolSchema, toolsetSchema } from '@lib/schema
 describe('agentSchema', () => {
   it('validates a correct agent object', () => {
     const data = {
-      name: 'agent-x',
+      name: 'agentX',
       description: 'desc',
       initialSkills: ['foo'],
       skills: ['bar'],
@@ -14,7 +14,7 @@ describe('agentSchema', () => {
   })
 
   it('fails on missing required fields', () => {
-    const data = { name: 'agent-x' }
+    const data = { name: 'agentX' }
     expect(() => agentSchema.parse(data)).toThrow()
   })
 })
@@ -22,7 +22,7 @@ describe('agentSchema', () => {
 describe('skillSchema', () => {
   it('validates a correct skill object', () => {
     const data = {
-      name: 'skill-x',
+      name: 'skillX',
       description: 'desc',
       toolsets: ['foo'],
       content: 'markdown',
@@ -34,7 +34,7 @@ describe('skillSchema', () => {
 describe('toolsetSchema', () => {
   it('validates a correct toolset object', () => {
     const data = {
-      name: 'toolset-x',
+      name: 'toolsetX',
       description: 'desc',
       tools: ['foo'],
       content: 'markdown',
@@ -46,7 +46,7 @@ describe('toolsetSchema', () => {
 describe('toolSchema', () => {
   it('validates a correct tool object', () => {
     const data = {
-      name: 'tool-x',
+      name: 'toolX',
       description: 'A test tool',
       content: 'markdown',
     }

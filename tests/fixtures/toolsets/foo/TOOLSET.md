@@ -2,7 +2,7 @@
 name: foo
 description: test toolset
 tools:
-  - tool-foo
+  - toolFoo
 content: markdown
 ---
 

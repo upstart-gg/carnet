@@ -1,4 +1,4 @@
-# variaules
+# Variables
 
 This page is coming soon. 
 

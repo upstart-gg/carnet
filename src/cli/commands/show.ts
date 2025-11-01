@@ -18,8 +18,8 @@ export function registerShowCommand(program: Command) {
     })
 }
 
-async function runShowCommand(type: string, name: string, options: { content?: string }) {
-  const contentDir = options.content || './content'
+async function runShowCommand(type: string, name: string, options: { dir?: string }) {
+  const contentDir = options.dir || './carnet'
   let filePath: string
   let schema: z.ZodType<unknown>
 

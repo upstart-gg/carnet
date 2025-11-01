@@ -17,9 +17,9 @@ describe('parseMarkdownFile', () => {
 
 describe('parseToolFile', () => {
   it('parses tool file content and name', async () => {
-    const file = path.join(__dirname, '../fixtures/tool-foo.md')
+    const file = path.join(__dirname, '../fixtures/toolFoo.md')
     const tool = await parseToolFile(file)
-    expect(tool.name).toBe('tool-foo')
+    expect(tool.name).toBe('toolFoo')
     expect(tool.description).toBe('A test tool for foo operations')
     expect(tool.content).toContain('Tool Foo Body')
   })

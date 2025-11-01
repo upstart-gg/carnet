@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 
 export default defineConfig({
   title: 'Carnet',
@@ -58,7 +59,7 @@ export default defineConfig({
             { text: 'Overview', link: '/cli/' },
             { text: 'init', link: '/cli/init' },
             { text: 'build', link: '/cli/build' },
-            { text: 'validate', link: '/cli/validate' },
+            { text: 'lint', link: '/cli/lint' },
             { text: 'list', link: '/cli/list' },
             { text: 'show', link: '/cli/show' },
           ],
@@ -66,12 +67,31 @@ export default defineConfig({
       ],
       '/api/': [
         {
-          text: 'API Reference',
+          text: 'Getting Started',
           items: [
             { text: 'Overview', link: '/api/' },
-            { text: 'Carnet Class', link: '/api/carnet-class' },
-            { text: 'build Function', link: '/api/build-function' },
-            { text: 'validate Function', link: '/api/validate-function' },
+            { text: 'Examples', link: '/api/examples' },
+          ],
+        },
+        {
+          text: 'API Methods',
+          items: [
+            { text: 'Content Retrieval', link: '/api/methods/content-retrieval' },
+            { text: 'Metadata Retrieval', link: '/api/methods/metadata-retrieval' },
+            { text: 'Listing Methods', link: '/api/methods/listing' },
+            { text: 'Prompt Generation', link: '/api/methods/prompt-generation' },
+          ],
+        },
+        {
+          text: 'Concepts',
+          items: [
+            { text: 'Variable Injection', link: '/api/concepts/variable-injection' },
+            { text: 'Progressive Loading', link: '/api/concepts/progressive-loading' },
+          ],
+        },
+        {
+          text: 'Reference',
+          items: [
             { text: 'Type Definitions', link: '/api/types' },
           ],
         },
@@ -86,6 +106,10 @@ export default defineConfig({
             { text: 'Toolsets', link: '/content/toolsets' },
             { text: 'Tools', link: '/content/tools' },
           ],
+        },
+        {
+          text: 'Manifest',
+          items: [{ text: 'Schema', link: '/content/manifest-schema' }],
         },
       ],
       '/configuration/': [
@@ -137,7 +161,10 @@ export default defineConfig({
   },
 
   markdown: {
-    lineNumbers: true,
+    lineNumbers: false,
     math: false,
+    config(md) {
+      md.use(tabsMarkdownPlugin)
+    },
   },
 })

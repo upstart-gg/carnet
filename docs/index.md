@@ -66,6 +66,7 @@ carnet list
 
 ## Use in Your Code
 
+**JavaScript/TypeScript:**
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
 
@@ -73,6 +74,26 @@ const carnet = await Carnet.fromFile('./dist/carnet.manifest.json')
 const agent = carnet.getAgent('my-agent')
 console.log(agent.prompt)
 ```
+
+**Any Language:**
+The compiled manifest is a standard JSON file that any application can read and parse:
+```json
+// dist/carnet.manifest.json
+{
+  "agents": [
+    {
+      "name": "my-agent",
+      "description": "...",
+      "prompt": "...",
+      "skills": [...]
+    }
+  ],
+  "skills": [...],
+  "toolsets": [...]
+}
+```
+
+Whether you're building with Node.js, Python, Go, or any other language, the manifest format is consistent and portable.
 
 ## Why Carnet?
 

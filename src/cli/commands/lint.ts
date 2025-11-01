@@ -3,25 +3,25 @@ import { validate } from '../../lib/builder'
 import { loadConfigFile } from '../../lib/config'
 import { colors } from '../colors'
 
-export function registerValidateCommand(program: Command) {
+export function registerLintCommand(program: Command) {
   program
-    .command('validate')
-    .description('Validate markdown files')
+    .command('lint')
+    .description('Lint markdown files')
     .action(async (options) => {
       const globalOptions = program.opts()
-      await runValidateCommand({
+      await runLintCommand({
         ...globalOptions,
         ...options,
       })
     })
 }
 
-async function runValidateCommand(options: {
-  content?: string
+async function runLintCommand(options: {
+  dir?: string
   config?: string
 }) {
   const config = await loadConfigFile(options.config)
-  const contentDir = options.content || config.baseDir
+  const contentDir = options.dir || config.baseDir
 
   // Validate that content directory exists
   const { promises: fs } = await import('node:fs')
@@ -31,12 +31,12 @@ async function runValidateCommand(options: {
     throw new Error(`Content directory does not exist: ${contentDir}`)
   }
 
-  console.log(colors.info('Validating Carnet project...'))
+  console.log(colors.info('Linting Carnet project...'))
   try {
     await validate(contentDir)
-    console.log(colors.success('Validation successful!'))
+    console.log(colors.success('Lint successful!'))
   } catch (error) {
-    console.error(colors.error(`Validation failed: ${(error as Error).message}`))
+    console.error(colors.error(`Lint failed: ${(error as Error).message}`))
     process.exit(1)
   }
 }
