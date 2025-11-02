@@ -23,14 +23,14 @@ export function registerListCommand(program: Command) {
 
 async function runListCommand(
   agentName: string | undefined,
-  options: { dir?: string; depth?: string; config?: string }
+  options: { dir?: string; depth?: string }
 ) {
-  const config = await loadConfigFile(options.config)
-  const contentDir = options.dir || config.baseDir
+  const carnetDir = options.dir || './carnet'
+  await loadConfigFile(carnetDir)
   const maxDepth = Math.max(1, parseInt(options.depth || '3', 10))
-  const agents = await collect<Agent>(discoverAgents(contentDir), agentSchema)
-  const skills = await collect<Skill>(discoverSkills(contentDir), skillSchema)
-  const toolsets = await collect<Toolset>(discoverToolsets(contentDir), toolsetSchema)
+  const agents = await collect<Agent>(discoverAgents(carnetDir), agentSchema)
+  const skills = await collect<Skill>(discoverSkills(carnetDir), skillSchema)
+  const toolsets = await collect<Toolset>(discoverToolsets(carnetDir), toolsetSchema)
 
   if (agentName) {
     const agent = agents.find((a) => a.name === agentName)

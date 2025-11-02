@@ -30,7 +30,6 @@ async function runBuildCommand(options: {
   dir?: string
   output?: string
   watch?: boolean
-  config?: string
   variables?: string[]
   envPrefix?: string[]
   include?: string[]
@@ -38,7 +37,8 @@ async function runBuildCommand(options: {
   globalSkills?: string[]
   globalInitialSkills?: string[]
 }) {
-  const fileConfig = await loadConfigFile(options.config)
+  const carnetDir = options.dir || './carnet'
+  const fileConfig = await loadConfigFile(carnetDir)
 
   // Parse CLI variables (format: "KEY=VALUE")
   const cliVariables: Record<string, string> = {}
@@ -54,7 +54,6 @@ async function runBuildCommand(options: {
   // Build CLI config from options
   const cliConfig: Partial<typeof fileConfig> = {}
 
-  if (options.dir) cliConfig.baseDir = options.dir
   if (options.output) cliConfig.output = options.output
   if (Object.keys(cliVariables).length > 0) cliConfig.variables = cliVariables
   if (options.envPrefix) cliConfig.envPrefix = options.envPrefix
@@ -74,16 +73,17 @@ async function runBuildCommand(options: {
 
   // Validate that content directory exists
   const { promises: fs } = await import('node:fs')
+  const contentDir = path.join(carnetDir, 'agents')
   try {
-    await fs.access(buildConfig.baseDir)
+    await fs.access(contentDir)
   } catch {
-    throw new Error(`Content directory does not exist: ${buildConfig.baseDir}`)
+    throw new Error(`Content directory does not exist: ${contentDir}`)
   }
 
   const runBuild = async () => {
     console.log(colors.info('Building Carnet project...'))
     try {
-      await build(buildConfig)
+      await build(buildConfig, carnetDir)
     } catch (error) {
       console.error(colors.error(`Build failed: ${(error as Error).message}`))
     }
@@ -93,10 +93,10 @@ async function runBuildCommand(options: {
 
   if (options.watch) {
     console.log(
-      colors.info(`\nWatching for changes in ${path.resolve(buildConfig.baseDir)}...`)
+      colors.info(`\nWatching for changes in ${path.resolve(carnetDir)}...`)
     )
     try {
-      const watcher = watch(buildConfig.baseDir, { recursive: true })
+      const watcher = watch(carnetDir, { recursive: true })
       for await (const event of watcher) {
         console.log(
           colors.dimmed(

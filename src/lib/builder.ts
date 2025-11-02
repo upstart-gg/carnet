@@ -40,9 +40,9 @@ export async function validate(contentDir: string) {
   validateReferences(agents, skills, toolsets, tools)
 }
 
-export async function build(options: CarnetConfig) {
-  const { baseDir: content, output } = options
-  const { agents, skills, toolsets, tools } = await loadContent(content)
+export async function build(options: CarnetConfig, carnetDir: string = './carnet') {
+  const { output } = options
+  const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
 
   validateReferences(agents, skills, toolsets, tools)
 

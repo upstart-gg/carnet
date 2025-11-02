@@ -24,7 +24,6 @@ export function registerLintCommand(program: Command) {
 
 async function runLintCommand(options: {
   dir?: string
-  config?: string
   variables?: string[]
   envPrefix?: string[]
   include?: string[]
@@ -32,7 +31,8 @@ async function runLintCommand(options: {
   globalSkills?: string[]
   globalInitialSkills?: string[]
 }) {
-  const fileConfig = await loadConfigFile(options.config)
+  const carnetDir = options.dir || './carnet'
+  const fileConfig = await loadConfigFile(carnetDir)
 
   // Parse CLI variables (format: "KEY=VALUE")
   const cliVariables: Record<string, string> = {}
@@ -48,7 +48,6 @@ async function runLintCommand(options: {
   // Build CLI config from options
   const cliConfig: Partial<typeof fileConfig> = {}
 
-  if (options.dir) cliConfig.baseDir = options.dir
   if (Object.keys(cliVariables).length > 0) cliConfig.variables = cliVariables
   if (options.envPrefix) cliConfig.envPrefix = options.envPrefix
   if (options.include) cliConfig.include = options.include
@@ -64,10 +63,10 @@ async function runLintCommand(options: {
   // Load environment variables and merge configurations with proper precedence
   const envConfig = loadEnvConfig()
   const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
-  const contentDir = config.baseDir
 
   // Validate that content directory exists
   const { promises: fs } = await import('node:fs')
+  const contentDir = `${carnetDir}/agents`
   try {
     await fs.access(contentDir)
   } catch {
@@ -76,7 +75,7 @@ async function runLintCommand(options: {
 
   console.log(colors.info('Linting Carnet project...'))
   try {
-    await validate(contentDir)
+    await validate(carnetDir)
     console.log(colors.success('Lint successful!'))
   } catch (error) {
     console.error(colors.error(`Lint failed: ${(error as Error).message}`))

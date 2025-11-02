@@ -19,25 +19,25 @@ export function registerShowCommand(program: Command) {
     })
 }
 
-async function runShowCommand(type: string, name: string, options: { dir?: string; config?: string }) {
-  const config = await loadConfigFile(options.config)
-  const contentDir = options.dir || config.baseDir
+async function runShowCommand(type: string, name: string, options: { dir?: string }) {
+  const carnetDir = options.dir || './carnet'
+  await loadConfigFile(carnetDir)
   let filePath: string
   let schema: z.ZodType<unknown>
 
   switch (type) {
     case 'agent':
-      filePath = path.join(contentDir, 'agents', name, 'AGENT.md')
+      filePath = path.join(carnetDir, 'agents', name, 'AGENT.md')
       schema = agentSchema
       break
     case 'skill':
       // This is a simplification. In a real-world scenario,
       // we'd need to search for the skill in all categories.
-      filePath = path.join(contentDir, 'skills', 'shared', name, 'SKILL.md')
+      filePath = path.join(carnetDir, 'skills', 'shared', name, 'SKILL.md')
       schema = skillSchema
       break
     case 'toolset':
-      filePath = path.join(contentDir, 'toolsets', name, 'TOOLSET.md')
+      filePath = path.join(carnetDir, 'toolsets', name, 'TOOLSET.md')
       schema = toolsetSchema
       break
     default:

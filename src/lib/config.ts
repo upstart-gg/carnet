@@ -1,12 +1,14 @@
 import { promises as fs } from 'node:fs'
+import path from 'node:path'
 import { type CarnetConfig, configSchema } from './schemas'
 
 /**
- * Load config file from disk. Returns defaults if file doesn't exist.
- * @param configFilePath Path to config file (defaults to './carnet/carnet.config.json')
+ * Load config file from a Carnet directory.
+ * @param dir Path to Carnet directory (defaults to './carnet'). Looks for carnet.config.json inside.
  * @returns Parsed and validated config, with defaults applied for missing values
  */
-export async function loadConfigFile(configFilePath = './carnet/carnet.config.json'): Promise<CarnetConfig> {
+export async function loadConfigFile(dir = './carnet'): Promise<CarnetConfig> {
+  const configFilePath = path.join(dir, 'carnet.config.json')
   try {
     const content = await fs.readFile(configFilePath, 'utf-8')
     const config = JSON.parse(content)
@@ -23,7 +25,6 @@ export async function loadConfigFile(configFilePath = './carnet/carnet.config.js
 /**
  * Load config from environment variables with CARNET_ prefix.
  * Supports:
- * - CARNET_BASE_DIR
  * - CARNET_OUTPUT
  * - CARNET_INCLUDE (comma-separated)
  * - CARNET_EXCLUDE (comma-separated)
@@ -36,9 +37,6 @@ export function loadEnvConfig(processEnv: Record<string, string | undefined> = p
   const envConfig: Partial<CarnetConfig> = {}
 
   // String options
-  if (processEnv.CARNET_BASE_DIR) {
-    envConfig.baseDir = processEnv.CARNET_BASE_DIR
-  }
   if (processEnv.CARNET_OUTPUT) {
     envConfig.output = processEnv.CARNET_OUTPUT
   }

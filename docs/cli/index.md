@@ -20,8 +20,7 @@ carnet [command] [options]
 ```
 
 **Available globally:**
-- `-c, --config <path>` - Path to `carnet.config.json` (default: `./carnet.config.json`)
-- `-d, --dir <dir>` - Content directory (default: `./carnet`)
+- `-d, --dir <dir>` - Carnet project directory containing carnet.config.json and content (default: `./carnet`)
 
 ## Configuration Precedence
 
@@ -138,12 +137,6 @@ carnet show tool my-tool
 ```bash
 # Watch for changes during development
 carnet build --watch
-
-# In another terminal, lint continuously
-watch -n 2 carnet lint
-
-# View current structure
-carnet list
 ```
 
 ### CI/CD Integration

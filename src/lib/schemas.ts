@@ -19,7 +19,6 @@ export const appConfigSchema = z
 
 export const configSchema = z.object({
   app: appConfigSchema,
-  baseDir: z.string().default('./carnet').describe('Path to the content directory'),
   output: z.string().default('./dist').describe('Path to the output directory'),
   variables: z
     .record(z.string(), z.string())

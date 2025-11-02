@@ -17,8 +17,7 @@ program
 
 // Global options
 program
-  .option('-c, --config <path>', 'path to the carnet config file')
-  .option('-d, --dir <dir>', 'content directory (default: ./carnet)')
+  .option('-d, --dir <dir>', 'Carnet project directory containing carnet.config.json and content (default: ./carnet)')
 
 // Register commands
 registerInitCommand(program)
