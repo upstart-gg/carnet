@@ -53,3 +53,10 @@ export interface PromptOptions {
   includeInitialSkills?: boolean // default: true
   includeSkillCatalog?: boolean // default: true
 }
+
+export interface CarnetSessionState {
+  agentName: string
+  discoveredSkills: Set<string>
+  loadedToolsets: Set<string>
+  exposedDomainTools: Set<string>
+}

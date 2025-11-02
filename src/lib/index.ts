@@ -1,8 +1,13 @@
-import type { ToolSet } from 'ai'
 import { existsSync, promises as fs } from 'node:fs'
+import type { ToolSet } from 'ai'
 import { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
+import { mergeToolSets } from './tool-filtering'
+import { type DomainToolSet, ToolRegistry } from './tool-registry'
+import type { ToolOptions } from './tools'
+import { createCarnetTools } from './tools'
 import type {
+  CarnetSessionState,
   ContentRetrievalOptions,
   GenerateAgentPromptOptions,
   GeneratedPrompt,
@@ -13,14 +18,12 @@ import type {
   ToolsetMetadata,
 } from './types'
 import { VariableInjector } from './variable-injector'
-import { createCarnetTools } from './tools'
-import type { ToolOptions } from './tools'
 
 export { PromptGenerator } from './prompt-generator'
+export type { ToolOptions } from './tools'
+export { createCarnetTools } from './tools'
 export * from './types'
 export { VariableInjector } from './variable-injector'
-export { createCarnetTools } from './tools'
-export type { ToolOptions } from './tools'
 
 /**
  * Main Carnet class for loading and using AI agent manifests
@@ -42,6 +45,8 @@ export class Carnet {
   protected cwd: string
   protected variableInjector: VariableInjector
   protected promptGenerator: PromptGenerator
+  protected readonly toolRegistry: ToolRegistry
+  protected readonly sessions: Map<string, CarnetSessionState>
 
   static MANIFEST_FILENAME = 'carnet.manifest.json'
 
@@ -68,6 +73,8 @@ export class Carnet {
       envPrefixes: options.envPrefixes,
     })
     this.promptGenerator = new PromptGenerator(this.variableInjector)
+    this.toolRegistry = new ToolRegistry()
+    this.sessions = new Map()
   }
 
   /**
@@ -106,6 +113,85 @@ export class Carnet {
     return parsed.data
   }
 
+  // Domain Tool and Session Management
+
+  public registerDomainToolset(toolsetName: string, tools: DomainToolSet): void {
+    this.toolRegistry.register(toolsetName, tools)
+  }
+
+  public getDiscoveredSkills(agentName: string): string[] {
+    const session = this.sessions.get(agentName)
+    return session ? Array.from(session.discoveredSkills) : []
+  }
+
+  public getAvailableTools(agentName: string): string[] {
+    const session = this.sessions.get(agentName)
+    return session ? Array.from(session.exposedDomainTools) : []
+  }
+
+  public resetSession(agentName: string): void {
+    this.sessions.delete(agentName)
+  }
+
+  /**
+   * Updates the session state after a skill has been successfully loaded.
+   * This is called internally by the `loadSkill` tool.
+   * @param agentName The name of the agent for the current session.
+   * @param skillName The name of the skill that was loaded.
+   * @internal
+   */
+  public _updateSessionOnSkillLoad(agentName: string, skillName: string): void {
+    const session = this.getOrCreateSession(agentName)
+    const skill = this.getSkill(skillName)
+
+    if (!skill) {
+      // This should ideally not be reached if the skill loading was successful.
+      return
+    }
+
+    session.discoveredSkills.add(skillName)
+
+    for (const toolsetName of skill.toolsets) {
+      session.loadedToolsets.add(toolsetName)
+    }
+
+    // Recalculate the set of exposed domain tools
+    const allExposedTools = this.toolRegistry.getToolsForToolsets(session.loadedToolsets)
+    session.exposedDomainTools = new Set(Object.keys(allExposedTools))
+  }
+
+  private getOrCreateSession(agentName: string): CarnetSessionState {
+    if (!this.sessions.has(agentName)) {
+      const agent = this.getAgent(agentName)
+      if (!agent) {
+        throw new Error(`Agent not found: ${agentName}`)
+      }
+
+      const initialSkills = new Set(agent.initialSkills)
+      const loadedToolsets = new Set()
+
+      for (const skillName of initialSkills) {
+        const skill = this.getSkill(skillName)
+        if (skill) {
+          for (const toolsetName of skill.toolsets) {
+            loadedToolsets.add(toolsetName)
+          }
+        }
+      }
+
+      const exposedDomainTools = new Set(
+        Object.keys(this.toolRegistry.getToolsForToolsets(loadedToolsets))
+      )
+
+      this.sessions.set(agentName, {
+        agentName,
+        discoveredSkills: initialSkills,
+        loadedToolsets,
+        exposedDomainTools,
+      })
+    }
+    return this.sessions.get(agentName)!
+  }
   /**
    * Get all agents from the manifest
    * @returns Record of agent name to agent definition
@@ -411,12 +497,18 @@ export class Carnet {
    * ```
    */
   getTools(agentName: string, options: ToolOptions = {}): ToolSet {
-    // Validate agent exists
-    const agent = this.manifest.agents[agentName]
-    if (!agent) {
-      throw new Error(`Agent not found: ${agentName}`)
+    const session = this.getOrCreateSession(agentName)
+    const carnetTools = createCarnetTools(this, agentName, options)
+
+    let merged = mergeToolSets(carnetTools, session, this.toolRegistry)
+
+    // Apply optional filtering from the ToolOptions
+    if (options.tools) {
+      merged = Object.fromEntries(
+        Object.entries(merged).filter(([name]) => options.tools?.includes(name))
+      )
     }
 
-    return createCarnetTools(this, agentName, options)
+    return merged
   }
 }

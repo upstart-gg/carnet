@@ -9,9 +9,9 @@ import type { Carnet } from './index'
 export interface ToolOptions {
   /**
    * List of specific tools to include. If undefined, all tools are included.
-   * Available tools: 'listAvailableSkills', 'loadSkill', 'listSkillToolsets', 'loadToolset', 'loadTool'
+   * This can include both Carnet meta-tools and any registered domain tools.
    */
-  tools?: Array<'listAvailableSkills' | 'loadSkill' | 'listSkillToolsets' | 'loadToolset' | 'loadTool'>
+  tools?: string[]
 }
 
 /**
@@ -93,6 +93,10 @@ export function createCarnetTools(
         try {
           const content = carnet.getSkillContent(skillName)
           const metadata = carnet.getSkillMetadata(skillName)
+
+          // Update the session state with the newly discovered skill and its toolsets
+          carnet._updateSessionOnSkillLoad(agentName, skillName)
+
           return {
             success: true,
             content,
