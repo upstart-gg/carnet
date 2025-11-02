@@ -14,7 +14,7 @@ Variable resolution follows this precedence (highest to lowest):
 1. Variables passed in method call
 2. Variables from constructor options
 3. Environment variables matching allowed prefixes
-4. Left as-is if not found: `{{ UNDEFINED_VAR }}`
+4. Replaced by an empty string if not found
 
 ## Environment Variables
 

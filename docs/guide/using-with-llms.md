@@ -11,18 +11,6 @@ Carnet is purpose-built for Vercel AI SDK. It provides two key capabilities:
 
 This enables memory-efficient agent architectures that scale beyond simple context windows.
 
-## Installation
-
-```bash
-npm install @upstart-gg/carnet ai zod
-
-# Install a language model provider
-npm install @ai-sdk/openai    # OpenAI
-npm install @ai-sdk/anthropic # Anthropic
-npm install @ai-sdk/google    # Google
-# ... or your preferred provider
-```
-
 ## Quick Start
 
 ```typescript
