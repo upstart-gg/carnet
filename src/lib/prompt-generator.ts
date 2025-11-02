@@ -97,19 +97,23 @@ export class PromptGenerator {
   private generateSkillLoadingInstructions(): string {
     return `## How to Load Skills
 
-To load a skill that is not yet available, use the \`loadSkill\` tool with the skill name.
+To access additional capabilities, use the \`loadSkill\` tool to load a skill by name.
 
-Example:
-- To use the "skill-xxx" skill, call \`loadSkill("skill-xxx")\`
-- To use a toolset within a skill, first load the skill, then call \`loadToolset("toolset-name")\`
-- To use a tool within a toolset, first load the toolset, then the tool will be available to you
+When you load a skill:
+1. You receive its full documentation and instructions
+2. All associated toolsets and tools are automatically loaded
+3. You immediately have access to all the tools in those toolsets
 
-The application provides these tools for progressive loading:
-- \`loadSkill(skillName)\` - Load a skill by name
-- \`loadToolset(toolsetName)\` - Load a toolset by name
-- \`loadTool(toolName)\` - Load a tool by name
+Example workflow:
+- Use \`listAvailableSkills()\` to see which skills you can load
+- Call \`loadSkill({ skillName: "research" })\` to load a skill
+- After loading, new tools become available for you to use
 
-Use these tools when you need access to functionality beyond your initial skills.`
+Available tools for progressive discovery:
+- \`listAvailableSkills()\` - See all skills you can load
+- \`loadSkill(skillName)\` - Load a skill and get access to its tools
+
+Note: You do not need to manually load toolsets or individual tools - they become available automatically when you load their parent skill.`
   }
 
   /**

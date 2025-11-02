@@ -257,6 +257,52 @@ describe('PromptGenerator', () => {
     })
   })
 
+  describe('generateSkillLoadingInstructions', () => {
+    it('should include correct tool references only (listAvailableSkills and loadSkill)', () => {
+      const agent: Agent = {
+        name: 'test-agent',
+        description: 'Test agent',
+        initialSkills: [],
+        skills: ['skill1'],
+        prompt: 'Test prompt',
+      }
+
+      const availableSkills: SkillMetadata[] = [
+        { name: 'skill1', description: 'First skill', toolsets: ['toolset1'] },
+      ]
+
+      const result = generator.generateAgentPrompt(agent, [], availableSkills)
+
+      // Check for correct tools
+      expect(result.content).toContain('`listAvailableSkills()`')
+      expect(result.content).toContain('`loadSkill(')
+
+      // Ensure non-existent tools are NOT mentioned
+      expect(result.content).not.toContain('loadToolset')
+      expect(result.content).not.toContain('loadTool')
+    })
+
+    it('should explain that toolsets and tools are auto-loaded with skills', () => {
+      const agent: Agent = {
+        name: 'test-agent',
+        description: 'Test agent',
+        initialSkills: [],
+        skills: ['skill1'],
+        prompt: 'Test prompt',
+      }
+
+      const availableSkills: SkillMetadata[] = [
+        { name: 'skill1', description: 'First skill', toolsets: ['toolset1'] },
+      ]
+
+      const result = generator.generateAgentPrompt(agent, [], availableSkills)
+
+      // Check for correct explanation
+      expect(result.content).toContain('automatically loaded')
+      expect(result.content).toContain('You do not need to manually load toolsets or individual tools')
+    })
+  })
+
   describe('integration', () => {
     it('should generate complete agent prompt with all sections', () => {
       const agent: Agent = {
