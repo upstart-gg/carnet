@@ -11,12 +11,12 @@ carnet ls [agent]
 
 ## Arguments
 
-- `agent`
+- `agent` (optional) - Name of a specific agent to display. If not provided, all agents are listed.
 
 ## Options
 
 | Option | Description |
 |--------|-------------|
-| `--depth <level>` | limit tree depth (1 for agents only, 2 for agents + skills, 3+ for full tree) |
-| `-c, --config <path>` | path to the carnet config file |
-| `-d, --dir <dir>` | content directory (default: ./carnet) |
+| `--depth <level>` | Control how deep the tree structure is displayed. `1` shows only agent names, `2` includes agent skills, `3+` shows full detail with toolsets. Defaults to `3`. |
+| `-c, --config <path>` | Path to the carnet.config.json configuration file. If not specified, looks for `./carnet/carnet.config.json` by default. |
+| `-d, --dir <dir>` | Content directory containing agents, skills, and toolsets. Defaults to `./carnet`. |

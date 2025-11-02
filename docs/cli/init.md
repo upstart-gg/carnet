@@ -10,7 +10,7 @@ carnet init [dir]
 
 ## Arguments
 
-- `dir`
+- `dir` (optional) - Directory where to initialize the Carnet project. Creates the directory structure with agents, skills, and toolsets folders, plus a carnet.config.json file. Defaults to `./carnet`.
 
 ## Options
 
