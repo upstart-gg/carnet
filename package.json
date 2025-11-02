@@ -1,7 +1,7 @@
 {
   "name": "@upstart-gg/carnet",
   "version": "0.1.0",
-  "description": "A library and CLI for managing AI agent definitions, skills, toolsets, and tools through markdown files with smart prompt generation",
+  "description": "A framework for building AI agents with Vercel AI SDK using markdown-based agent definitions, skills, toolsets, and tools with smart prompt generation",
   "type": "module",
   "exports": {
     ".": {
@@ -12,19 +12,7 @@
       "types": "./dist/schema/index.d.ts",
       "import": "./dist/schema/index.js"
     },
-    "./schema/config.schema.json": "./schema/config.schema.json",
-    "./adapters/vercel-ai": {
-      "types": "./dist/adapters/vercel-ai/index.d.ts",
-      "import": "./dist/adapters/vercel-ai/index.js"
-    },
-    "./adapters/openai": {
-      "types": "./dist/adapters/openai/index.d.ts",
-      "import": "./dist/adapters/openai/index.js"
-    },
-    "./adapters/anthropic": {
-      "types": "./dist/adapters/anthropic/index.d.ts",
-      "import": "./dist/adapters/anthropic/index.js"
-    }
+    "./schema/config.schema.json": "./schema/config.schema.json"
   },
   "bin": {
     "carnet": "./dist/cli/index.js"
@@ -71,9 +59,7 @@
     "gray-matter": "4.0.3"
   },
   "peerDependencies": {
-    "ai": ">=5.0.1",
-    "openai": ">=4.0.0",
-    "@anthropic-ai/sdk": ">=0.20.0",
+    "ai": ">=5.0.0",
     "zod": ">=4.0.0"
   },
   "devDependencies": {

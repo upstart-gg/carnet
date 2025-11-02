@@ -1,3 +1,4 @@
+import type { ToolSet } from 'ai'
 import { existsSync, promises as fs } from 'node:fs'
 import { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
@@ -6,15 +7,20 @@ import type {
   GenerateAgentPromptOptions,
   GeneratedPrompt,
   Manifest,
+  PromptOptions,
   SkillMetadata,
   ToolMetadata,
   ToolsetMetadata,
 } from './types'
 import { VariableInjector } from './variable-injector'
+import { createCarnetTools } from './tools'
+import type { ToolOptions } from './tools'
 
 export { PromptGenerator } from './prompt-generator'
 export * from './types'
 export { VariableInjector } from './variable-injector'
+export { createCarnetTools } from './tools'
+export type { ToolOptions } from './tools'
 
 /**
  * Main Carnet class for loading and using AI agent manifests
@@ -350,5 +356,67 @@ export class Carnet {
     const availableSkills = this.listAvailableSkills(agentName)
 
     return this.promptGenerator.generateAgentPrompt(agent, initialSkills, availableSkills, options)
+  }
+
+  /**
+   * Generate a system prompt for an agent, ready to use with Vercel AI SDK
+   *
+   * @param agentName The name of the agent
+   * @param options Generation options
+   * @param options.includeSkillCatalog Whether to include the skill catalog (default: true)
+   * @param options.includeInitialSkills Whether to include initial skills content (default: true)
+   * @param options.variables Custom variables for injection
+   * @returns The system prompt string
+   * @throws Error if agent not found
+   * @example
+   * ```typescript
+   * const systemPrompt = carnet.getSystemPrompt('researcher', {
+   *   variables: { domain: 'science' }
+   * })
+   * ```
+   */
+  getSystemPrompt(agentName: string, options: PromptOptions = {}): string {
+    const prompt = this.generateAgentPrompt(agentName, {
+      includeSkillCatalog: options.includeSkillCatalog ?? true,
+      includeInitialSkills: options.includeInitialSkills ?? true,
+      variables: options.variables,
+    })
+    return prompt.content
+  }
+
+  /**
+   * Get a ToolSet compatible with Vercel AI SDK for an agent
+   *
+   * Creates five tools for progressive skill and content loading:
+   * - listAvailableSkills: List all available skills for the agent
+   * - loadSkill: Load a specific skill with full content
+   * - listSkillToolsets: List toolsets within a skill
+   * - loadToolset: Load a specific toolset with instructions
+   * - loadTool: Load a specific tool with full documentation
+   *
+   * @param agentName The name of the agent
+   * @param options Configuration options for which tools to expose
+   * @returns A ToolSet for use with Vercel AI SDK
+   * @throws Error if agent not found
+   * @example
+   * ```typescript
+   * const tools = carnet.getTools('my-agent')
+   *
+   * const result = await streamText({
+   *   model: openai('gpt-4'),
+   *   system: carnet.getSystemPrompt('my-agent'),
+   *   tools,
+   *   messages: [...]
+   * })
+   * ```
+   */
+  getTools(agentName: string, options: ToolOptions = {}): ToolSet {
+    // Validate agent exists
+    const agent = this.manifest.agents[agentName]
+    if (!agent) {
+      throw new Error(`Agent not found: ${agentName}`)
+    }
+
+    return createCarnetTools(this, agentName, options)
   }
 }

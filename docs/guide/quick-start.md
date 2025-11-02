@@ -49,7 +49,26 @@ You should see a tree view of your agents, skills, and toolsets.
 
 ## 5. Use in Your Code
 
-See [Using with LLMs](/guide/using-with-llms) for complete integration examples with SDKs from Vercel, OpenAI, Anthropic, and more.
+Integrate with Vercel AI SDK:
+
+```typescript
+import { Carnet } from '@upstart-gg/carnet'
+import { streamText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+
+// Load your manifest
+const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+
+// Get system prompt and tools for your agent
+const result = await streamText({
+  model: openai('gpt-4'),
+  system: carnet.getSystemPrompt('my-agent'),
+  tools: carnet.getTools('my-agent'),
+  messages: [{ role: 'user', content: 'Help me with a task!' }]
+})
+```
+
+See [Using with Vercel AI SDK](/guide/using-with-llms) for complete examples and advanced patterns.
 
 
 ## Next Steps

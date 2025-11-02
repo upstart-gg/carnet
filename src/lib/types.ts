@@ -46,3 +46,10 @@ export interface GeneratedPrompt {
   initialSkills: Skill[]
   availableSkills: SkillMetadata[]
 }
+
+// Options for generating system prompts
+export interface PromptOptions {
+  variables?: Record<string, string>
+  includeInitialSkills?: boolean // default: true
+  includeSkillCatalog?: boolean // default: true
+}
