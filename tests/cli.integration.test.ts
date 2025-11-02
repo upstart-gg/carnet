@@ -30,7 +30,7 @@ describe('CLI Integration', () => {
 
   describe('build command', () => {
     it('builds successfully with fixtures', async () => {
-      execSync(`${cli} build --config tests/carnet.config.json --dir tests/fixtures --output ${outputDir}`, { stdio: 'inherit' })
+      execSync(`${cli} build --dir tests/fixtures --output ${outputDir}`, { stdio: 'inherit' })
       const manifestPath = path.join(outputDir, 'manifest.json')
       expect(existsSync(manifestPath)).toBe(true)
 
@@ -45,21 +45,21 @@ describe('CLI Integration', () => {
 
     it('fails with invalid content directory', () => {
       expect(() => {
-        execSync(`${cli} build --config tests/carnet.config.json --dir nonexistent --output ${outputDir}`, { stdio: 'inherit' })
+        execSync(`${cli} build --dir nonexistent --output ${outputDir}`, { stdio: 'inherit' })
       }).toThrow()
     })
   })
 
   describe('lint command', () => {
     it('lints successfully with valid fixtures', () => {
-      const output = execSync(`${cli} lint --config tests/carnet.config.json --dir tests/fixtures`)
+      const output = execSync(`${cli} lint --dir tests/fixtures`)
       const outputStr = output.toString()
       expect(outputStr).toBeTruthy()
     })
 
     it('fails with invalid content directory', () => {
       expect(() => {
-        execSync(`${cli} lint --config tests/carnet.config.json --dir nonexistent`)
+        execSync(`${cli} lint --dir nonexistent`)
       }).toThrow()
     })
   })
@@ -78,7 +78,7 @@ describe('CLI Integration', () => {
       try {
         await fs.mkdir(tempDir, { recursive: true })
         process.chdir(tempDir)
-        execSync(`${cli} init`)
+        execSync(`${cli} init --dir .`, { cwd: tempDir })
 
         expect(existsSync('agents')).toBe(true)
         expect(existsSync('skills')).toBe(true)

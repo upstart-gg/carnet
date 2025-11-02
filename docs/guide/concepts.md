@@ -6,6 +6,30 @@ Understanding Carnet's core concepts will help you organize your AI agents effec
 
 Carnet defines a hierarchy of four entity types that compose your agents:
 
+## Two Types of Tools
+
+With the introduction of executable tools, it's important to distinguish between two types of tools in the Carnet ecosystem:
+
+### Carnet Tools 🔍
+
+These are the five meta-tools provided by Carnet itself. Their sole purpose is to enable the progressive discovery of skills and documentation.
+
+- `listAvailableSkills`
+- `loadSkill`
+- `listSkillToolsets`
+- `loadToolset`
+- `loadTool`
+
+These tools are always available to the agent and their behavior is static.
+
+### Domain Tools 🛠️
+
+These are the actual, executable tools that you, the developer, provide. They represent the concrete capabilities of your application (e.g., `searchDatabase`, `generateImage`, `sendEmail`).
+
+- **Provided by you:** You register them with Carnet using the `registerDomainToolset` method.
+- **Dynamically Exposed:** They are not available to the agent initially. They are automatically exposed when the agent loads a `Skill` that is associated with the tool's `Toolset`.
+- **Executable:** When the agent calls a domain tool, your provided `execute` function is run.
+
 ```
 Agent
 ├── Skills (on-demand)

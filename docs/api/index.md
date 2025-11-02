@@ -15,6 +15,8 @@ Generate a system prompt for an agent with optional skill catalogs and variable 
 - `options?: PromptOptions` - Generation options
   - `includeInitialSkills?: boolean` - Include initial skill content (default: true)
   - `includeSkillCatalog?: boolean` - Include available skills list (default: true)
+  - `includeLoadedSkills?: boolean` - Include a section listing skills loaded during the session (default: true).
+  - `includeAvailableTools?: boolean` - Include a section listing currently available domain tools (default: true).
   - `variables?: Record<string, string>` - Custom variables for injection
 
 **Returns:** `string` - The generated system prompt
@@ -29,7 +31,7 @@ const prompt = carnet.getSystemPrompt('researcher', {
 
 ### `getTools(agentName, options?): ToolSet`
 
-Get a complete ToolSet for an agent with five built-in progressive loading tools.
+Get a complete ToolSet for an agent. This includes the five built-in progressive loading tools plus any domain tools that have been dynamically exposed for the current session.
 
 **Parameters:**
 - `agentName: string` - The name of the agent
@@ -51,6 +53,46 @@ const tools = carnet.getTools('researcher', {
   tools: ['listAvailableSkills', 'loadSkill']  // Optional: subset
 })
 ```
+
+## Session and Tool Management
+
+These methods allow you to manage agent sessions and register your own executable tools.
+
+### `registerDomainToolset(toolsetName: string, tools: ToolSet): void`
+
+Register a set of executable domain tools for a specific toolset name. These tools will be dynamically exposed to an agent when it loads a skill that references this toolset.
+
+**Parameters:**
+- `toolsetName: string` - The name of the toolset (must match a name in your manifest).
+- `tools: ToolSet` - An object of Vercel AI SDK `tool` definitions.
+
+**Example:**
+```typescript
+import { tool } from 'ai'
+import { z } from 'zod'
+
+const searchTools = {
+  basicSearch: tool({
+    description: 'Perform a basic web search',
+    inputSchema: z.object({ query: z.string() }),
+    execute: async ({ query }) => { /* ... */ }
+  })
+}
+
+carnet.registerDomainToolset('search-tools', searchTools)
+```
+
+### `getDiscoveredSkills(agentName: string): string[]`
+
+Returns an array of skill names that have been discovered by the agent in the current session.
+
+### `getAvailableTools(agentName: string): string[]`
+
+Returns an array of the names of the domain tools that are currently exposed and available to the agent.
+
+### `resetSession(agentName: string): void`
+
+Clears the session state for a specific agent, resetting its discovered skills and tool exposure to the initial state.
 
 ## Utility Methods
 

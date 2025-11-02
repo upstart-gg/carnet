@@ -37,6 +37,8 @@ export interface GenerateAgentPromptOptions {
   variables?: Record<string, string>
   includeInitialSkills?: boolean // default: true
   includeSkillCatalog?: boolean // default: true
+  includeLoadedSkills?: boolean // default: true
+  includeAvailableTools?: boolean // default: true
 }
 
 // Generated prompt return type
@@ -52,7 +54,12 @@ export interface PromptOptions {
   variables?: Record<string, string>
   includeInitialSkills?: boolean // default: true
   includeSkillCatalog?: boolean // default: true
+  includeLoadedSkills?: boolean // default: true
+  includeAvailableTools?: boolean // default: true
 }
+
+// Domain toolset type - a collection of executable Vercel AI SDK tools
+export type DomainToolSet = Record<string, import('ai').Tool>
 
 export interface CarnetSessionState {
   agentName: string

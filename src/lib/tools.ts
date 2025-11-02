@@ -2,6 +2,7 @@ import type { ToolSet } from 'ai'
 import { tool } from 'ai'
 import { z } from 'zod'
 import type { Carnet } from './index'
+import type { DomainToolSet } from './types'
 
 /**
  * Options for configuring which Carnet tools to expose
@@ -9,9 +10,25 @@ import type { Carnet } from './index'
 export interface ToolOptions {
   /**
    * List of specific tools to include. If undefined, all tools are included.
-   * This can include both Carnet meta-tools and any registered domain tools.
+   * This can include both Carnet meta-tools and any domain tools from toolsets.
    */
   tools?: string[]
+
+  /**
+   * Domain toolsets to make available to the agent.
+   * Keys should match toolset names from your manifest.
+   *
+   * @example
+   * ```typescript
+   * const tools = carnet.getTools('researcher', {
+   *   toolsets: {
+   *     'search': searchTools,
+   *     'analysis': analysisTools
+   *   }
+   * })
+   * ```
+   */
+  toolsets?: Record<string, DomainToolSet>
 }
 
 /**

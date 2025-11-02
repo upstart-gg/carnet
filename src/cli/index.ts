@@ -1,5 +1,12 @@
+import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { Command } from 'commander'
-import pkg from '../../package.json' with { type: 'macro' }
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const pkgPath = resolve(__dirname, '../../package.json')
+const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
+
 import { registerBuildCommand } from './commands/build'
 import { registerInitCommand } from './commands/init'
 import { registerLintCommand } from './commands/lint'
@@ -16,8 +23,10 @@ program
   .version(pkg.version)
 
 // Global options
-program
-  .option('-d, --dir <dir>', 'Carnet project directory containing carnet.config.json and content (default: ./carnet)')
+program.option(
+  '-d, --dir <dir>',
+  'Carnet project directory containing carnet.config.json and content (default: ./carnet)'
+)
 
 // Register commands
 registerInitCommand(program)

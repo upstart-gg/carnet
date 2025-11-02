@@ -7,12 +7,25 @@ export function registerLintCommand(program: Command) {
   program
     .command('lint')
     .description('Lint markdown files')
-    .option('-v, --variables <key=value...>', 'custom variables to inject (can be used multiple times)')
-    .option('--env-prefix <prefix...>', 'environment variable prefixes to allow (can be used multiple times)')
+    .option('-d, --dir <dir>', 'Carnet project directory containing content (default: ./carnet)')
+    .option(
+      '-v, --variables <key=value...>',
+      'custom variables to inject (can be used multiple times)'
+    )
+    .option(
+      '--env-prefix <prefix...>',
+      'environment variable prefixes to allow (can be used multiple times)'
+    )
     .option('--include <pattern...>', 'glob patterns to include (can be used multiple times)')
     .option('--exclude <pattern...>', 'glob patterns to exclude (can be used multiple times)')
-    .option('--global-skills <skill...>', 'global skills available to all agents (can be used multiple times)')
-    .option('--global-initial-skills <skill...>', 'initial skills available to all agents at startup (can be used multiple times)')
+    .option(
+      '--global-skills <skill...>',
+      'global skills available to all agents (can be used multiple times)'
+    )
+    .option(
+      '--global-initial-skills <skill...>',
+      'initial skills available to all agents at startup (can be used multiple times)'
+    )
     .action(async (options) => {
       const globalOptions = program.opts()
       await runLintCommand({
@@ -62,7 +75,7 @@ async function runLintCommand(options: {
 
   // Load environment variables and merge configurations with proper precedence
   const envConfig = loadEnvConfig()
-  const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
+  const _config = mergeConfigurations(fileConfig, envConfig, cliConfig)
 
   // Validate that content directory exists
   const { promises: fs } = await import('node:fs')

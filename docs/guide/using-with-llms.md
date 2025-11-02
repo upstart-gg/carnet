@@ -51,6 +51,8 @@ Generate a system prompt for an agent.
 const prompt = carnet.getSystemPrompt('researcher', {
   includeSkillCatalog: true,      // Include available skills (default: true)
   includeInitialSkills: true,     // Include initial skill content (default: true)
+  includeLoadedSkills: true,      // Include skills loaded in this session (default: true)
+  includeAvailableTools: true,    // Include available domain tools (default: true)
   variables: { TOPIC: 'AI' }      // Custom variables for injection
 })
 
@@ -64,11 +66,11 @@ const result = await streamText({
 
 ### `getTools(agentName, options?)`
 
-Get a complete ToolSet for an agent.
+Get a complete ToolSet for an agent, including Carnet's meta-tools and any exposed domain tools.
 
 ```typescript
 const tools = carnet.getTools('researcher', {
-  tools: ['listAvailableSkills', 'loadSkill', 'loadToolset'] // Optional: limit tools
+  tools: ['listAvailableSkills', 'loadSkill', 'basicSearch'] // Optional: limit tools
 })
 
 // Use with Vercel AI SDK
@@ -86,6 +88,103 @@ The returned ToolSet includes five tools:
 - **listSkillToolsets** - List toolsets within a skill
 - **loadToolset** - Load a toolset with instructions and available tools
 - **loadTool** - Load a specific tool with full documentation
+
+## Working with Domain Tools
+
+While Carnet's progressive loading tools are powerful, the ultimate goal is to give your agent access to your own executable **Domain Tools**.
+
+### 1. Create Your Tools
+
+First, define your tools using the Vercel AI SDK's `tool` function. It's best to organize them into modules that correspond to your toolsets.
+
+```typescript
+// src/tools/search.ts
+import { tool } from 'ai'
+import { z } from 'zod'
+
+export const basicSearch = tool({
+  description: 'Perform a basic web search',
+  inputSchema: z.object({ query: z.string() }),
+  execute: async ({ query }) => {
+    // Your implementation here...
+    return { results: `Found 3 results for "${query}"` }
+  }
+})
+```
+
+### 2. Register Your Toolsets
+
+Next, import your tools and register them with your `Carnet` instance using the `registerDomainToolset` method. The name you provide must match a `toolset` name in your manifest.
+
+```typescript
+import { Carnet } from '@upstart-gg/carnet'
+import * as searchTools from './tools/search'
+
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+
+// Register the 'search' toolset with its corresponding tools
+carnet.registerDomainToolset('search', searchTools)
+```
+
+### 3. The Dynamic Workflow
+
+Now, everything is set up for dynamic tool exposure.
+
+1.  **Initial State:** When you first call `carnet.getTools('my-agent')`, it will include the Carnet meta-tools and any domain tools from the agent's `initialSkills`.
+2.  **Skill Loading:** The agent calls `loadSkill('some-skill')`.
+3.  **State Update:** Carnet internally updates the session, noting that `'some-skill'` has been loaded. It identifies the toolsets associated with that skill.
+4.  **New Tools Exposed:** The next time you call `carnet.getTools('my-agent')`, the returned `ToolSet` will now **also include the domain tools** from the newly loaded skill's toolsets.
+5.  **Dynamic Prompts:** Similarly, the system prompt will update to list the newly loaded skill and the newly available tools, giving the LLM full context.
+
+### Multi-Turn Example with Dynamic Tools
+
+This example demonstrates how an agent's capabilities can grow during a conversation.
+
+```typescript
+import { Carnet } from '@upstart-gg/carnet'
+import { streamText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import * as searchTools from './tools/search'
+import * as analysisTools from './tools/analysis'
+
+// 1. Setup
+const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+carnet.registerDomainToolset('search', searchTools)
+carnet.registerDomainToolset('analysis', analysisTools)
+
+const messages = [{ role: 'user', content: 'Search for AI papers and then analyze the results.' }]
+
+// 2. First Turn (Search)
+// The 'webSearch' skill is an initial skill, so 'basicSearch' is already available.
+const result1 = await streamText({
+  model: openai('gpt-4'),
+  system: carnet.getSystemPrompt('researcher'),
+  tools: carnet.getTools('researcher'),
+  messages,
+})
+
+// ... process result1, which might include a call to basicSearch ...
+// Let's assume the LLM decides it needs to analyze data and calls loadSkill('dataAnalysis')
+// The Vercel AI SDK would handle the tool call, and our tool would update the session.
+// For this example, we'll call it manually to simulate the effect:
+carnet._updateSessionOnSkillLoad('researcher', 'dataAnalysis')
+
+
+// 3. Second Turn (Analyze)
+// Now, the 'analysis' tools are available.
+const result2 = await streamText({
+  model: openai('gpt-4'),
+  system: carnet.getSystemPrompt('researcher'), // This prompt is now updated!
+  tools: carnet.getTools('researcher'),       // These tools now include 'analyzeData'!
+  messages: [
+    ...messages,
+    // ... add assistant's response from turn 1 ...
+    { role: 'user', content: 'Great, now analyze the sentiment of the paper titles.' }
+  ],
+})
+
+// ... process result2, which can now call analyzeData ...
+```
 
 ## Complete Examples
 

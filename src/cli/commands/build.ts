@@ -9,14 +9,27 @@ export function registerBuildCommand(program: Command) {
   program
     .command('build')
     .description('Build markdown files into JSON artifacts')
+    .option('-d, --dir <dir>', 'Carnet project directory containing content (default: ./carnet)')
     .option('-o, --output <dir>', 'output directory (default: ./dist)')
     .option('-w, --watch', 'watch for changes and rebuild')
-    .option('-v, --variables <key=value...>', 'custom variables to inject (can be used multiple times)')
-    .option('--env-prefix <prefix...>', 'environment variable prefixes to allow (can be used multiple times)')
+    .option(
+      '-v, --variables <key=value...>',
+      'custom variables to inject (can be used multiple times)'
+    )
+    .option(
+      '--env-prefix <prefix...>',
+      'environment variable prefixes to allow (can be used multiple times)'
+    )
     .option('--include <pattern...>', 'glob patterns to include (can be used multiple times)')
     .option('--exclude <pattern...>', 'glob patterns to exclude (can be used multiple times)')
-    .option('--global-skills <skill...>', 'global skills available to all agents (can be used multiple times)')
-    .option('--global-initial-skills <skill...>', 'initial skills available to all agents at startup (can be used multiple times)')
+    .option(
+      '--global-skills <skill...>',
+      'global skills available to all agents (can be used multiple times)'
+    )
+    .option(
+      '--global-initial-skills <skill...>',
+      'initial skills available to all agents at startup (can be used multiple times)'
+    )
     .action(async (options) => {
       const globalOptions = program.opts()
       await runBuildCommand({
@@ -92,9 +105,7 @@ async function runBuildCommand(options: {
   await runBuild()
 
   if (options.watch) {
-    console.log(
-      colors.info(`\nWatching for changes in ${path.resolve(carnetDir)}...`)
-    )
+    console.log(colors.info(`\nWatching for changes in ${path.resolve(carnetDir)}...`))
     try {
       const watcher = watch(carnetDir, { recursive: true })
       for await (const event of watcher) {

@@ -1,9 +1,9 @@
 import { existsSync, promises as fs } from 'node:fs'
 import type { ToolSet } from 'ai'
-import { PromptGenerator } from './prompt-generator'
+import { DynamicPromptGenerator } from './dynamic-prompt-generator'
+import type { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
 import { mergeToolSets } from './tool-filtering'
-import { type DomainToolSet, ToolRegistry } from './tool-registry'
 import type { ToolOptions } from './tools'
 import { createCarnetTools } from './tools'
 import type {
@@ -45,7 +45,6 @@ export class Carnet {
   protected cwd: string
   protected variableInjector: VariableInjector
   protected promptGenerator: PromptGenerator
-  protected readonly toolRegistry: ToolRegistry
   protected readonly sessions: Map<string, CarnetSessionState>
 
   static MANIFEST_FILENAME = 'carnet.manifest.json'
@@ -72,8 +71,7 @@ export class Carnet {
       variables: options.variables,
       envPrefixes: options.envPrefixes,
     })
-    this.promptGenerator = new PromptGenerator(this.variableInjector)
-    this.toolRegistry = new ToolRegistry()
+    this.promptGenerator = new DynamicPromptGenerator(this.variableInjector)
     this.sessions = new Map()
   }
 
@@ -115,9 +113,7 @@ export class Carnet {
 
   // Domain Tool and Session Management
 
-  public registerDomainToolset(toolsetName: string, tools: DomainToolSet): void {
-    this.toolRegistry.register(toolsetName, tools)
-  }
+  // Removed registerDomainToolset() - users now pass toolsets directly via getTools()
 
   public getDiscoveredSkills(agentName: string): string[] {
     const session = this.sessions.get(agentName)
@@ -155,9 +151,9 @@ export class Carnet {
       session.loadedToolsets.add(toolsetName)
     }
 
-    // Recalculate the set of exposed domain tools
-    const allExposedTools = this.toolRegistry.getToolsForToolsets(session.loadedToolsets)
-    session.exposedDomainTools = new Set(Object.keys(allExposedTools))
+    // Recalculate the set of exposed domain tools (names only)
+    const allExposedTools = skill.toolsets.flatMap((t) => this.getToolset(t)?.tools ?? [])
+    session.exposedDomainTools = new Set(allExposedTools)
   }
 
   private getOrCreateSession(agentName: string): CarnetSessionState {
@@ -168,7 +164,7 @@ export class Carnet {
       }
 
       const initialSkills = new Set(agent.initialSkills)
-      const loadedToolsets = new Set()
+      const loadedToolsets = new Set<string>()
 
       for (const skillName of initialSkills) {
         const skill = this.getSkill(skillName)
@@ -180,7 +176,7 @@ export class Carnet {
       }
 
       const exposedDomainTools = new Set(
-        Object.keys(this.toolRegistry.getToolsForToolsets(loadedToolsets))
+        Array.from(loadedToolsets).flatMap((t) => this.getToolset(t)?.tools ?? [])
       )
 
       this.sessions.set(agentName, {
@@ -190,6 +186,7 @@ export class Carnet {
         exposedDomainTools,
       })
     }
+    // biome-ignore lint/style/noNonNullAssertion: safe to assume session exists here
     return this.sessions.get(agentName)!
   }
   /**
@@ -433,6 +430,8 @@ export class Carnet {
       throw new Error(`Agent not found: ${agentName}`)
     }
 
+    const session = this.getOrCreateSession(agentName)
+
     // Get initial skills (always included if they exist)
     const initialSkills = agent.initialSkills
       .map((name) => this.manifest.skills[name])
@@ -441,7 +440,35 @@ export class Carnet {
     // Get available skills metadata (includes initial + dynamic skills)
     const availableSkills = this.listAvailableSkills(agentName)
 
-    return this.promptGenerator.generateAgentPrompt(agent, initialSkills, availableSkills, options)
+    const prompt = (this.promptGenerator as DynamicPromptGenerator).generateAgentPrompt(
+      agent,
+      initialSkills,
+      availableSkills,
+      options
+    )
+
+    const dynamicSections = []
+    if (options.includeLoadedSkills) {
+      dynamicSections.push(
+        (this.promptGenerator as DynamicPromptGenerator).generateLoadedSkillsSection(
+          session,
+          this.manifest
+        )
+      )
+    }
+    if (options.includeAvailableTools) {
+      const availableToolsets = (options as import('./tools').ToolOptions).toolsets ?? {}
+      const availableToolsSection = (
+        this.promptGenerator as DynamicPromptGenerator
+      ).generateAvailableToolsSection(session, availableToolsets)
+      if (availableToolsSection.trim().length > 0) {
+        dynamicSections.push(availableToolsSection)
+      }
+    }
+
+    prompt.content = [prompt.content, ...dynamicSections].filter(Boolean).join('\n\n')
+
+    return prompt
   }
 
   /**
@@ -462,11 +489,7 @@ export class Carnet {
    * ```
    */
   getSystemPrompt(agentName: string, options: PromptOptions = {}): string {
-    const prompt = this.generateAgentPrompt(agentName, {
-      includeSkillCatalog: options.includeSkillCatalog ?? true,
-      includeInitialSkills: options.includeInitialSkills ?? true,
-      variables: options.variables,
-    })
+    const prompt = this.generateAgentPrompt(agentName, options)
     return prompt.content
   }
 
@@ -500,7 +523,7 @@ export class Carnet {
     const session = this.getOrCreateSession(agentName)
     const carnetTools = createCarnetTools(this, agentName, options)
 
-    let merged = mergeToolSets(carnetTools, session, this.toolRegistry)
+    let merged = mergeToolSets(carnetTools, session, options.toolsets ?? {})
 
     // Apply optional filtering from the ToolOptions
     if (options.tools) {
