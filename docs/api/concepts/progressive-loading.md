@@ -77,42 +77,6 @@ const toolContent = carnet.getToolContent('button')
 // Returns: Full tool documentation
 ```
 
-## API Methods by Category
-
-### Metadata (Lightweight)
-
-```typescript
-carnet.getSkillMetadata(name)      // Returns metadata only
-carnet.getToolsetMetadata(name)    // Returns metadata only
-carnet.getToolMetadata(name)       // Returns metadata only
-carnet.listAvailableSkills(agent)  // Lists with metadata
-carnet.listSkillToolsets(skill)    // Lists with metadata
-carnet.listToolsetTools(toolset)   // Lists with metadata
-```
-
-### Content (Full)
-
-```typescript
-carnet.getSkillContent(name)       // Full content with variables
-carnet.getToolsetContent(name)     // Full content with variables
-carnet.getToolContent(name)        // Full content with variables
-carnet.generateAgentPrompt(agent)  // Complete LLM-ready prompt
-```
-
-## Efficiency Benefits
-
-### Tokens Saved Example
-
-```typescript
-// Without progressive loading:
-// Send full prompt with all 20 skills = 5,000 tokens
-
-// With progressive loading:
-// Send prompt with metadata of 20 skills = 500 tokens
-// Agent asks for 3 skills = 1,500 tokens (on demand)
-// Total: 2,000 tokens (60% reduction!)
-```
-
 ## Best Practices
 
 ### 1. Start with Metadata Catalog
@@ -160,37 +124,6 @@ try {
 }
 ```
 
-## Implementation for App Developers
-
-If you're creating an app that wraps Carnet for LLM agents, create tools around these methods:
-
-```typescript
-const tools = {
-  listSkills: {
-    name: 'listSkills',
-    description: 'List available skills with metadata',
-    execute: () => carnet.listAvailableSkills('agentName')
-  },
-
-  getSkill: {
-    name: 'getSkill',
-    description: 'Get full skill content',
-    execute: (skillName) => carnet.getSkillContent(skillName)
-  },
-
-  listTools: {
-    name: 'listTools',
-    description: 'List tools in a toolset',
-    execute: (toolsetName) => carnet.listToolsetTools(toolsetName)
-  },
-
-  getTool: {
-    name: 'getTool',
-    description: 'Get full tool documentation',
-    execute: (toolName) => carnet.getToolContent(toolName)
-  }
-}
-```
 
 ## See Also
 

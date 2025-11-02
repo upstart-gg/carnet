@@ -1,6 +1,6 @@
-import type { CoreTool } from 'ai'
+import type { ToolSet } from 'ai'
 
 export interface VercelAIConfig {
   system: string
-  tools: Record<string, CoreTool>
+  tools: ToolSet
 }

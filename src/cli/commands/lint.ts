@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { validate } from '../../lib/builder'
-import { loadConfigFile, mergeConfigurations } from '../../lib/config'
+import { loadConfigFile, loadEnvConfig, mergeConfigurations } from '../../lib/config'
 import { colors } from '../colors'
 
 export function registerLintCommand(program: Command) {
@@ -61,8 +61,9 @@ async function runLintCommand(options: {
     }
   }
 
-  // Merge configurations with proper precedence
-  const config = mergeConfigurations(fileConfig, undefined, cliConfig)
+  // Load environment variables and merge configurations with proper precedence
+  const envConfig = loadEnvConfig()
+  const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
   const contentDir = config.baseDir
 
   // Validate that content directory exists

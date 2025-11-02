@@ -1,6 +1,6 @@
 import { watch } from 'node:fs/promises'
 import path from 'node:path'
-import { loadConfigFile, mergeConfigurations } from '@lib/config'
+import { loadConfigFile, loadEnvConfig, mergeConfigurations } from '@lib/config'
 import type { Command } from 'commander'
 import { build } from '../../lib/builder'
 import { colors } from '../colors'
@@ -68,8 +68,9 @@ async function runBuildCommand(options: {
     }
   }
 
-  // Merge configurations with proper precedence
-  const buildConfig = mergeConfigurations(fileConfig, undefined, cliConfig)
+  // Load environment variables and merge configurations with proper precedence
+  const envConfig = loadEnvConfig()
+  const buildConfig = mergeConfigurations(fileConfig, envConfig, cliConfig)
 
   // Validate that content directory exists
   const { promises: fs } = await import('node:fs')

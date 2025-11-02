@@ -95,13 +95,11 @@ export class CarnetOpenAIAdapter {
   }
 
   private buildSystemPrompt(): string {
-    return this.carnet
-      .generateAgentPrompt(this.agentName, {
-        includeSkillCatalog: this.options.includeSkillCatalog ?? true,
-        includeInitialSkills: this.options.includeInitialSkills ?? true,
-        variables: this.options.variables,
-      })
-      .content
+    return this.carnet.generateAgentPrompt(this.agentName, {
+      includeSkillCatalog: this.options.includeSkillCatalog ?? true,
+      includeInitialSkills: this.options.includeInitialSkills ?? true,
+      variables: this.options.variables,
+    }).content
   }
 
   private buildTools() {
@@ -248,7 +246,7 @@ export class CarnetOpenAIAdapter {
         content,
         metadata,
       }
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         error: `Skill not found: ${skillName}`,

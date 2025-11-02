@@ -2,10 +2,6 @@
 
 A tool is the smallest unit - it represents a single capability or function available to an agent. Tools are always defined within a toolset.
 
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
-
 ## Schema Fields
 
 ### `name`

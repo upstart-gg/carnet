@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Carnet"
-  text: "Specification & Build System for AI agents"
-  tagline: Define, validate, and manage AI agents through markdown files following the Carnet standard
+  text: "Manage your AI agents prompts easily"
+  tagline: Define, validate, and manage AI agents through markdown files
   actions:
     - theme: brand
       text: Get Started
@@ -31,7 +31,7 @@ features:
     details: Works seamlessly with Node.js, Bun, and Deno
   - icon: 🎯
     title: Minimal Dependencies
-    details: Only 4 production dependencies with no bloat
+    details: Only 3 production dependencies with no bloat
   - icon: 🔒
     title: Type-Safe
     details: Full TypeScript support with Zod validation throughout
@@ -40,69 +40,6 @@ features:
     details: Rebuild automatically during development with hot reload
 ---
 
-## Quick Installation
-
-:::tabs key:pm
-== npm (Global)
-```bash
-npm install -g @upstart-gg/carnet
-```
-
-== npm (Project)
-```bash
-npm install @upstart-gg/carnet
-```
-
-== npm (Without Install)
-```bash
-npx @upstart-gg/carnet init my-agents
-```
-
-== bun (Global)
-```bash
-bun add -g @upstart-gg/carnet
-```
-
-== bun (Project)
-```bash
-bun add @upstart-gg/carnet
-```
-
-== bun (Without Install)
-```bash
-bunx @upstart-gg/carnet init my-agents
-```
-
-== pnpm (Global)
-```bash
-pnpm add -g @upstart-gg/carnet
-```
-
-== pnpm (Project)
-```bash
-pnpm add @upstart-gg/carnet
-```
-
-== pnpm (Without Install)
-```bash
-pnpm dlx @upstart-gg/carnet init my-agents
-```
-
-== yarn (Global)
-```bash
-yarn global add @upstart-gg/carnet
-```
-
-== yarn (Project)
-```bash
-yarn add @upstart-gg/carnet
-```
-
-== yarn (Without Install)
-```bash
-yarn dlx @upstart-gg/carnet init my-agents
-```
-:::
 
 ## Get Started
 

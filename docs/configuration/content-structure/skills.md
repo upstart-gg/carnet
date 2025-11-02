@@ -2,10 +2,6 @@
 
 A skill is a collection of related toolsets that provide specific capabilities to an agent.
 
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
-
 ## Schema Fields
 
 ### `name`

@@ -23,10 +23,10 @@ export interface AdapterOptions {
   /**
    * Specific tools to enable. If not specified, all tools are enabled
    */
-  tools?: ToolName[]
+  tools?: CarnetToolName[]
 }
 
-export type ToolName =
+export type CarnetToolName =
   | 'listAvailableSkills'
   | 'loadSkill'
   | 'listSkillToolsets'

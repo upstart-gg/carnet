@@ -1,4 +1,5 @@
 import { Command } from 'commander'
+import pkg from '../../package.json' with { type: 'macro' }
 import { registerBuildCommand } from './commands/build'
 import { registerInitCommand } from './commands/init'
 import { registerLintCommand } from './commands/lint'
@@ -12,7 +13,7 @@ program
   .description(
     'A library and CLI for managing AI agent definitions, skills, toolsets, and tools through markdown files with smart prompt generation'
   )
-  .version('0.1.0')
+  .version(pkg.version)
 
 // Global options
 program

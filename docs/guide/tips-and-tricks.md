@@ -21,7 +21,7 @@ initialSkills:
   - error-handling
 ```
 
-**Do this** (configured once):
+**Configure global skills in `carnet.config.json`:**
 ```json
 {
   "app": {
@@ -44,59 +44,6 @@ Exclude draft or experimental content from production builds:
 
 This prevents incomplete or test content from being included in the manifest.
 
-## Development-Only Skills
-
-In development, include extra debugging and testing skills:
-
-```json
-{
-  "include": ["**/*.dev.md"],
-  "variables": {
-    "DEBUG_MODE": "true"
-  }
-}
-```
-
-Then use in your content:
-```markdown
-# Debug Utilities
-
-```typescript
-if ({{ DEBUG_MODE }}) {
-  console.log('Debug mode enabled')
-}
-```
-```
-
-## Using Multiple Config Files
-
-### Development Configuration
-**carnet.config.json:**
-```json
-{
-  "baseDir": "./content",
-  "output": "./dist",
-  "include": ["**/*.dev.md"],
-  "variables": {
-    "ENVIRONMENT": "development",
-    "LOG_LEVEL": "debug"
-  }
-}
-```
-
-### Production Configuration
-**carnet.config.prod.json:**
-```json
-{
-  "baseDir": "./content",
-  "output": "./dist",
-  "exclude": ["**/draft/**", "**/*.dev.md"],
-  "variables": {
-    "ENVIRONMENT": "production",
-    "LOG_LEVEL": "warn"
-  }
-}
-```
 
 ### Build Commands
 ```bash

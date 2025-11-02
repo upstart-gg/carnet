@@ -24,26 +24,13 @@ const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
 // Done! 3 lines total
 ```
 
-## Installation
+## Requirements
 
-Install the base Carnet package first:
-```bash
-npm install @upstart-gg/carnet zod
-```
-
-Then install your chosen SDK:
-```bash
-# Vercel AI SDK
-npm install ai @ai-sdk/openai
-
-# OpenAI SDK
-npm install openai
-
-# Anthropic SDK
-npm install @anthropic-ai/sdk
-```
-
-All SDK packages are optional peer dependencies. Install only what you use.
+- Carnet (`@upstart-gg/carnet`)
+- One of the supported SDKs:
+  - Vercel AI SDK (`ai` and `@ai-sdk/openai`)
+  - OpenAI SDK (`openai`)
+  - Anthropic SDK (`@anthropic-ai/sdk`)
 
 ## Quick Start
 
@@ -51,8 +38,6 @@ Choose your SDK for a complete working example:
 
 :::tabs
 == Vercel AI SDK
-
-The most powerful adapter with full streaming support and tool calling.
 
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
@@ -65,8 +50,8 @@ const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
 
 const result = await streamText({
   model: openai('gpt-4'),
-  ...adapter.getConfig(),
   messages: [{ role: 'user', content: 'Help me!' }]
+  ...adapter.getConfig(), // => { system: "...", tools: {...} }
 })
 
 for await (const chunk of result.textStream) {
@@ -75,8 +60,6 @@ for await (const chunk of result.textStream) {
 ```
 
 == OpenAI SDK
-
-Use with OpenAI's function calling API.
 
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
@@ -100,8 +83,6 @@ console.log(completion.choices[0].message.content)
 ```
 
 == Anthropic SDK
-
-Use with Claude's tool use capability.
 
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'

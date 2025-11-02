@@ -2,10 +2,6 @@
 
 The `carnet.config.json` configuration file defines how your Carnet project builds and processes content.
 
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
-
 ## Configuration Options
 
 All options are optional and have sensible defaults.

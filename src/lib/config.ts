@@ -21,6 +21,55 @@ export async function loadConfigFile(configFilePath = 'carnet.config.json'): Pro
 }
 
 /**
+ * Load config from environment variables with CARNET_ prefix.
+ * Supports:
+ * - CARNET_BASE_DIR
+ * - CARNET_OUTPUT
+ * - CARNET_INCLUDE (comma-separated)
+ * - CARNET_EXCLUDE (comma-separated)
+ * - CARNET_GLOBAL_SKILLS (comma-separated)
+ * - CARNET_GLOBAL_INITIAL_SKILLS (comma-separated)
+ * @param processEnv Environment variables object (defaults to process.env)
+ * @returns Partial config from environment variables
+ */
+export function loadEnvConfig(processEnv: Record<string, string | undefined> = process.env): Partial<CarnetConfig> {
+  const envConfig: Partial<CarnetConfig> = {}
+
+  // String options
+  if (processEnv.CARNET_BASE_DIR) {
+    envConfig.baseDir = processEnv.CARNET_BASE_DIR
+  }
+  if (processEnv.CARNET_OUTPUT) {
+    envConfig.output = processEnv.CARNET_OUTPUT
+  }
+
+  // Array options (comma-separated)
+  if (processEnv.CARNET_INCLUDE) {
+    envConfig.include = processEnv.CARNET_INCLUDE.split(',').map((s) => s.trim())
+  }
+  if (processEnv.CARNET_EXCLUDE) {
+    envConfig.exclude = processEnv.CARNET_EXCLUDE.split(',').map((s) => s.trim())
+  }
+
+  // App config
+  const globalSkills = processEnv.CARNET_GLOBAL_SKILLS
+    ? processEnv.CARNET_GLOBAL_SKILLS.split(',').map((s) => s.trim())
+    : undefined
+  const globalInitialSkills = processEnv.CARNET_GLOBAL_INITIAL_SKILLS
+    ? processEnv.CARNET_GLOBAL_INITIAL_SKILLS.split(',').map((s) => s.trim())
+    : undefined
+
+  if (globalSkills || globalInitialSkills) {
+    envConfig.app = {
+      globalSkills: globalSkills || [],
+      globalInitialSkills: globalInitialSkills || [],
+    }
+  }
+
+  return envConfig
+}
+
+/**
  * Get default configuration with all schema defaults applied
  * @returns Default CarnetConfig
  */

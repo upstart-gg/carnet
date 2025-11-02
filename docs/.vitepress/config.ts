@@ -6,15 +6,21 @@ export default defineConfig({
   description: 'Build system and content management for AI agents',
   lang: 'en-US',
 
-  ignoreDeadLinks: [
-    // Release process page will be completed later
-    '/contributing/release-process',
-  ],
+  ignoreDeadLinks: [],
 
   head: [
     ['meta', { name: 'theme-color', content: '#7270c6' }],
     ['meta', { name: 'og:type', content: 'website' }],
     ['meta', { name: 'og:locale', content: 'en' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    [
+      'link',
+      {
+        href: 'https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap',
+        rel: 'stylesheet',
+      },
+    ],
   ],
 
   lastUpdated: true,
@@ -28,14 +34,6 @@ export default defineConfig({
       { text: 'CLI', link: '/cli/', activeMatch: '/cli/' },
       { text: 'API', link: '/api/', activeMatch: '/api/' },
       { text: 'Configuration', link: '/configuration/', activeMatch: '/configuration/' },
-      {
-        text: 'More',
-        items: [
-          { text: 'Contributing', link: '/contributing/' },
-          { text: 'GitHub', link: 'https://github.com/upstart-gg/carnet' },
-          { text: 'npm', link: 'https://www.npmjs.com/package/@upstart-gg/carnet' },
-        ],
-      },
     ],
 
     sidebar: {
@@ -85,24 +83,12 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/api/' },
             { text: 'Framework Adapters', link: '/api/adapters' },
-            { text: 'Examples', link: '/api/examples' },
-          ],
-        },
-        {
-          text: 'API Methods',
-          items: [
-            { text: 'Content Retrieval', link: '/api/methods/content-retrieval' },
-            { text: 'Metadata Retrieval', link: '/api/methods/metadata-retrieval' },
-            { text: 'Listing Methods', link: '/api/methods/listing' },
-            { text: 'Prompt Generation', link: '/api/methods/prompt-generation' },
+            { text: 'Variable Injection', link: '/api/variable-injection' },
           ],
         },
         {
           text: 'Concepts',
-          items: [
-            { text: 'Variable Injection', link: '/api/concepts/variable-injection' },
-            { text: 'Progressive Loading', link: '/api/concepts/progressive-loading' },
-          ],
+          items: [{ text: 'Progressive Loading', link: '/api/concepts/progressive-loading' }],
         },
       ],
       '/configuration/': [
@@ -111,7 +97,6 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/configuration/' },
             { text: 'carnet.config.json', link: '/configuration/config-file' },
-            { text: 'Variables', link: '/configuration/variables' },
             { text: 'Patterns', link: '/configuration/patterns' },
           ],
         },

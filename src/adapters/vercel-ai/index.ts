@@ -1,2 +1,2 @@
-export { CarnetVercelAdapter } from './adapter'
+export { VercelAdapter } from './adapter'
 export type { VercelAIConfig } from './types'

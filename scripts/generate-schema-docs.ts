@@ -6,10 +6,6 @@ const SCHEMA_DOCS: Record<string, string> = {
 
 The \`carnet.config.json\` configuration file defines how your Carnet project builds and processes content.
 
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
-
 ## Configuration Options
 
 All options are optional and have sensible defaults.
@@ -80,10 +76,6 @@ All options are optional and have sensible defaults.
 
 An agent is the main entity in Carnet - it represents an AI agent with a system prompt and a set of skills.
 
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
-
 ## Schema Fields
 
 ### \`name\`
@@ -138,10 +130,6 @@ This is the markdown body of the agent, which becomes the system prompt.
 
 A skill is a collection of related toolsets that provide specific capabilities to an agent.
 
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
-
 ## Schema Fields
 
 ### \`name\`
@@ -187,10 +175,6 @@ The markdown body here documents the skill in detail.
   'docs/content/toolsets.md': `# Toolset Schema
 
 A toolset is a collection of related tools that work together to provide functionality.
-
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 
@@ -257,10 +241,6 @@ The markdown body documents how these tools work together.
   'docs/content/tools.md': `# Tool Schema
 
 A tool is the smallest unit - it represents a single capability or function available to an agent. Tools are always defined within a toolset.
-
-## TypeScript Type
-
-See the [API Reference](/api/types) for type definitions.
 
 ## Schema Fields
 

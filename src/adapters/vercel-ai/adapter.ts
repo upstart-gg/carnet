@@ -1,37 +1,20 @@
-import type { Carnet } from '../../lib/index'
-import type { AdapterOptions } from '../shared/types'
-import type { CoreTool } from 'ai'
+import type { ToolSet } from 'ai'
 import { tool } from 'ai'
 import { z } from 'zod'
+import type { Carnet } from '../../lib/index'
+import { CarnetAdapter } from '../shared/adapter'
+import type { AdapterOptions } from '../shared/types'
 
-/**
- * Adapter for Vercel AI SDK v5
- *
- * Usage:
- * ```typescript
- * import { CarnetVercelAdapter } from '@upstart-gg/carnet/adapters/vercel-ai'
- * import { streamText } from 'ai'
- * import { openai } from '@ai-sdk/openai'
- *
- * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
- * const adapter = new CarnetVercelAdapter(carnet, 'my-agent')
- *
- * const result = await streamText({
- *   model: openai('gpt-4'),
- *   ...adapter.getConfig(),
- *   messages: [{ role: 'user', content: 'Help me!' }]
- * })
- * ```
- */
-export class CarnetVercelAdapter {
+export class VercelAdapter extends CarnetAdapter {
   private systemPrompt: string
-  private toolsCache: Record<string, CoreTool>
+  private toolsCache: ToolSet
 
   constructor(
-    private carnet: Carnet,
-    private agentName: string,
+    carnet: Carnet,
+    agentName: string,
     private options: AdapterOptions = {}
   ) {
+    super(carnet, agentName)
     this.systemPrompt = this.buildSystemPrompt()
     this.toolsCache = this.buildTools()
   }
@@ -56,21 +39,19 @@ export class CarnetVercelAdapter {
   /**
    * Get the tools separately
    */
-  getTools(): Record<string, CoreTool> {
+  getTools(): ToolSet {
     return this.toolsCache
   }
 
   private buildSystemPrompt(): string {
-    return this.carnet
-      .generateAgentPrompt(this.agentName, {
-        includeSkillCatalog: this.options.includeSkillCatalog ?? true,
-        includeInitialSkills: this.options.includeInitialSkills ?? true,
-        variables: this.options.variables,
-      })
-      .content
+    return this.carnet.generateAgentPrompt(this.agentName, {
+      includeSkillCatalog: this.options.includeSkillCatalog ?? true,
+      includeInitialSkills: this.options.includeInitialSkills ?? true,
+      variables: this.options.variables,
+    }).content
   }
 
-  private buildTools(): Record<string, CoreTool> {
+  private buildTools() {
     const enabledTools = this.options.tools ?? [
       'listAvailableSkills',
       'loadSkill',
@@ -79,12 +60,12 @@ export class CarnetVercelAdapter {
       'loadTool',
     ]
 
-    const tools: Record<string, CoreTool> = {}
+    const tools: ToolSet = {}
 
     if (enabledTools.includes('listAvailableSkills')) {
       tools.listAvailableSkills = tool({
         description: 'List all available skills for the agent',
-        parameters: z.object({}),
+        inputSchema: z.object({}),
         execute: async () => {
           try {
             const skills = this.carnet.listAvailableSkills(this.agentName)
@@ -109,7 +90,7 @@ export class CarnetVercelAdapter {
     if (enabledTools.includes('loadSkill')) {
       tools.loadSkill = tool({
         description: 'Load a skill by name to get its full content and capabilities',
-        parameters: z.object({
+        inputSchema: z.object({
           skillName: z.string().describe('The name of the skill to load'),
         }),
         execute: async ({ skillName }) => {
@@ -121,13 +102,11 @@ export class CarnetVercelAdapter {
               content,
               metadata,
             }
-          } catch (error) {
+          } catch (_error) {
             return {
               success: false,
               error: `Skill not found: ${skillName}`,
-              available: this.carnet
-                .listAvailableSkills(this.agentName)
-                .map((s) => s.name),
+              available: this.carnet.listAvailableSkills(this.agentName).map((s) => s.name),
             }
           }
         },
@@ -137,7 +116,7 @@ export class CarnetVercelAdapter {
     if (enabledTools.includes('listSkillToolsets')) {
       tools.listSkillToolsets = tool({
         description: 'List all toolsets available in a skill',
-        parameters: z.object({
+        inputSchema: z.object({
           skillName: z.string().describe('The name of the skill'),
         }),
         execute: async ({ skillName }) => {
@@ -164,7 +143,7 @@ export class CarnetVercelAdapter {
     if (enabledTools.includes('loadToolset')) {
       tools.loadToolset = tool({
         description: 'Load a toolset to get its instructions and available tools',
-        parameters: z.object({
+        inputSchema: z.object({
           toolsetName: z.string().describe('The name of the toolset to load'),
         }),
         execute: async ({ toolsetName }) => {
@@ -193,7 +172,7 @@ export class CarnetVercelAdapter {
     if (enabledTools.includes('loadTool')) {
       tools.loadTool = tool({
         description: 'Load a specific tool to get its full documentation and usage',
-        parameters: z.object({
+        inputSchema: z.object({
           toolName: z.string().describe('The name of the tool to load'),
         }),
         execute: async ({ toolName }) => {

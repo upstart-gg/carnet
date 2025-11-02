@@ -43,7 +43,7 @@ const carnet = new Carnet(manifest, process.cwd(), {
 ```typescript
 // Setup with variables
 const carnet = new Carnet(manifest, process.cwd(), {
-  variables: { API_URL: 'https://api.example.com' },
+  variables: { userFullName: 'John Doe' },
   envPrefixes: ['MYAPP_'],
 })
 
@@ -56,14 +56,12 @@ process.env.MYAPP_KEY = 'secret'
 ```typescript
 // Content with variables
 const content = carnet.getSkillContent('mySkill')
-// If skill contains: "API: {{ API_URL }}, Key: {{ MYAPP_KEY }}"
-// Result: "API: https://api.example.com, Key: secret"
 
 // Override for specific call
 const custom = carnet.getSkillContent('mySkill', {
-  variables: { API_URL: 'https://staging.example.com' }
+  variables: { userFullName: 'John Doe' }
 })
-// Result uses staging URL
+// {{ userFullName }} gets replaced with "John Doe" in all content
 ```
 
 ## Precedence Example
