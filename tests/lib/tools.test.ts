@@ -83,9 +83,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
     })
 
     it('should create only specified tools when tools option is provided', () => {
-      const tools = createCarnetTools(carnet, 'testAgent', {
-        tools: ['listAvailableSkills', 'loadSkill'],
-      })
+      const tools = createCarnetTools(carnet, 'testAgent')
       expect(Object.keys(tools)).toHaveLength(2)
       expect(Object.keys(tools)).toContain('listAvailableSkills')
       expect(Object.keys(tools)).toContain('loadSkill')
@@ -93,17 +91,16 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
     })
 
     it('should create empty ToolSet when tools array is empty', () => {
-      const tools = createCarnetTools(carnet, 'testAgent', {
-        tools: [],
-      })
-      expect(Object.keys(tools)).toHaveLength(0)
+      const tools = createCarnetTools(carnet, 'testAgent')
+      // Factory now always creates the minimal Carnet meta-tools; filtering is applied later by Carnet.getTools()
+      expect(Object.keys(tools)).toHaveLength(2)
     })
   })
 
   describe('listAvailableSkills tool', () => {
     it('should list all available skills', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.listAvailableSkills.execute({})
+      const result = (await tools.listAvailableSkills.execute({}, {})) as any
 
       expect(result.success).toBe(true)
       expect(result.skills).toBeDefined()
@@ -114,16 +111,16 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
 
     it('should include skill metadata in results', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.listAvailableSkills.execute({})
+      const result = (await tools.listAvailableSkills.execute({}, {})) as any
 
-      const skillA = result.skills.find((s) => s.name === 'skillA')
+      const skillA = result.skills.find((s: any) => s.name === 'skillA')
       expect(skillA.description).toBe('First skill')
       expect(skillA.toolsets).toEqual(['toolsetA'])
     })
 
     it('should return error for invalid agent', async () => {
       const tools = createCarnetTools(carnet, 'invalidAgent')
-      const result = await tools.listAvailableSkills.execute({})
+      const result = (await tools.listAvailableSkills.execute({}, {})) as any
 
       expect(result.success).toBe(false)
       expect(result.error).toBeDefined()
@@ -133,7 +130,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   describe('loadSkill tool', () => {
     it('should load skill content by name', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadSkill.execute({ skillName: 'skillA' })
+      const result = (await tools.loadSkill.execute({ skillName: 'skillA' }, {})) as any
 
       expect(result.success).toBe(true)
       expect(result.content).toContain('# Skill A')
@@ -143,7 +140,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
 
     it('should return error for non-existent skill', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadSkill.execute({ skillName: 'non-existent' })
+      const result = (await tools.loadSkill.execute({ skillName: 'non-existent' }, {})) as any
 
       expect(result.success).toBe(false)
       expect(result.error).toContain('Skill not found')
@@ -152,7 +149,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
 
     it('should list available skills when skill not found', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadSkill.execute({ skillName: 'missing' })
+      const result = (await tools.loadSkill.execute({ skillName: 'missing' }, {})) as any
 
       expect(result.available).toEqual(['skillA', 'skillB'])
     })
@@ -167,12 +164,12 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
 
       // Step 1: List available skills
-      const skillsList = await tools.listAvailableSkills.execute({})
+      const skillsList = (await tools.listAvailableSkills.execute({}, {})) as any
       expect(skillsList.success).toBe(true)
       expect(skillsList.skills).toHaveLength(2)
 
       // Step 2: Load a specific skill
-      const skillContent = await tools.loadSkill.execute({ skillName: 'skillA' })
+      const skillContent = (await tools.loadSkill.execute({ skillName: 'skillA' }, {})) as any
       expect(skillContent.success).toBe(true)
       expect(skillContent.content).toContain('# Skill A')
       // After loading a skill, domain tools from its toolsets are available when merging domain toolsets

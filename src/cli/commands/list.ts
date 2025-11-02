@@ -11,7 +11,11 @@ export function registerListCommand(program: Command) {
     .command('list [agent]')
     .alias('ls')
     .description('List agents with their skills and toolsets in tree format')
-    .option('--depth <level>', 'limit tree depth (1 for agents only, 2 for agents + skills, 3+ for full tree)', '3')
+    .option(
+      '--depth <level>',
+      'limit tree depth (1 for agents only, 2 for agents + skills, 3+ for full tree)',
+      '3'
+    )
     .action(async (agent, options) => {
       const globalOptions = program.opts()
       await runListCommand(agent, {

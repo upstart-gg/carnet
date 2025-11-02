@@ -1,4 +1,3 @@
-import type { ToolSet } from 'ai'
 import { tool } from 'ai'
 import { z } from 'zod'
 import type { Carnet } from './index'
@@ -64,17 +63,9 @@ export interface ToolOptions {
  * This function is used internally by Carnet.getTools() and should not be called directly by user code.
  * Users should invoke `carnet.getTools()` instead, which wraps and manages this factory internally.
  */
-export function createCarnetTools(
-  carnet: Carnet,
-  agentName: string,
-  options: ToolOptions = {}
-): ToolSet {
-  const enabledTools = options.tools ?? ['listAvailableSkills', 'loadSkill']
-
-  const tools: ToolSet = {}
-
-  if (enabledTools.includes('listAvailableSkills')) {
-    tools.listAvailableSkills = tool({
+export function createCarnetTools(carnet: Carnet, agentName: string) {
+  const tools = {
+    listAvailableSkills: tool({
       description: 'List all available skills for the agent',
       inputSchema: z.object({}),
       execute: async () => {
@@ -95,11 +86,8 @@ export function createCarnetTools(
           }
         }
       },
-    })
-  }
-
-  if (enabledTools.includes('loadSkill')) {
-    tools.loadSkill = tool({
+    }),
+    loadSkill: tool({
       description: 'Load a skill by name to get its full content and capabilities',
       inputSchema: z.object({
         skillName: z.string().describe('The name of the skill to load'),
@@ -125,8 +113,8 @@ export function createCarnetTools(
           }
         }
       },
-    })
-  }
+    }),
+  } as const
 
   // Note: only `listAvailableSkills` and `loadSkill` are exported as Carnet meta-tools.
   // Toolsets and individual tool loading are performed by domain tool providers

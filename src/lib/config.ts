@@ -33,7 +33,9 @@ export async function loadConfigFile(dir = './carnet'): Promise<CarnetConfig> {
  * @param processEnv Environment variables object (defaults to process.env)
  * @returns Partial config from environment variables
  */
-export function loadEnvConfig(processEnv: Record<string, string | undefined> = process.env): Partial<CarnetConfig> {
+export function loadEnvConfig(
+  processEnv: Record<string, string | undefined> = process.env
+): Partial<CarnetConfig> {
   const envConfig: Partial<CarnetConfig> = {}
 
   // String options
@@ -86,7 +88,7 @@ export function getDefaultConfig(): CarnetConfig {
 export function mergeConfigurations(
   fileConfig?: Partial<CarnetConfig>,
   envConfig?: Partial<CarnetConfig>,
-  cliConfig?: Partial<CarnetConfig>,
+  cliConfig?: Partial<CarnetConfig>
 ): CarnetConfig {
   // Start with defaults
   const merged = getDefaultConfig()

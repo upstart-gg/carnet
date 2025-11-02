@@ -1,12 +1,11 @@
-import { describe, it, expect } from 'vitest'
-import { loadEnvConfig, mergeConfigurations, getDefaultConfig } from '../../src/lib/config'
+import { describe, expect, it } from 'bun:test'
+import { loadEnvConfig, mergeConfigurations } from '../../src/lib/config'
 
 describe('loadEnvConfig', () => {
   it('should return empty object when no env vars are set', () => {
     const config = loadEnvConfig({})
     expect(config).toEqual({})
   })
-
 
   it('should load CARNET_OUTPUT', () => {
     const config = loadEnvConfig({ CARNET_OUTPUT: './build' })

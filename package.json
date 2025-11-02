@@ -25,7 +25,7 @@
     "dev": "bun build --watch",
     "build": "bun build src/lib/index.ts src/cli/index.ts --outdir dist --target node",
     "test": "bun test",
-    "lint": "biome lint src",
+    "lint": "biome lint src tests",
     "format": "biome format --write src",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

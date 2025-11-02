@@ -519,7 +519,7 @@ export class Carnet {
    */
   getTools(agentName: string, options: ToolOptions = {}): ToolSet {
     const session = this.getOrCreateSession(agentName)
-    const carnetTools = createCarnetTools(this, agentName, options)
+    const carnetTools = createCarnetTools(this, agentName)
 
     let merged = mergeToolSets(carnetTools, session, options.toolsets ?? {})
 

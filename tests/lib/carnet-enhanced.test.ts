@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { Carnet } from '../../src/lib/index'
 import type { Manifest } from '../../src/lib/types'
 
@@ -225,7 +225,7 @@ describe('Carnet - Enhanced API', () => {
         },
         skills: {
           ...manifest.skills,
-          'skillC': {
+          skillC: {
             name: 'skillC',
             description: 'Skill C',
             toolsets: [],
@@ -390,7 +390,7 @@ describe('Carnet - Enhanced API', () => {
 
   describe('constructor options', () => {
     it('should accept and use custom variables', () => {
-      const customCarnet = new Carnet(manifest, process.cwd(), {
+      const _customCarnet = new Carnet(manifest, process.cwd(), {
         variables: { CUSTOM: 'custom-value' },
       })
 
@@ -477,8 +477,8 @@ describe('Carnet - Enhanced API', () => {
 
     it('should maintain agents getter', () => {
       const agents = carnet.agents
-      expect(agents['testAgent']).toBeDefined()
-      expect(agents['testAgent'].name).toBe('testAgent')
+      expect(agents.testAgent).toBeDefined()
+      expect(agents.testAgent.name).toBe('testAgent')
     })
   })
 })

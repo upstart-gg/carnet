@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 import { VariableInjector } from '../../src/lib/variable-injector'
 
 describe('VariableInjector', () => {
@@ -35,7 +35,7 @@ describe('VariableInjector', () => {
     })
 
     it('should inject environment variables with allowed prefixes', () => {
-      const originalEnv = process.env
+      const _originalEnv = process.env
       process.env.CARNET_API_KEY = 'secret123'
       process.env.PUBLIC_URL = 'https://example.com'
       process.env.PRIVATE_KEY = 'should-not-appear'
