@@ -30,6 +30,20 @@ export interface ToolOptions {
   toolsets?: Record<string, DomainToolSet>
 }
 
+type ListAvailableResult =
+  | {
+      success: true
+      skills: Array<{
+        name: string
+        description: string
+        toolsets: string[]
+      }>
+    }
+  | {
+      success: false
+      error: string
+    }
+
 /**
  * Create a complete ToolSet for use with Vercel AI SDK
  *
@@ -68,7 +82,7 @@ export function createCarnetTools(carnet: Carnet, agentName: string) {
     listAvailableSkills: tool({
       description: 'List all available skills for the agent',
       inputSchema: z.object({}),
-      execute: async () => {
+      execute: async (): Promise<ListAvailableResult> => {
         try {
           const skills = carnet.listAvailableSkills(agentName)
           return {
@@ -114,7 +128,7 @@ export function createCarnetTools(carnet: Carnet, agentName: string) {
         }
       },
     }),
-  } as const
+  }
 
   // Note: only `listAvailableSkills` and `loadSkill` are exported as Carnet meta-tools.
   // Toolsets and individual tool loading are performed by domain tool providers

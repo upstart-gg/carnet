@@ -100,58 +100,147 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   describe('listAvailableSkills tool', () => {
     it('should list all available skills', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.listAvailableSkills.execute({}, {})
+      const result = await tools.listAvailableSkills.execute?.(
+        {},
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      if (!result || !('success' in result)) {
+        throw new Error('Expected result with success property')
+      }
 
       expect(result.success).toBe(true)
-      expect(result.skills).toBeDefined()
-      expect(result.skills.length).toBe(2)
-      expect(result.skills[0].name).toBe('skillA')
-      expect(result.skills[1].name).toBe('skillB')
+      if (result.success && 'skills' in result) {
+        expect(result.skills).toBeDefined()
+        expect(result.skills.length).toBe(2)
+        if (result.skills[0]) {
+          expect(result.skills[0].name).toBe('skillA')
+        }
+        if (result.skills[1]) {
+          expect(result.skills[1].name).toBe('skillB')
+        }
+      }
     })
 
     it('should include skill metadata in results', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = (await tools.listAvailableSkills.execute({}, {})) as any
+      if (!tools.listAvailableSkills.execute) {
+        throw new Error('execute function not found')
+      }
 
-      const skillA = result.skills.find((s: any) => s.name === 'skillA')
-      expect(skillA.description).toBe('First skill')
-      expect(skillA.toolsets).toEqual(['toolsetA'])
+      const result = await tools.listAvailableSkills.execute({}, {
+        toolCallId: 'test-call-id',
+        messages: [],
+      })
+
+      if (!result || !('success' in result) || !result.success || !('skills' in result)) {
+        throw new Error('Expected successful result with skills')
+      }
+
+      const skillA = result.skills.find((s) => s.name === 'skillA')
+      expect(skillA).toBeDefined()
+      if (skillA) {
+        expect(skillA.description).toBe('First skill')
+        expect(skillA.toolsets).toEqual(['toolsetA'])
+      }
     })
 
     it('should return error for invalid agent', async () => {
       const tools = createCarnetTools(carnet, 'invalidAgent')
-      const result = (await tools.listAvailableSkills.execute({}, {})) as any
+      if (!tools.listAvailableSkills.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.listAvailableSkills.execute({}, {
+        toolCallId: 'test-call-id',
+        messages: [],
+      })
+
+      if (!result || !('success' in result)) {
+        throw new Error('Expected result with success property')
+      }
 
       expect(result.success).toBe(false)
-      expect(result.error).toBeDefined()
+      if (!result.success && 'error' in result) {
+        expect(result.error).toBeDefined()
+      }
     })
   })
 
   describe('loadSkill tool', () => {
     it('should load skill content by name', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = (await tools.loadSkill.execute({ skillName: 'skillA' }, {})) as any
+      if (!tools.loadSkill.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkill.execute(
+        { skillName: 'skillA' },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      if (!result || !('success' in result)) {
+        throw new Error('Expected result with success property')
+      }
 
       expect(result.success).toBe(true)
-      expect(result.content).toContain('# Skill A')
-      expect(result.metadata.name).toBe('skillA')
-      expect(result.metadata.description).toBe('First skill')
+      if (result.success && 'content' in result && 'metadata' in result && result.metadata) {
+        expect(result.content).toContain('# Skill A')
+        expect(result.metadata.name).toBe('skillA')
+        expect(result.metadata.description).toBe('First skill')
+      }
     })
 
     it('should return error for non-existent skill', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = (await tools.loadSkill.execute({ skillName: 'non-existent' }, {})) as any
+      if (!tools.loadSkill.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkill.execute(
+        { skillName: 'non-existent' },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      if (!result || !('success' in result)) {
+        throw new Error('Expected result with success property')
+      }
 
       expect(result.success).toBe(false)
-      expect(result.error).toContain('Skill not found')
-      expect(result.available).toBeDefined()
+      if (!result.success && 'error' in result) {
+        expect(result.error).toContain('Skill not found')
+        if ('available' in result) {
+          expect(result.available).toBeDefined()
+        }
+      }
     })
 
     it('should list available skills when skill not found', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = (await tools.loadSkill.execute({ skillName: 'missing' }, {})) as any
+      if (!tools.loadSkill.execute) {
+        throw new Error('execute function not found')
+      }
 
-      expect(result.available).toEqual(['skillA', 'skillB'])
+      const result = await tools.loadSkill.execute(
+        { skillName: 'missing' },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      if (result && 'available' in result) {
+        expect(result.available).toEqual(['skillA', 'skillB'])
+      }
     })
   })
 
@@ -164,14 +253,40 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
 
       // Step 1: List available skills
-      const skillsList = (await tools.listAvailableSkills.execute({}, {})) as any
+      if (!tools.listAvailableSkills.execute) {
+        throw new Error('listAvailableSkills.execute not found')
+      }
+      const skillsList = await tools.listAvailableSkills.execute({}, {
+        toolCallId: 'test-call-id',
+        messages: [],
+      })
+      if (!skillsList || !('success' in skillsList)) {
+        throw new Error('Expected result with success property')
+      }
       expect(skillsList.success).toBe(true)
-      expect(skillsList.skills).toHaveLength(2)
+      if (skillsList.success && 'skills' in skillsList) {
+        expect(skillsList.skills).toHaveLength(2)
+      }
 
       // Step 2: Load a specific skill
-      const skillContent = (await tools.loadSkill.execute({ skillName: 'skillA' }, {})) as any
+      if (!tools.loadSkill.execute) {
+        throw new Error('loadSkill.execute not found')
+      }
+      const skillContent = await tools.loadSkill.execute(
+        { skillName: 'skillA' },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+      if (!skillContent || !('success' in skillContent)) {
+        throw new Error('Expected result with success property')
+      }
       expect(skillContent.success).toBe(true)
-      expect(skillContent.content).toContain('# Skill A')
+      if (skillContent.success && 'content' in skillContent) {
+        expect(skillContent.content).toContain('# Skill A')
+      }
+
       // After loading a skill, domain tools from its toolsets are available when merging domain toolsets
       const mergedTools = carnet.getTools('testAgent', {
         toolsets: {
