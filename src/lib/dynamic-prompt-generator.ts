@@ -1,5 +1,7 @@
+import type { ToolSet } from 'ai'
 import { PromptGenerator } from './prompt-generator'
-import type { CarnetSessionState, DomainToolSet, Manifest } from './types'
+import type { ToolRegistry } from './tool-registry'
+import type { CarnetSessionState, Manifest } from './types'
 
 /**
  * Extends the base PromptGenerator to add dynamic sections to the prompt
@@ -41,19 +43,14 @@ export class DynamicPromptGenerator extends PromptGenerator {
    */
   public generateAvailableToolsSection(
     session: CarnetSessionState,
-    availableToolsets: Record<string, DomainToolSet>
+    toolsRegistery: ToolRegistry
   ): string {
     if (session.exposedDomainTools.size === 0) {
       return ''
     }
 
     const toolNames = Array.from(session.exposedDomainTools)
-    const allTools: import('ai').ToolSet = {}
-
-    for (const toolsetName of session.loadedToolsets) {
-      const toolset = availableToolsets[toolsetName]
-      if (toolset) Object.assign(allTools, toolset)
-    }
+    const allTools: ToolSet = toolsRegistery.getToolsForToolsets(session.loadedToolsets)
 
     const toolDetails = toolNames
       .map((toolName) => {

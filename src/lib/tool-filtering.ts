@@ -13,7 +13,7 @@ import type { CarnetSessionState, DomainToolSet } from './types'
 export function mergeToolSets(
   carnetTools: ToolSet,
   session: CarnetSessionState,
-  availableToolsets: Record<string, DomainToolSet> = {}
+  availableToolsets: DomainToolSet = {}
 ): ToolSet {
   // Get domain tools from loaded toolsets
   const domainTools: ToolSet = {}

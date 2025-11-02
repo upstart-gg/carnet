@@ -98,9 +98,9 @@ describe('Domain Tools Integration', () => {
 
   it('should expose initial domain tools on startup', () => {
     const tools = carnet.getTools('researcher', {
-      toolsets: {
-        search: searchTools,
-        analysis: analysisTools,
+      tools: {
+        ...searchTools,
+        ...analysisTools,
       },
     })
     const toolNames = Object.keys(tools)
@@ -115,9 +115,9 @@ describe('Domain Tools Integration', () => {
     carnet._updateSessionOnSkillLoad('researcher', 'dataAnalysis')
 
     const tools = carnet.getTools('researcher', {
-      toolsets: {
-        search: searchTools,
-        analysis: analysisTools,
+      tools: {
+        ...searchTools,
+        ...analysisTools,
       },
     })
     const toolNames = Object.keys(tools)
@@ -156,9 +156,9 @@ describe('Domain Tools Integration', () => {
     // Load a skill to change the state
     carnet._updateSessionOnSkillLoad('researcher', 'dataAnalysis')
     let tools = carnet.getTools('researcher', {
-      toolsets: {
-        search: searchTools,
-        analysis: analysisTools,
+      tools: {
+        ...searchTools,
+        ...analysisTools,
       },
     })
     expect(Object.keys(tools)).toContain('analyzeData')
@@ -168,9 +168,9 @@ describe('Domain Tools Integration', () => {
 
     // Verify the state is reset
     tools = carnet.getTools('researcher', {
-      toolsets: {
-        search: searchTools,
-        analysis: analysisTools,
+      tools: {
+        ...searchTools,
+        ...analysisTools,
       },
     })
     const toolNames = Object.keys(tools)

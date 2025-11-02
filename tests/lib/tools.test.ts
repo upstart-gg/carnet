@@ -131,10 +131,13 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
         throw new Error('execute function not found')
       }
 
-      const result = await tools.listAvailableSkills.execute({}, {
-        toolCallId: 'test-call-id',
-        messages: [],
-      })
+      const result = await tools.listAvailableSkills.execute(
+        {},
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
 
       if (!result || !('success' in result) || !result.success || !('skills' in result)) {
         throw new Error('Expected successful result with skills')
@@ -154,10 +157,13 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
         throw new Error('execute function not found')
       }
 
-      const result = await tools.listAvailableSkills.execute({}, {
-        toolCallId: 'test-call-id',
-        messages: [],
-      })
+      const result = await tools.listAvailableSkills.execute(
+        {},
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
 
       if (!result || !('success' in result)) {
         throw new Error('Expected result with success property')
@@ -256,10 +262,13 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       if (!tools.listAvailableSkills.execute) {
         throw new Error('listAvailableSkills.execute not found')
       }
-      const skillsList = await tools.listAvailableSkills.execute({}, {
-        toolCallId: 'test-call-id',
-        messages: [],
-      })
+      const skillsList = await tools.listAvailableSkills.execute(
+        {},
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
       if (!skillsList || !('success' in skillsList)) {
         throw new Error('Expected result with success property')
       }
@@ -289,26 +298,22 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
 
       // After loading a skill, domain tools from its toolsets are available when merging domain toolsets
       const mergedTools = carnet.getTools('testAgent', {
-        toolsets: {
-          toolsetA: {
-            toolA1: tool({
-              description: 'A',
-              inputSchema: z.object({}),
-              execute: async () => ({ ok: true }),
-            }),
-            toolA2: tool({
-              description: 'A2',
-              inputSchema: z.object({}),
-              execute: async () => ({ ok: true }),
-            }),
-          },
-          toolsetB: {
-            toolB1: tool({
-              description: 'B1',
-              inputSchema: z.object({}),
-              execute: async () => ({ ok: true }),
-            }),
-          },
+        tools: {
+          toolA1: tool({
+            description: 'A',
+            inputSchema: z.object({}),
+            execute: async () => ({ ok: true }),
+          }),
+          toolA2: tool({
+            description: 'A2',
+            inputSchema: z.object({}),
+            execute: async () => ({ ok: true }),
+          }),
+          toolB1: tool({
+            description: 'B1',
+            inputSchema: z.object({}),
+            execute: async () => ({ ok: true }),
+          }),
         },
       })
 

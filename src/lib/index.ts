@@ -187,27 +187,24 @@ export class Carnet {
     // biome-ignore lint/style/noNonNullAssertion: safe to assume session exists here
     return this.sessions.get(agentName)!
   }
+
   /**
    * Get all agents from the manifest
    * @returns Record of agent name to agent definition
    */
-  get agents(): Manifest['agents'] {
+  get agents() {
     return this.manifest.agents
   }
 
   /**
    * Get a single agent by name
-   * @param name The name of the agent to retrieve
-   * @returns The agent definition, or undefined if not found
    */
-  getAgent(name: string, _options: { rewritePrompt?: boolean } = { rewritePrompt: true }) {
+  getAgent(name: string) {
     return this.manifest.agents[name]
   }
 
   /**
    * Get a skill by name
-   * @param name The name of the skill to retrieve
-   * @returns The skill definition, or undefined if not found
    */
   getSkill(name: string) {
     return this.manifest.skills[name]
@@ -404,20 +401,8 @@ export class Carnet {
    * - Instructions for progressive skill loading
    * - Variable substitution
    *
-   * @param agentName The name of the agent
-   * @param options Generation options
-   * @param options.includeSkillCatalog Whether to include the skill catalog (default: true)
-   * @param options.includeInitialSkills Whether to include initial skills content (default: true)
-   * @param options.variables Custom variables for injection
    * @returns Generated prompt object with content and metadata
    * @throws Error if agent not found
-   * @example
-   * ```typescript
-   * const prompt = carnet.generateAgentPrompt('researcher', {
-   *   variables: { domain: 'science' }
-   * })
-   * // Use prompt.content with your LLM
-   * ```
    */
   generateAgentPrompt(
     agentName: string,
@@ -455,7 +440,7 @@ export class Carnet {
       )
     }
     if (options.includeAvailableTools) {
-      const availableToolsets = (options as import('./tools').ToolOptions).toolsets ?? {}
+      const availableToolsets = options.tools ?? {}
       const availableToolsSection = (
         this.promptGenerator as DynamicPromptGenerator
       ).generateAvailableToolsSection(session, availableToolsets)
@@ -472,19 +457,8 @@ export class Carnet {
   /**
    * Generate a system prompt for an agent, ready to use with Vercel AI SDK
    *
-   * @param agentName The name of the agent
-   * @param options Generation options
-   * @param options.includeSkillCatalog Whether to include the skill catalog (default: true)
-   * @param options.includeInitialSkills Whether to include initial skills content (default: true)
-   * @param options.variables Custom variables for injection
    * @returns The system prompt string
    * @throws Error if agent not found
-   * @example
-   * ```typescript
-   * const systemPrompt = carnet.getSystemPrompt('researcher', {
-   *   variables: { domain: 'science' }
-   * })
-   * ```
    */
   getSystemPrompt(agentName: string, options: PromptOptions = {}): string {
     const prompt = this.generateAgentPrompt(agentName, options)
@@ -494,42 +468,20 @@ export class Carnet {
   /**
    * Get a ToolSet compatible with Vercel AI SDK for an agent
    *
-   * Creates five tools for progressive skill and content loading:
+   * Merge 2 tools for progressive skill and content loading:
    * - listAvailableSkills: List all available skills for the agent
    * - loadSkill: Load a specific skill with full content
-   * - listSkillToolsets: List toolsets within a skill
-   * - loadToolset: Load a specific toolset with instructions
-   * - loadTool: Load a specific tool with full documentation
+   *
+   * With domain tools provided via the `tools` option.
    *
    * @param agentName The name of the agent
-   * @param options Configuration options for which tools to expose
+   * @param options Configuration options containing domain tools
    * @returns A ToolSet for use with Vercel AI SDK
    * @throws Error if agent not found
-   * @example
-   * ```typescript
-   * const tools = carnet.getTools('my-agent')
-   *
-   * const result = await streamText({
-   *   model: openai('gpt-4'),
-   *   system: carnet.getSystemPrompt('my-agent'),
-   *   tools,
-   *   messages: [...]
-   * })
-   * ```
    */
   getTools(agentName: string, options: ToolOptions = {}): ToolSet {
     const session = this.getOrCreateSession(agentName)
     const carnetTools = createCarnetTools(this, agentName)
-
-    let merged = mergeToolSets(carnetTools, session, options.toolsets ?? {})
-
-    // Apply optional filtering from the ToolOptions
-    if (options.tools) {
-      merged = Object.fromEntries(
-        Object.entries(merged).filter(([name]) => options.tools?.includes(name))
-      )
-    }
-
-    return merged
+    return mergeToolSets(carnetTools, session, options.tools ?? {})
   }
 }

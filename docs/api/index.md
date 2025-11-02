@@ -45,7 +45,7 @@ Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of bui
 - `listAvailableSkills` – lists all skills for an agent.
 - `loadSkill` – loads and initializes a skill (and updates session state).
 
-These meta‑tools are used alongside any domain tools you provide via the `toolsets` option. They are created internally by `Carnet.getTools()` and are not intended for direct instantiation.
+These meta‑tools are used alongside any domain tools you provide via the `toolsets` option. They are created internally and are not intended for direct instantiation.
 
 **Example:**
 ```typescript

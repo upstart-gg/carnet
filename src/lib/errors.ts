@@ -1,9 +1,4 @@
 /**
- * Custom error types for Carnet
- * Provides structured error handling with context and actionable messages
- */
-
-/**
  * Base error class for all Carnet errors
  * Provides consistent error interface with optional context
  */

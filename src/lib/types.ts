@@ -35,6 +35,7 @@ export interface ContentRetrievalOptions {
 // Agent prompt generation options
 export interface GenerateAgentPromptOptions {
   variables?: Record<string, string>
+  tools?: DomainToolSet
   includeInitialSkills?: boolean // default: true
   includeSkillCatalog?: boolean // default: true
   includeLoadedSkills?: boolean // default: true
