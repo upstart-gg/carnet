@@ -153,11 +153,11 @@ carnet list
 
 ### Production Build
 ```bash
-# Build with specific config
-carnet build --config ./config.prod.json --output ./dist
+# Build for deployment
+carnet build --output ./dist
 
 # Lint the output
-carnet lint --config ./config.prod.json
+carnet lint
 ```
 
 ## Help & Documentation

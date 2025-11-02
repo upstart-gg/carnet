@@ -10,12 +10,11 @@ carnet show [type] [name]
 
 ## Arguments
 
-- `type`
-- `name`
+- `<type>` - The type of entity to display. Valid values: `agent`, `skill`, `toolset`, or `tool`.
+- `<name>` - The name of the entity to display.
 
 ## Options
 
 | Option | Description |
 |--------|-------------|
-| `-c, --config <path>` | path to the carnet config file |
-| `-d, --dir <dir>` | content directory (default: ./carnet) |
+| `-d, --dir <dir>` | Carnet project directory containing carnet.config.json and content (agents, skills, toolsets). Defaults to `./carnet` |
