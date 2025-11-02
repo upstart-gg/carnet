@@ -1,5 +1,6 @@
 import { existsSync, promises as fs } from 'node:fs'
 import type { ToolSet } from 'ai'
+import { ConfigError, ValidationError } from './errors'
 import { DynamicPromptGenerator } from './dynamic-prompt-generator'
 import type { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
@@ -15,6 +16,7 @@ import type {
   Manifest,
   PromptOptions,
   SkillMetadata,
+  ToolFilteringDiagnostics,
   ToolMetadata,
   ToolsetMetadata,
 } from './types'
@@ -23,6 +25,7 @@ import { VariableInjector } from './variable-injector'
 export { PromptGenerator } from './prompt-generator'
 export { ToolRegistry } from './tool-registry'
 export type { ToolOptions } from './tools'
+export type { ToolFilteringDiagnostics } from './types'
 export * from './types'
 export { VariableInjector } from './variable-injector'
 
@@ -97,7 +100,7 @@ export class Carnet {
     cwd?: string
   ): Promise<Carnet> {
     if (!existsSync(manifestPath)) {
-      throw new Error(`Manifest file not found: ${manifestPath}`)
+      throw new ConfigError(`Manifest file not found`, { manifestPath })
     }
     const content = await fs.readFile(manifestPath, 'utf-8')
     const manifest = JSON.parse(content)
@@ -107,7 +110,9 @@ export class Carnet {
   private validateManifest(manifest: unknown): Manifest {
     const parsed = manifestSchema.safeParse(manifest)
     if (!parsed.success) {
-      throw new Error(`Invalid manifest: ${parsed.error.message}`)
+      throw new ValidationError(`Invalid manifest format`, 'manifest', 'root', {
+        error: parsed.error.message,
+      })
     }
     return parsed.data
   }
@@ -126,6 +131,24 @@ export class Carnet {
 
   public resetSession(agentName: string): void {
     this.sessions.delete(agentName)
+  }
+
+  /**
+   * Inspects the current session state for an agent.
+   * Useful for debugging why certain tools are or aren't available.
+   * @param agentName The name of the agent
+   * @returns The session state (discovered skills, loaded toolsets, exposed tools) or null if no session exists
+   */
+  public getSessionState(agentName: string): CarnetSessionState | null {
+    const session = this.sessions.get(agentName)
+    if (!session) return null
+
+    return {
+      agentName: session.agentName,
+      discoveredSkills: new Set(session.discoveredSkills),
+      loadedToolsets: new Set(session.loadedToolsets),
+      exposedDomainTools: new Set(session.exposedDomainTools),
+    }
   }
 
   /**
@@ -161,7 +184,7 @@ export class Carnet {
     if (!this.sessions.has(agentName)) {
       const agent = this.getAgent(agentName)
       if (!agent) {
-        throw new Error(`Agent not found: ${agentName}`)
+        throw new ValidationError(`Agent not found`, 'agent', agentName)
       }
 
       const initialSkills = new Set(agent.initialSkills)
@@ -247,7 +270,7 @@ export class Carnet {
   getSkillContent(name: string, options: ContentRetrievalOptions = {}): string {
     const skill = this.manifest.skills[name]
     if (!skill) {
-      throw new Error(`Skill not found: ${name}`)
+      throw new ValidationError(`Skill not found`, 'skill', name)
     }
 
     if (options.raw) {
@@ -267,7 +290,7 @@ export class Carnet {
   getToolsetContent(name: string, options: ContentRetrievalOptions = {}): string {
     const toolset = this.manifest.toolsets[name]
     if (!toolset) {
-      throw new Error(`Toolset not found: ${name}`)
+      throw new ValidationError(`Toolset not found`, 'toolset', name)
     }
 
     if (options.raw) {
@@ -287,7 +310,7 @@ export class Carnet {
   getToolContent(name: string, options: ContentRetrievalOptions = {}): string {
     const tool = this.manifest.tools[name]
     if (!tool) {
-      throw new Error(`Tool not found: ${name}`)
+      throw new ValidationError(`Tool not found`, 'tool', name)
     }
 
     if (options.raw) {
@@ -309,7 +332,7 @@ export class Carnet {
   getSkillMetadata(name: string): SkillMetadata {
     const skill = this.manifest.skills[name]
     if (!skill) {
-      throw new Error(`Skill not found: ${name}`)
+      throw new ValidationError(`Skill not found`, 'skill', name)
     }
 
     return {
@@ -325,7 +348,7 @@ export class Carnet {
   getToolsetMetadata(name: string): ToolsetMetadata {
     const toolset = this.manifest.toolsets[name]
     if (!toolset) {
-      throw new Error(`Toolset not found: ${name}`)
+      throw new ValidationError(`Toolset not found`, 'toolset', name)
     }
 
     return {
@@ -341,7 +364,7 @@ export class Carnet {
   getToolMetadata(name: string): ToolMetadata {
     const tool = this.manifest.tools[name]
     if (!tool) {
-      throw new Error(`Tool not found: ${name}`)
+      throw new ValidationError(`Tool not found`, 'tool', name)
     }
 
     return {
@@ -357,7 +380,7 @@ export class Carnet {
   listAvailableSkills(agentName: string): SkillMetadata[] {
     const agent = this.manifest.agents[agentName]
     if (!agent) {
-      throw new Error(`Agent not found: ${agentName}`)
+      throw new ValidationError(`Agent not found`, 'agent', agentName)
     }
 
     const allSkillNames = [...new Set([...agent.initialSkills, ...agent.skills])]
@@ -372,7 +395,7 @@ export class Carnet {
   listSkillToolsets(skillName: string): ToolsetMetadata[] {
     const skill = this.manifest.skills[skillName]
     if (!skill) {
-      throw new Error(`Skill not found: ${skillName}`)
+      throw new ValidationError(`Skill not found`, 'skill', skillName)
     }
 
     return skill.toolsets
@@ -386,7 +409,7 @@ export class Carnet {
   listToolsetTools(toolsetName: string): ToolMetadata[] {
     const toolset = this.manifest.toolsets[toolsetName]
     if (!toolset) {
-      throw new Error(`Toolset not found: ${toolsetName}`)
+      throw new ValidationError(`Toolset not found`, 'toolset', toolsetName)
     }
 
     return toolset.tools
@@ -413,7 +436,7 @@ export class Carnet {
   ): GeneratedPrompt {
     const agent = this.manifest.agents[agentName]
     if (!agent) {
-      throw new Error(`Agent not found: ${agentName}`)
+      throw new ValidationError(`Agent not found`, 'agent', agentName)
     }
 
     const session = this.getOrCreateSession(agentName)
@@ -492,10 +515,16 @@ export class Carnet {
    *
    * With domain tools provided via the `tools` option.
    *
+   * Tool Filtering Diagnostics:
+   * - Only tools in session.exposedDomainTools are included
+   * - Tools not in this set are filtered out (see getToolFilteringDiagnostics)
+   * - Filtering occurs after skill loading to progressively expose tools
+   *
    * @param agentName The name of the agent
    * @param options Configuration options containing domain tools
    * @returns A ToolSet for use with Vercel AI SDK
-   * @throws Error if agent not found
+   * @throws ValidationError if agent not found
+   * @see getToolFilteringDiagnostics For debugging tool filtering decisions
    */
   getTools(agentName: string, options: ToolOptions = {}): ToolSet {
     const session = this.getOrCreateSession(agentName)
@@ -507,18 +536,63 @@ export class Carnet {
     const runtimeTools = options.tools ?? {}
     if (Object.keys(runtimeTools).length > 0) {
       const exposedRuntimeTools: typeof runtimeTools = {}
-      for (const toolName of session.exposedDomainTools) {
-        const tool = runtimeTools[toolName]
-        if (tool) {
-          exposedRuntimeTools[toolName] = tool
+      const filteredOutTools: string[] = []
+
+      for (const toolName of Object.keys(runtimeTools)) {
+        if (session.exposedDomainTools.has(toolName)) {
+          const tool = runtimeTools[toolName]
+          if (tool) {
+            exposedRuntimeTools[toolName] = tool
+          }
+        } else {
+          filteredOutTools.push(toolName)
         }
       }
+
       if (Object.keys(exposedRuntimeTools).length > 0) {
         toolRegistry.register('runtime-tools', exposedRuntimeTools)
         session.loadedToolsets.add('runtime-tools')
       }
+
+      // Store diagnostics on session for debugging
+      session.__toolFilteringDiagnostics = {
+        exposedTools: Array.from(session.exposedDomainTools),
+        filteredOutTools,
+        providedTools: Object.keys(runtimeTools),
+        reason: 'Tools filtered based on currently loaded skills and toolsets',
+      }
     }
 
     return mergeToolSets(carnetTools, session, toolRegistry)
+  }
+
+  /**
+   * Get tool filtering diagnostics for debugging tool availability.
+   * Useful for understanding why certain tools are or aren't available.
+   *
+   * @param agentName The name of the agent
+   * @returns Object with filtering diagnostics or null if no session exists
+   * @example
+   * ```typescript
+   * const diagnostics = carnet.getToolFilteringDiagnostics('myAgent')
+   * console.log(`Filtered out tools: ${diagnostics?.filteredOutTools.join(', ')}`)
+   * console.log(`Exposed tools: ${diagnostics?.exposedTools.join(', ')}`)
+   * ```
+   */
+  getToolFilteringDiagnostics(agentName: string): ToolFilteringDiagnostics | null {
+    const session = this.sessions.get(agentName)
+    if (!session) return null
+
+    const diagnostics = session.__toolFilteringDiagnostics
+    if (!diagnostics) {
+      return {
+        exposedTools: Array.from(session.exposedDomainTools),
+        filteredOutTools: [],
+        providedTools: [],
+        reason: 'No tools provided or filtering not yet performed',
+      }
+    }
+
+    return diagnostics
   }
 }

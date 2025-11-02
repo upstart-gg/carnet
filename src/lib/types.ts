@@ -62,9 +62,25 @@ export interface PromptOptions {
 // Domain toolset type - a collection of executable Vercel AI SDK tools
 export type DomainToolSet = Record<string, import('ai').Tool>
 
+export interface ToolFilteringDiagnostics {
+  exposedTools: string[]
+  filteredOutTools: string[]
+  providedTools: string[]
+  reason: string
+}
+
 export interface CarnetSessionState {
   agentName: string
   discoveredSkills: Set<string>
   loadedToolsets: Set<string>
   exposedDomainTools: Set<string>
+  __toolFilteringDiagnostics?: ToolFilteringDiagnostics
+}
+
+// Public session state interface for inspection and debugging
+export interface SessionState {
+  agentName: string
+  discoveredSkills: readonly string[]
+  loadedToolsets: readonly string[]
+  exposedDomainTools: readonly string[]
 }
