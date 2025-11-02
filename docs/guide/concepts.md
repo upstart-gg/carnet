@@ -134,42 +134,12 @@ Use for:
 - Domain-focused tools
 - Custom configurations
 
-## File Organization
+## File Organization & More
 
-Agents, skills, and toolsets live in their own directories. Tools are defined as markdown files within their parent toolset directory:
-
-```
-content/
-├── agents/
-│   └── my-agent/AGENT.md
-├── skills/
-│   └── my-skill/SKILL.md
-└── toolsets/
-    └── my-toolset/
-        ├── TOOLSET.md
-        ├── my-tool-1.md
-        ├── my-tool-2.md
-        └── my-tool-3.md
-```
-
-**Naming conventions:**
-- Directories: lowercase with hyphens (`my-agent`, `code-formatter`, `my-toolset`)
-- Entity names: match directory name
-- Files: UPPERCASE for TOOLSET/AGENT/SKILL (`AGENT.md`, `SKILL.md`, `TOOLSET.md`), lowercase for tools (`my-tool.md`)
-
-**Key point:** Tools are not in a separate `tools/` directory. Instead, each tool is a markdown file directly inside its parent toolset directory.
-
-## The Build Process
-
-When you run `carnet build`:
-
-1. **Discover** - Find all markdown files in content directory
-2. **Parse** - Extract YAML frontmatter and markdown content
-3. **Validate** - Check schemas and reference integrity
-4. **Compile** - Generate optimized manifest
-5. **Output** - Save `dist/carnet.manifest.json`
-
-The manifest is a single JSON file containing all your agents, skills, toolsets, and tools, ready for runtime loading.
+For detailed information on file organization, naming conventions, and the build process, see the [Configuration](/configuration/) section which covers:
+- [Content Structure](/configuration/content-structure/agents.md) - File layout and organization
+- [Configuration Files](/configuration/config-file.md) - carnet.config.json setup
+- [Manifest Schema](/configuration/manifest-schema.md) - Generated output format
 
 ## Key Design Principles
 
@@ -215,9 +185,3 @@ graph TD
 4. **Use meaningful names** - Descriptive entity names improve clarity
 5. **Reference existing entities** - Build new agents from existing skills/tools
 
-## Next Steps
-
-- Learn how to [structure content](/configuration/content-structure/agents)
-- Explore [CLI commands](/cli/)
-- Check the [API reference](/api/)
-- See [configuration options](/configuration/)

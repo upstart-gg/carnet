@@ -34,7 +34,7 @@ After installation, verify it works:
 carnet --version
 ```
 
-## Local Installation (For Projects)
+## Local Installation (For programmatic use)
 
 Install Carnet in your project for programmatic use with Vercel AI SDK:
 
@@ -69,33 +69,6 @@ npm install @ai-sdk/anthropic # Anthropic provider
 # or another Vercel AI SDK compatible provider
 ```
 
-## Use Without Installing
-
-Run Carnet commands without any installation using your package manager:
-
-:::tabs key:pm
-== npm
-```bash
-npx @upstart-gg/carnet init my-agents
-```
-
-== bun
-```bash
-bunx @upstart-gg/carnet init my-agents
-```
-
-== pnpm
-```bash
-pnpm dlx @upstart-gg/carnet init my-agents
-```
-
-== yarn
-```bash
-yarn dlx @upstart-gg/carnet init my-agents
-```
-:::
-
-This is useful for one-off commands or trying Carnet before committing to installation.
 
 ## System Requirements
 

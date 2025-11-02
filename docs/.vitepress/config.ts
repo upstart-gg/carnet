@@ -3,7 +3,8 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 
 export default defineConfig({
   title: 'Carnet',
-  description: 'Build system and content management for AI agents',
+  description:
+    'Framework for building AI agents with Vercel AI SDK using markdown-based definitions',
   lang: 'en-US',
 
   ignoreDeadLinks: [],
@@ -50,17 +51,7 @@ export default defineConfig({
           text: 'Learning',
           items: [
             { text: 'Core Concepts', link: '/guide/concepts' },
-            { text: 'Patterns', link: '/guide/patterns' },
-            { text: 'Using with LLMs', link: '/guide/using-with-llms' },
-          ],
-        },
-        {
-          text: 'Reference',
-          items: [
-            { text: 'Organizing Projects', link: '/guide/organizing-projects' },
-            { text: 'Example Projects', link: '/guide/example-projects' },
-            { text: 'Tips & Tricks', link: '/guide/tips-and-tricks' },
-            { text: 'Troubleshooting', link: '/guide/troubleshooting' },
+            { text: 'Using with Vercel AI SDK', link: '/guide/using-with-llms' },
           ],
         },
       ],
@@ -82,7 +73,6 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'Overview', link: '/api/' },
-            { text: 'Framework Adapters', link: '/api/adapters' },
             { text: 'Variable Injection', link: '/api/variable-injection' },
           ],
         },
@@ -97,7 +87,6 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/configuration/' },
             { text: 'carnet.config.json', link: '/configuration/config-file' },
-            { text: 'Patterns', link: '/configuration/patterns' },
           ],
         },
         {

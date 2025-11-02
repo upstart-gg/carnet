@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Carnet"
-  text: "Manage your AI agents prompts easily"
+  text: "Build AI agents with Vercel AI SDK"
   tagline: Define, validate, and manage AI agents through markdown files
   actions:
     - theme: brand
@@ -51,7 +51,7 @@ See the [Quick Start Guide](/guide/quick-start) to build your first agent in 5 m
 - **Build-Time Safety** - Validate all references before deployment
 - **JSON Manifests** - Compile to fast-loading JSON for any language
 - **Progressive Loading** - Efficiently load agent capabilities on demand
-- **LLM-Ready** - Designed for AI agent frameworks and LLM integrations
+- **Vercel AI SDK Native** - Built specifically for Vercel AI SDK with zero abstraction
 
 ## Why Carnet?
 

@@ -15,20 +15,3 @@ The key insight: markdown files are human-editable and version-controllable, whi
 ### Language-Agnostic Design
 
 While Carnet provides a JavaScript/TypeScript library for convenient access, the compiled manifest is a **standard JSON file** that any language can parse. Whether you're using Node.js, Python, Go, Rust, or any other runtime, you can read and use the Carnet manifest directly. This makes Carnet truly language-agnostic.
-
-## Next Steps
-
-Follow this learning path:
-
-1. **[Installation](/guide/installation)** - Set up Carnet for your platform
-2. **[Quick Start](/guide/quick-start)** - Build your first agent in 5 minutes
-3. **[Core Concepts](/guide/concepts)** - Understand agents, skills, toolsets, and tools
-4. **[Examples](/guide/example-projects)** - See real-world patterns and use cases
-5. **[CLI Reference](/cli/)** - Command reference when you need it
-6. **[API Reference](/api/)** - For programmatic usage in your applications
-
-## Need Help?
-
-- See [Examples](/guide/example-projects) for working projects
-- Visit [GitHub Issues](https://github.com/upstart-gg/carnet/issues)
-- Start a [Discussion](https://github.com/upstart-gg/carnet/discussions)

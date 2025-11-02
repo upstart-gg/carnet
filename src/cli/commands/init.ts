@@ -13,7 +13,7 @@ export function registerInitCommand(program: Command) {
     })
 }
 
-async function runInitCommand(dir: string = '.') {
+async function runInitCommand(dir: string = './carnet') {
   console.log(colors.info(`Initializing Carnet project in ${path.resolve(dir)}...`))
   await fs.mkdir(path.join(dir, 'agents'), { recursive: true })
   await fs.mkdir(path.join(dir, 'skills'), { recursive: true })

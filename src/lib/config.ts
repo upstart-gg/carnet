@@ -3,10 +3,10 @@ import { type CarnetConfig, configSchema } from './schemas'
 
 /**
  * Load config file from disk. Returns defaults if file doesn't exist.
- * @param configFilePath Path to config file (defaults to 'carnet.config.json')
+ * @param configFilePath Path to config file (defaults to './carnet/carnet.config.json')
  * @returns Parsed and validated config, with defaults applied for missing values
  */
-export async function loadConfigFile(configFilePath = 'carnet.config.json'): Promise<CarnetConfig> {
+export async function loadConfigFile(configFilePath = './carnet/carnet.config.json'): Promise<CarnetConfig> {
   try {
     const content = await fs.readFile(configFilePath, 'utf-8')
     const config = JSON.parse(content)
