@@ -1,7 +1,4 @@
-import type { Tool } from 'ai'
-
-// A DomainToolSet is a collection of executable tools, keyed by name.
-export type DomainToolSet = Record<string, Tool>
+import type { DomainToolSet } from './types'
 
 /**
  * Manages the registration and retrieval of domain toolsets.

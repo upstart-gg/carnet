@@ -4,6 +4,7 @@ import { DynamicPromptGenerator } from './dynamic-prompt-generator'
 import type { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
 import { mergeToolSets } from './tool-filtering'
+import { ToolRegistry } from './tool-registry'
 import type { ToolOptions } from './tools'
 import { createCarnetTools } from './tools'
 import type {
@@ -20,8 +21,8 @@ import type {
 import { VariableInjector } from './variable-injector'
 
 export { PromptGenerator } from './prompt-generator'
+export { ToolRegistry } from './tool-registry'
 export type { ToolOptions } from './tools'
-// `createCarnetTools` is intentionally not re-exported — it's internal. Use `carnet.getTools()`.
 export * from './types'
 export { VariableInjector } from './variable-injector'
 
@@ -149,9 +150,11 @@ export class Carnet {
       session.loadedToolsets.add(toolsetName)
     }
 
-    // Recalculate the set of exposed domain tools (names only)
-    const allExposedTools = skill.toolsets.flatMap((t) => this.getToolset(t)?.tools ?? [])
-    session.exposedDomainTools = new Set(allExposedTools)
+    // Update the set of exposed domain tools with new tools from loaded skill
+    const newExposedTools = skill.toolsets.flatMap((t) => this.getToolset(t)?.tools ?? [])
+    for (const toolName of newExposedTools) {
+      session.exposedDomainTools.add(toolName)
+    }
   }
 
   private getOrCreateSession(agentName: string): CarnetSessionState {
@@ -440,10 +443,25 @@ export class Carnet {
       )
     }
     if (options.includeAvailableTools) {
-      const availableToolsets = options.tools ?? {}
+      // Convert flat domain tools to ToolRegistry
+      // Only include tools that match the currently exposed domain tools
+      const toolRegistry = new ToolRegistry()
+      const runtimeTools = options.tools ?? {}
+      if (Object.keys(runtimeTools).length > 0) {
+        const exposedRuntimeTools: typeof runtimeTools = {}
+        for (const toolName of session.exposedDomainTools) {
+          const tool = runtimeTools[toolName]
+          if (tool) {
+            exposedRuntimeTools[toolName] = tool
+          }
+        }
+        if (Object.keys(exposedRuntimeTools).length > 0) {
+          toolRegistry.register('runtime-tools', exposedRuntimeTools)
+        }
+      }
       const availableToolsSection = (
         this.promptGenerator as DynamicPromptGenerator
-      ).generateAvailableToolsSection(session, availableToolsets)
+      ).generateAvailableToolsSection(session, toolRegistry)
       if (availableToolsSection.trim().length > 0) {
         dynamicSections.push(availableToolsSection)
       }
@@ -482,6 +500,25 @@ export class Carnet {
   getTools(agentName: string, options: ToolOptions = {}): ToolSet {
     const session = this.getOrCreateSession(agentName)
     const carnetTools = createCarnetTools(this, agentName)
-    return mergeToolSets(carnetTools, session, options.tools ?? {})
+
+    // Convert flat domain tools to ToolRegistry
+    // Only include tools that match the currently exposed domain tools
+    const toolRegistry = new ToolRegistry()
+    const runtimeTools = options.tools ?? {}
+    if (Object.keys(runtimeTools).length > 0) {
+      const exposedRuntimeTools: typeof runtimeTools = {}
+      for (const toolName of session.exposedDomainTools) {
+        const tool = runtimeTools[toolName]
+        if (tool) {
+          exposedRuntimeTools[toolName] = tool
+        }
+      }
+      if (Object.keys(exposedRuntimeTools).length > 0) {
+        toolRegistry.register('runtime-tools', exposedRuntimeTools)
+        session.loadedToolsets.add('runtime-tools')
+      }
+    }
+
+    return mergeToolSets(carnetTools, session, toolRegistry)
   }
 }
