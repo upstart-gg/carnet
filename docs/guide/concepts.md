@@ -26,7 +26,6 @@ These tools are always available to the agent and their behavior is static.
 
 These are the actual, executable tools that you, the developer, provide. They represent the concrete capabilities of your application (e.g., `searchDatabase`, `generateImage`, `sendEmail`).
 
-- **Provided by you:** You register them with Carnet using the `registerDomainToolset` method.
 - **Dynamically Exposed:** They are not available to the agent initially. They are automatically exposed when the agent loads a `Skill` that is associated with the tool's `Toolset`.
 - **Executable:** When the agent calls a domain tool, your provided `execute` function is run.
 

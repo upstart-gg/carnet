@@ -113,8 +113,6 @@ export class Carnet {
 
   // Domain Tool and Session Management
 
-  // Removed registerDomainToolset() - users now pass toolsets directly via getTools()
-
   public getDiscoveredSkills(agentName: string): string[] {
     const session = this.sessions.get(agentName)
     return session ? Array.from(session.discoveredSkills) : []

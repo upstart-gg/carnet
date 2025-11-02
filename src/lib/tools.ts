@@ -59,6 +59,10 @@ export interface ToolOptions {
  *   messages: [...]
  * })
  * ```
+ *
+ * @internal
+ * This function is used internally by Carnet.getTools() and should not be called directly by user code.
+ * Users should invoke `carnet.getTools()` instead, which wraps and manages this factory internally.
  */
 export function createCarnetTools(
   carnet: Carnet,

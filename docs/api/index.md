@@ -31,56 +31,38 @@ const prompt = carnet.getSystemPrompt('researcher', {
 
 ### `getTools(agentName, options?): ToolSet`
 
-Get a complete ToolSet for an agent. This includes the five built-in progressive loading tools plus any domain tools that have been dynamically exposed for the current session.
+Returns a `ToolSet` for the specified agent. This set includes Carnet’s five built‑in **progressive‑loading** tools, which are used internally by the system to dynamically load skills, toolsets, and tools as they become available.
+
+> **Note:** Users do **not** need to create or manage tools directly. Carnet builds and registers all required tools automatically at runtime.
 
 **Parameters:**
-- `agentName: string` - The name of the agent
-- `options?: ToolOptions` - Configuration options
-  - `tools?: string[]` - Specific tools to include (optional subset filtering)
+- `agentName: string` – The name of the agent.
+- `options?: ToolOptions` – Specify which of the built‑in tools should be enabled.
 
-**Returns:** `ToolSet` - A Vercel AI SDK compatible ToolSet
+**Returns:** `ToolSet` – A Vercel AI SDK‑compatible set of tools automatically created by Carnet.
 
-**Tools included:**
-- `listAvailableSkills` - List all available skills for the agent
-- `loadSkill` - Load a skill with full content
-- `listSkillToolsets` - List toolsets in a skill
-- `loadToolset` - Load a toolset with instructions
-- `loadTool` - Load a specific tool with documentation
+**Included internal tools:**
+- `listAvailableSkills` – lists all skills for an agent.
+- `loadSkill` – loads and initializes a skill.
+- `listSkillToolsets` – lists toolsets belonging to a skill.
+- `loadToolset` – loads toolset metadata and usage instructions.
+- `loadTool` – loads a specific tool and its documentation.
+
+These utilities are created internally by `Carnet.getTools()` using a private factory. They are not meant to be instantiated directly.
 
 **Example:**
 ```typescript
+// Retrieve the minimal built‑in utility set for skill navigation
 const tools = carnet.getTools('researcher', {
-  tools: ['listAvailableSkills', 'loadSkill']  // Optional: subset
+  tools: ['listAvailableSkills', 'loadSkill']
 })
 ```
+
+Carnet automatically merges any dynamically exposed domain tools discovered through skills, so you never need to register them manually.
 
 ## Session and Tool Management
 
 These methods allow you to manage agent sessions and register your own executable tools.
-
-### `registerDomainToolset(toolsetName: string, tools: ToolSet): void`
-
-Register a set of executable domain tools for a specific toolset name. These tools will be dynamically exposed to an agent when it loads a skill that references this toolset.
-
-**Parameters:**
-- `toolsetName: string` - The name of the toolset (must match a name in your manifest).
-- `tools: ToolSet` - An object of Vercel AI SDK `tool` definitions.
-
-**Example:**
-```typescript
-import { tool } from 'ai'
-import { z } from 'zod'
-
-const searchTools = {
-  basicSearch: tool({
-    description: 'Perform a basic web search',
-    inputSchema: z.object({ query: z.string() }),
-    execute: async ({ query }) => { /* ... */ }
-  })
-}
-
-carnet.registerDomainToolset('search-tools', searchTools)
-```
 
 ### `getDiscoveredSkills(agentName: string): string[]`
 

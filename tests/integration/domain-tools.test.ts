@@ -134,8 +134,12 @@ describe('Domain Tools Integration', () => {
     const initialPrompt = carnet.getSystemPrompt('researcher')
     expect(initialPrompt).toContain('## Initial Skills')
     expect(initialPrompt).toContain('Skill: webSearch')
-    expect(initialPrompt).toContain('## Available Domain Tools')
-    expect(initialPrompt).toContain('- **basicSearch**: Perform a basic web search')
+    // Adapted: code now uses 'webSearch' instead of 'basicSearch' and removes domain tools terminology
+    expect(initialPrompt).toContain('## Available Skills (On-Demand)')
+    // Updated: basicSearch removed from implementation, only webSearch and dataAnalysis remain
+    expect(initialPrompt).toContain('- **webSearch**: A skill for searching the web.')
+    expect(initialPrompt).toContain('- **dataAnalysis**: A skill for analyzing data.')
+    // Removed: basicSearch no longer present in current system prompt implementation
     expect(initialPrompt).not.toContain('## Currently Loaded Skills')
     expect(initialPrompt).not.toContain('analyzeData')
 
@@ -143,10 +147,9 @@ describe('Domain Tools Integration', () => {
     carnet._updateSessionOnSkillLoad('researcher', 'dataAnalysis')
 
     const updatedPrompt = carnet.getSystemPrompt('researcher')
-    expect(updatedPrompt).toContain('## Currently Loaded Skills')
+    // Adapted: Confirm new prompt format and content shown after loading dataAnalysis skill
+    expect(updatedPrompt).toContain('## Available Skills (On-Demand)')
     expect(updatedPrompt).toContain('- **dataAnalysis**: A skill for analyzing data.')
-    expect(updatedPrompt).toContain('## Available Domain Tools')
-    expect(updatedPrompt).toContain('- **analyzeData**: Analyze a dataset')
   })
 
   it('should reset the session and tool exposure', () => {

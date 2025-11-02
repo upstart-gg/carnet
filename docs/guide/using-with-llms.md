@@ -112,19 +112,6 @@ export const basicSearch = tool({
 })
 ```
 
-### 2. Register Your Toolsets
-
-Next, import your tools and register them with your `Carnet` instance using the `registerDomainToolset` method. The name you provide must match a `toolset` name in your manifest.
-
-```typescript
-import { Carnet } from '@upstart-gg/carnet'
-import * as searchTools from './tools/search'
-
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
-
-// Register the 'search' toolset with its corresponding tools
-carnet.registerDomainToolset('search', searchTools)
-```
 
 ### 3. The Dynamic Workflow
 
@@ -149,8 +136,6 @@ import * as analysisTools from './tools/analysis'
 
 // 1. Setup
 const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
-carnet.registerDomainToolset('search', searchTools)
-carnet.registerDomainToolset('analysis', analysisTools)
 
 const messages = [{ role: 'user', content: 'Search for AI papers and then analyze the results.' }]
 
