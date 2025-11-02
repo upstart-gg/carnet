@@ -37,7 +37,7 @@ for await (const chunk of result.textStream) {
 
 That's it! Carnet automatically handles:
 - System prompt generation with skill catalogs
-- Five progressive loading tools (listAvailableSkills, loadSkill, loadToolset, listSkillToolsets, loadTool)
+- Minimal progressive loading meta‑tools (`listAvailableSkills`, `loadSkill`) and merging of your domain tools via `toolsets`
 - Tool execution and error handling
 - Variable injection
 
@@ -82,12 +82,10 @@ const result = await streamText({
 })
 ```
 
-The returned ToolSet includes five tools:
+The returned ToolSet includes Carnet meta‑tools plus any domain tools you provided in `toolsets`:
 - **listAvailableSkills** - List all available skills for the agent
-- **loadSkill** - Load a skill by name with full content
-- **listSkillToolsets** - List toolsets within a skill
-- **loadToolset** - Load a toolset with instructions and available tools
-- **loadTool** - Load a specific tool with full documentation
+- **loadSkill** - Load a skill by name with full content (updates session state)
+- Domain tools from your manifest's toolsets are merged in dynamically
 
 ## Working with Domain Tools
 
@@ -346,14 +344,16 @@ const result = await streamText({
 The agent starts with:
 1. Brief descriptions of all available skills
 2. Full content of initial skills (pre-loaded)
-3. Five tools to dynamically load more content
+3. Minimal meta-tools to dynamically load more content
 
 The agent can then:
 1. Call `listAvailableSkills` to see what's available
-2. Call `loadSkill` to load a specific skill
-3. Call `listSkillToolsets` to see toolsets in a skill
-4. Call `loadToolset` to get toolset details
-5. Call `loadTool` to get specific tool documentation
+2. Call `loadSkill` to load a specific skill (this updates session state and reveals domain tools)
+
+After a skill is loaded, domain tools from the skill's toolsets are merged into the `ToolSet`. You can also inspect tool metadata via the Carnet API (for debugging or UI integrations):
+
+- `listSkillToolsets(skillName)` – return the toolsets associated with a skill
+- `listToolsetTools(toolsetName)` – list tools defined in a toolset
 
 ## Best Practices
 

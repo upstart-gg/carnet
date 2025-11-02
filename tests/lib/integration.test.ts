@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { Carnet } from '../../src/lib/index'
 import type { Manifest } from '../../src/lib/types'
 
@@ -258,9 +258,7 @@ Creates charts and graphs from data.
       const tools = carnet.getTools('researcher')
       expect(Object.keys(tools)).toContain('listAvailableSkills')
       expect(Object.keys(tools)).toContain('loadSkill')
-      expect(Object.keys(tools)).toContain('listSkillToolsets')
-      expect(Object.keys(tools)).toContain('loadToolset')
-      expect(Object.keys(tools)).toContain('loadTool')
+      // The factory now exposes a minimal set of meta-tools. Domain tools are merged separately.
     })
 
     it('should respect tools filter option', () => {
@@ -282,7 +280,7 @@ Creates charts and graphs from data.
       const tools = carnet.getTools('researcher')
 
       // Check that each tool has the required structure
-      for (const [toolName, tool] of Object.entries(tools)) {
+      for (const [_toolName, tool] of Object.entries(tools)) {
         expect(tool.description).toBeDefined()
         expect(typeof tool.description).toBe('string')
         // Tool should have execute method
@@ -313,7 +311,8 @@ Creates charts and graphs from data.
         tools: ['listAvailableSkills', 'loadSkill', 'loadToolset'],
       })
 
-      expect(Object.keys(tools)).toHaveLength(3)
+      // 'loadToolset' is not a supported meta-tool anymore; the filter will only include available meta-tools and domain tools present
+      expect(Object.keys(tools)).toHaveLength(2)
 
       // Should still work with Vercel AI SDK
       const config = {
@@ -321,7 +320,7 @@ Creates charts and graphs from data.
         tools: tools,
       }
 
-      expect(Object.keys(config.tools)).toHaveLength(3)
+      expect(Object.keys(config.tools)).toHaveLength(2)
     })
   })
 

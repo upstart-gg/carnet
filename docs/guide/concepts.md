@@ -10,17 +10,14 @@ Carnet defines a hierarchy of four entity types that compose your agents:
 
 With the introduction of executable tools, it's important to distinguish between two types of tools in the Carnet ecosystem:
 
-### Carnet Tools 🔍
+### Carnet Meta‑Tools 🔍
 
-These are the five meta-tools provided by Carnet itself. Their sole purpose is to enable the progressive discovery of skills and documentation.
+Carnet provides a small set of meta‑tools to support progressive discovery of skills and content. These are intentionally minimal:
 
 - `listAvailableSkills`
 - `loadSkill`
-- `listSkillToolsets`
-- `loadToolset`
-- `loadTool`
 
-These tools are always available to the agent and their behavior is static.
+These meta‑tools are provided alongside your domain tools (from toolsets). Meta‑tools are used to manage discovery and session state; domain tools provide executable capabilities.
 
 ### Domain Tools 🛠️
 

@@ -1,6 +1,9 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
-import { Carnet, createCarnetTools } from '../../src/lib/index'
-import type { Manifest, ToolOptions } from '../../src/lib/types'
+import { beforeEach, describe, expect, it } from 'bun:test'
+import { tool } from 'ai'
+import { z } from 'zod'
+import { Carnet } from '../../src/lib/index'
+import { createCarnetTools } from '../../src/lib/tools'
+import type { Manifest } from '../../src/lib/types'
 
 describe('Carnet Tools - Vercel AI SDK Integration', () => {
   let carnet: Carnet
@@ -77,9 +80,6 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
       expect(Object.keys(tools)).toContain('listAvailableSkills')
       expect(Object.keys(tools)).toContain('loadSkill')
-      expect(Object.keys(tools)).toContain('listSkillToolsets')
-      expect(Object.keys(tools)).toContain('loadToolset')
-      expect(Object.keys(tools)).toContain('loadTool')
     })
 
     it('should create only specified tools when tools option is provided', () => {
@@ -89,7 +89,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       expect(Object.keys(tools)).toHaveLength(2)
       expect(Object.keys(tools)).toContain('listAvailableSkills')
       expect(Object.keys(tools)).toContain('loadSkill')
-      expect(Object.keys(tools)).not.toContain('loadToolset')
+      // Deprecated meta-tools like 'loadToolset' are not created by the factory anymore
     })
 
     it('should create empty ToolSet when tools array is empty', () => {
@@ -159,66 +159,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   })
 
   describe('listSkillToolsets tool', () => {
-    it('should list toolsets for a skill', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.listSkillToolsets.execute({ skillName: 'skillA' })
-
-      expect(result.success).toBe(true)
-      expect(result.toolsets).toBeDefined()
-      expect(result.toolsets.length).toBe(1)
-      expect(result.toolsets[0].name).toBe('toolsetA')
-      expect(result.toolsets[0].description).toBe('Toolset A')
-      expect(result.toolsets[0].toolCount).toBe(2)
-    })
-
-    it('should return error for non-existent skill', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.listSkillToolsets.execute({ skillName: 'non-existent' })
-
-      expect(result.success).toBe(false)
-      expect(result.error).toBeDefined()
-    })
-  })
-
-  describe('loadToolset tool', () => {
-    it('should load toolset content and tools', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadToolset.execute({ toolsetName: 'toolsetA' })
-
-      expect(result.success).toBe(true)
-      expect(result.content).toContain('# Toolset A')
-      expect(result.availableTools).toBeDefined()
-      expect(result.availableTools.length).toBe(2)
-      expect(result.availableTools[0].name).toBe('toolA1')
-    })
-
-    it('should return error for non-existent toolset', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadToolset.execute({ toolsetName: 'non-existent' })
-
-      expect(result.success).toBe(false)
-      expect(result.error).toBeDefined()
-    })
-  })
-
-  describe('loadTool tool', () => {
-    it('should load tool content and metadata', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadTool.execute({ toolName: 'toolA1' })
-
-      expect(result.success).toBe(true)
-      expect(result.content).toContain('# Tool A1')
-      expect(result.metadata.name).toBe('toolA1')
-      expect(result.metadata.description).toBe('Tool A1 description')
-    })
-
-    it('should return error for non-existent tool', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.loadTool.execute({ toolName: 'non-existent' })
-
-      expect(result.success).toBe(false)
-      expect(result.error).toBeDefined()
-    })
+    // listSkillToolsets is now available as a Carnet API method (see carnet.listSkillToolsets)
   })
 
   describe('progressive loading flow', () => {
@@ -234,25 +175,34 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       const skillContent = await tools.loadSkill.execute({ skillName: 'skillA' })
       expect(skillContent.success).toBe(true)
       expect(skillContent.content).toContain('# Skill A')
-
-      // Step 3: List toolsets in skill
-      const toolsetsInSkill = await tools.listSkillToolsets.execute({ skillName: 'skillA' })
-      expect(toolsetsInSkill.success).toBe(true)
-      expect(toolsetsInSkill.toolsets).toHaveLength(1)
-
-      // Step 4: Load a specific toolset
-      const toolsetContent = await tools.loadToolset.execute({
-        toolsetName: toolsetsInSkill.toolsets[0].name,
+      // After loading a skill, domain tools from its toolsets are available when merging domain toolsets
+      const mergedTools = carnet.getTools('testAgent', {
+        toolsets: {
+          toolsetA: {
+            toolA1: tool({
+              description: 'A',
+              inputSchema: z.object({}),
+              execute: async () => ({ ok: true }),
+            }),
+            toolA2: tool({
+              description: 'A2',
+              inputSchema: z.object({}),
+              execute: async () => ({ ok: true }),
+            }),
+          },
+          toolsetB: {
+            toolB1: tool({
+              description: 'B1',
+              inputSchema: z.object({}),
+              execute: async () => ({ ok: true }),
+            }),
+          },
+        },
       })
-      expect(toolsetContent.success).toBe(true)
-      expect(toolsetContent.availableTools).toHaveLength(2)
 
-      // Step 5: Load a specific tool
-      const toolContent = await tools.loadTool.execute({
-        toolName: toolsetContent.availableTools[0].name,
-      })
-      expect(toolContent.success).toBe(true)
-      expect(toolContent.content).toContain('# Tool A1')
+      // Should include domain tools merged from provided toolsets
+      expect(Object.keys(mergedTools)).toContain('toolA1')
+      expect(Object.keys(mergedTools)).toContain('toolA2')
     })
   })
 })

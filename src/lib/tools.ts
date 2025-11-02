@@ -69,13 +69,7 @@ export function createCarnetTools(
   agentName: string,
   options: ToolOptions = {}
 ): ToolSet {
-  const enabledTools = options.tools ?? [
-    'listAvailableSkills',
-    'loadSkill',
-    'listSkillToolsets',
-    'loadToolset',
-    'loadTool',
-  ]
+  const enabledTools = options.tools ?? ['listAvailableSkills', 'loadSkill']
 
   const tools: ToolSet = {}
 
@@ -134,87 +128,9 @@ export function createCarnetTools(
     })
   }
 
-  if (enabledTools.includes('listSkillToolsets')) {
-    tools.listSkillToolsets = tool({
-      description: 'List all toolsets available in a skill',
-      inputSchema: z.object({
-        skillName: z.string().describe('The name of the skill'),
-      }),
-      execute: async ({ skillName }) => {
-        try {
-          const toolsets = carnet.listSkillToolsets(skillName)
-          return {
-            success: true,
-            toolsets: toolsets.map((t) => ({
-              name: t.name,
-              description: t.description,
-              toolCount: t.tools.length,
-            })),
-          }
-        } catch (error) {
-          return {
-            success: false,
-            error: `Failed to list toolsets: ${error instanceof Error ? error.message : String(error)}`,
-          }
-        }
-      },
-    })
-  }
-
-  if (enabledTools.includes('loadToolset')) {
-    tools.loadToolset = tool({
-      description: 'Load a toolset to get its instructions and available tools',
-      inputSchema: z.object({
-        toolsetName: z.string().describe('The name of the toolset to load'),
-      }),
-      execute: async ({ toolsetName }) => {
-        try {
-          const content = carnet.getToolsetContent(toolsetName)
-          const tools = carnet.listToolsetTools(toolsetName)
-
-          return {
-            success: true,
-            content,
-            availableTools: tools.map((t) => ({
-              name: t.name,
-              description: t.description,
-            })),
-          }
-        } catch (error) {
-          return {
-            success: false,
-            error: `Failed to load toolset: ${error instanceof Error ? error.message : String(error)}`,
-          }
-        }
-      },
-    })
-  }
-
-  if (enabledTools.includes('loadTool')) {
-    tools.loadTool = tool({
-      description: 'Load a specific tool to get its full documentation and usage',
-      inputSchema: z.object({
-        toolName: z.string().describe('The name of the tool to load'),
-      }),
-      execute: async ({ toolName }) => {
-        try {
-          const content = carnet.getToolContent(toolName)
-          const metadata = carnet.getToolMetadata(toolName)
-
-          return {
-            success: true,
-            metadata,
-            content,
-          }
-        } catch (error) {
-          return {
-            success: false,
-            error: `Failed to load tool: ${error instanceof Error ? error.message : String(error)}`,
-          }
-        }
-      },
-    })
-  }
+  // Note: only `listAvailableSkills` and `loadSkill` are exported as Carnet meta-tools.
+  // Toolsets and individual tool loading are performed by domain tool providers
+  // exposed via the `toolsets` option to `getTools()`.
 
   return tools
 }

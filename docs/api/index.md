@@ -31,34 +31,31 @@ const prompt = carnet.getSystemPrompt('researcher', {
 
 ### `getTools(agentName, options?): ToolSet`
 
-Returns a `ToolSet` for the specified agent. This set includes Carnet’s five built‑in **progressive‑loading** tools, which are used internally by the system to dynamically load skills, toolsets, and tools as they become available.
+Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of built‑in meta‑tools used to support progressive loading. These meta‑tools are intentionally small (see below). Domain tools from your manifest's toolsets are merged into the returned `ToolSet` via the `toolsets` option.
 
-> **Note:** Users do **not** need to create or manage tools directly. Carnet builds and registers all required tools automatically at runtime.
+> **Note:** Users do **not** need to create or manage the meta‑tools directly. Use `carnet.getTools()` which builds the appropriate `ToolSet` and merges domain tools at runtime.
 
 **Parameters:**
 - `agentName: string` – The name of the agent.
-- `options?: ToolOptions` – Specify which of the built‑in tools should be enabled.
+- `options?: ToolOptions` – Configuration for which meta‑tools or domain tools to expose.
 
 **Returns:** `ToolSet` – A Vercel AI SDK‑compatible set of tools automatically created by Carnet.
 
-**Included internal tools:**
+**Included internal tools (meta‑tools):**
 - `listAvailableSkills` – lists all skills for an agent.
-- `loadSkill` – loads and initializes a skill.
-- `listSkillToolsets` – lists toolsets belonging to a skill.
-- `loadToolset` – loads toolset metadata and usage instructions.
-- `loadTool` – loads a specific tool and its documentation.
+- `loadSkill` – loads and initializes a skill (and updates session state).
 
-These utilities are created internally by `Carnet.getTools()` using a private factory. They are not meant to be instantiated directly.
+These meta‑tools are used alongside any domain tools you provide via the `toolsets` option. They are created internally by `Carnet.getTools()` and are not intended for direct instantiation.
 
 **Example:**
 ```typescript
-// Retrieve the minimal built‑in utility set for skill navigation
+// Expose only Carnet meta‑tools (default) and your domain toolsets
 const tools = carnet.getTools('researcher', {
-  tools: ['listAvailableSkills', 'loadSkill']
+  toolsets: {
+    search: searchTools,
+  }
 })
 ```
-
-Carnet automatically merges any dynamically exposed domain tools discovered through skills, so you never need to register them manually.
 
 ## Session and Tool Management
 
@@ -133,13 +130,11 @@ Options for `getTools()`:
 
 ```typescript
 interface ToolOptions {
-  tools?: Array<
-    | 'listAvailableSkills'
-    | 'loadSkill'
-    | 'listSkillToolsets'
-    | 'loadToolset'
-    | 'loadTool'
-  >
+  // Explicit meta tool names you want to expose (default: Carnet exposes the minimal meta set)
+  tools?: Array<'listAvailableSkills' | 'loadSkill' | string>
+
+  // Domain toolsets to merge into the returned ToolSet (keyed by toolset name)
+  toolsets?: Record<string, any>
 }
 ```
 

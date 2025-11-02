@@ -21,7 +21,7 @@ import { VariableInjector } from './variable-injector'
 
 export { PromptGenerator } from './prompt-generator'
 export type { ToolOptions } from './tools'
-export { createCarnetTools } from './tools'
+// `createCarnetTools` is intentionally not re-exported — it's internal. Use `carnet.getTools()`.
 export * from './types'
 export { VariableInjector } from './variable-injector'
 
