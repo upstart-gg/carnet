@@ -100,7 +100,7 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   describe('listAvailableSkills tool', () => {
     it('should list all available skills', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      const result = (await tools.listAvailableSkills.execute({}, {})) as any
+      const result = await tools.listAvailableSkills.execute({}, {})
 
       expect(result.success).toBe(true)
       expect(result.skills).toBeDefined()
