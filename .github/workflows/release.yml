@@ -61,18 +61,45 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Add Latest Tag to Release
+      - name: Add 'latest' tag to released packages
         if: steps.changesets.outputs.published == 'true'
-        run: |
-          PUBLISHED_PACKAGES=${{ steps.changesets.outputs.publishedPackages }}
-          if [ ! -z "$PUBLISHED_PACKAGES" ]; then
-            echo "$PUBLISHED_PACKAGES" | jq -r '.[].name' | while read -r PKG; do
-              VERSION=$(npm view "$PKG" version)
-              GIT_TAG="${PKG#@upstart-gg/}@${VERSION}"
-              echo "Tagging release: $GIT_TAG"
-              git tag -f -a "$GIT_TAG" -m "Release: $GIT_TAG"
-              git push origin "$GIT_TAG" -f
-            done
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const publishedPackages = JSON.parse('${{ steps.changesets.outputs.publishedPackages }}');
+            const sha = context.sha;
+
+            for (const pkg of publishedPackages) {
+              const { name, version } = pkg;
+
+              console.log(`Adding 'latest' tag to ${name}@${version}`);
+
+              try {
+                try {
+                  await github.rest.git.createRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `refs/tags/${name}@latest`,
+                    sha: sha
+                  });
+                } catch (error) {
+                  if (error.status === 422) {
+                    // Tag already exists, update it
+                    await github.rest.git.updateRef({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      ref: `tags/${name}@latest`,
+                      sha: sha,
+                      force: true
+                    });
+                  } else {
+                    throw error;
+                  }
+                }
+
+                console.log(`Successfully added/updated 'latest' tag for ${name}`);
+              } catch (error) {
+                console.error(`Error adding 'latest' tag for ${name}:`, error);
+              }
+            }
