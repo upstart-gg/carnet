@@ -1,5 +1,15 @@
 # @upstart.gg/carnet
 
+## 0.1.4
+
+### Patch Changes
+
+- [`04317f9`](https://github.com/upstart-gg/carnet/commit/04317f945162f1d70b8aa36b50c9ffe8d6c08dd4) Thanks [@mattallty](https://github.com/mattallty)! - fix cli
+
+- [#14](https://github.com/upstart-gg/carnet/pull/14) [`6b4c0c3`](https://github.com/upstart-gg/carnet/commit/6b4c0c3377eaaef5ffc026af688bfc58566c6051) Thanks [@mattallty](https://github.com/mattallty)! - Add loadSkillFile() feature
+
+- [#14](https://github.com/upstart-gg/carnet/pull/14) [`6b4c0c3`](https://github.com/upstart-gg/carnet/commit/6b4c0c3377eaaef5ffc026af688bfc58566c6051) Thanks [@mattallty](https://github.com/mattallty)! - Rework schemas
+
 ## 0.1.3
 
 ### Patch Changes
