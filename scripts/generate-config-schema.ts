@@ -19,7 +19,7 @@ async function generateConfigSchema() {
 
     // Add metadata
     const schemaWithMetadata = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
+      // $schema: 'http://json-schema.org/draft-07/schema#',
       title: 'Carnet Configuration Schema',
       description: 'Schema for carnet.config.json configuration files',
       version: '1.0.0',
@@ -28,11 +28,11 @@ async function generateConfigSchema() {
 
     // Write to file
     await fs.writeFile(
-      './schema/config.schema.json',
+      './dist/config.schema.json',
       `${JSON.stringify(schemaWithMetadata, null, 2)}\n`
     )
 
-    console.log('✓ Generated schema/config.schema.json')
+    console.log('✓ Generated dist/config.schema.json')
   } catch (error) {
     console.error('✗ Failed to generate config schema:', error)
     process.exit(1)

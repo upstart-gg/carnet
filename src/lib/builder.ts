@@ -35,12 +35,12 @@ async function loadContent(contentDir: string) {
   return { agents, skills, toolsets, tools }
 }
 
-export async function validate(contentDir: string) {
+export async function validate(contentDir: string): Promise<void> {
   const { agents, skills, toolsets, tools } = await loadContent(contentDir)
   validateReferences(agents, skills, toolsets, tools)
 }
 
-export async function build(options: CarnetConfig, carnetDir: string = './carnet') {
+export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
   const { output } = options
   const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
 

@@ -1,6 +1,14 @@
 import * as z from 'zod'
 
-export const appConfigSchema = z
+export const appConfigSchema: z.ZodDefault<
+  z.ZodObject<
+    {
+      globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+      globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+    },
+    z.core.$strip
+  >
+> = z
   .object({
     globalInitialSkills: z
       .array(z.string())
@@ -17,7 +25,22 @@ export const appConfigSchema = z
   })
   .describe('Application config')
 
-export const configSchema = z.object({
+export const configSchema: z.ZodObject<{
+  app: z.ZodDefault<
+    z.ZodObject<
+      {
+        globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+        globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+      },
+      z.core.$strip
+    >
+  >
+  output: z.ZodDefault<z.ZodString>
+  variables: z.ZodDefault<z.ZodRecord<z.ZodString, z.ZodString>>
+  envPrefix: z.ZodDefault<z.ZodArray<z.ZodString>>
+  include: z.ZodDefault<z.ZodArray<z.ZodString>>
+  exclude: z.ZodDefault<z.ZodArray<z.ZodString>>
+}> = z.object({
   app: appConfigSchema,
   output: z.string().default('./dist').describe('Path to the output directory'),
   variables: z
@@ -41,11 +64,17 @@ export const configSchema = z.object({
 
 export type CarnetConfig = z.infer<typeof configSchema>
 
-export const agentCapabilitySchema = z
-  .enum(['createCustomAgent'])
-  .describe('Capabilities that can be granted to an agent')
+export const agentCapabilitySchema: z.ZodEnum<{
+  createCustomAgent: 'createCustomAgent'
+}> = z.enum(['createCustomAgent']).describe('Capabilities that can be granted to an agent')
 
-export const agentSchema = z
+export const agentSchema: z.ZodObject<{
+  name: z.ZodString
+  description: z.ZodString
+  initialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+  skills: z.ZodDefault<z.ZodArray<z.ZodString>>
+  prompt: z.ZodString
+}> = z
   .object({
     name: z.string().min(1).describe('The name of the agent'),
     description: z.string().min(1).describe('A brief description of the agent'),
@@ -61,7 +90,12 @@ export const agentSchema = z
   })
   .describe('Agent Schema')
 
-export const skillSchema = z
+export const skillSchema: z.ZodObject<{
+  name: z.ZodString
+  description: z.ZodString
+  toolsets: z.ZodDefault<z.ZodArray<z.ZodString>>
+  content: z.ZodString
+}> = z
   .object({
     name: z.string().min(1).describe('The name of the skill'),
     description: z.string().min(1).describe('A brief description of the skill'),
@@ -70,7 +104,12 @@ export const skillSchema = z
   })
   .describe('Skill Schema')
 
-export const toolsetSchema = z
+export const toolsetSchema: z.ZodObject<{
+  name: z.ZodString
+  description: z.ZodString
+  tools: z.ZodArray<z.ZodString>
+  content: z.ZodString
+}> = z
   .object({
     name: z.string().min(1).describe('The name of the toolset'),
     description: z.string().min(1).describe('A brief description of the toolset'),
@@ -79,7 +118,11 @@ export const toolsetSchema = z
   })
   .describe('Toolset Schema')
 
-export const toolSchema = z
+export const toolSchema: z.ZodObject<{
+  name: z.ZodString
+  description: z.ZodString
+  content: z.ZodString
+}> = z
   .object({
     name: z
       .string()
@@ -91,7 +134,66 @@ export const toolSchema = z
   })
   .describe('Tool Schema')
 
-export const manifestSchema = z
+export const manifestSchema: z.ZodObject<{
+  version: z.ZodDefault<z.ZodNumber>
+  app: z.ZodDefault<
+    z.ZodObject<
+      {
+        globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+        globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+      },
+      z.core.$strip
+    >
+  >
+  agents: z.ZodRecord<
+    z.ZodString,
+    z.ZodObject<
+      {
+        name: z.ZodString
+        description: z.ZodString
+        initialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+        skills: z.ZodDefault<z.ZodArray<z.ZodString>>
+        prompt: z.ZodString
+      },
+      z.core.$strip
+    >
+  >
+  skills: z.ZodRecord<
+    z.ZodString,
+    z.ZodObject<
+      {
+        name: z.ZodString
+        description: z.ZodString
+        toolsets: z.ZodDefault<z.ZodArray<z.ZodString>>
+        content: z.ZodString
+      },
+      z.core.$strip
+    >
+  >
+  toolsets: z.ZodRecord<
+    z.ZodString,
+    z.ZodObject<
+      {
+        name: z.ZodString
+        description: z.ZodString
+        tools: z.ZodArray<z.ZodString>
+        content: z.ZodString
+      },
+      z.core.$strip
+    >
+  >
+  tools: z.ZodRecord<
+    z.ZodString,
+    z.ZodObject<
+      {
+        name: z.ZodString
+        description: z.ZodString
+        content: z.ZodString
+      },
+      z.core.$strip
+    >
+  >
+}> = z
   .object({
     version: z.number().default(1).describe('Version of the manifest schema'),
     app: appConfigSchema,

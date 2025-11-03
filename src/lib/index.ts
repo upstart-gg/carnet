@@ -1,7 +1,7 @@
 import { existsSync, promises as fs } from 'node:fs'
 import type { ToolSet } from 'ai'
-import { ConfigError, ValidationError } from './errors'
 import { DynamicPromptGenerator } from './dynamic-prompt-generator'
+import { ConfigError, ValidationError } from './errors'
 import type { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
 import { mergeToolSets } from './tool-filtering'
@@ -9,15 +9,19 @@ import { ToolRegistry } from './tool-registry'
 import type { ToolOptions } from './tools'
 import { createCarnetTools } from './tools'
 import type {
+  Agent,
   CarnetSessionState,
   ContentRetrievalOptions,
   GenerateAgentPromptOptions,
   GeneratedPrompt,
   Manifest,
   PromptOptions,
+  Skill,
   SkillMetadata,
+  Tool,
   ToolFilteringDiagnostics,
   ToolMetadata,
+  Toolset,
   ToolsetMetadata,
 } from './types'
 import { VariableInjector } from './variable-injector'
@@ -219,21 +223,21 @@ export class Carnet {
    * @returns Record of agent name to agent definition
    */
   get agents() {
-    return this.manifest.agents
+    return this.manifest.agents as Record<string, Agent>
   }
 
   /**
    * Get a single agent by name
    */
   getAgent(name: string) {
-    return this.manifest.agents[name]
+    return this.manifest.agents[name] as Agent | undefined
   }
 
   /**
    * Get a skill by name
    */
   getSkill(name: string) {
-    return this.manifest.skills[name]
+    return this.manifest.skills[name] as Skill | undefined
   }
 
   /**
@@ -242,7 +246,7 @@ export class Carnet {
    * @returns The toolset definition, or undefined if not found
    */
   getToolset(name: string) {
-    return this.manifest.toolsets[name]
+    return this.manifest.toolsets[name] as Toolset | undefined
   }
 
   /**
@@ -251,7 +255,7 @@ export class Carnet {
    * @returns The tool definition, or undefined if not found
    */
   getTool(name: string) {
-    return this.manifest.tools[name]
+    return this.manifest.tools[name] as Tool | undefined
   }
 
   // Content retrieval with variable injection
