@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'bun:test'
 import { tool } from 'ai'
 import { z } from 'zod'
 import { ToolRegistry } from '../../src/lib/tool-registry'
+import type { DomainToolSet } from '../../src/lib/types'
 
 describe('ToolRegistry', () => {
   let registry: ToolRegistry
@@ -42,7 +43,7 @@ describe('ToolRegistry', () => {
       registry.register('tools', { tool1 })
       registry.register('tools', { tool2 })
 
-      const result = registry.getTools('tools')!
+      const result = registry.getTools('tools') as DomainToolSet
       expect(Object.keys(result)).toHaveLength(2)
       expect(result.tool1).toBe(tool1)
       expect(result.tool2).toBe(tool2)
@@ -55,7 +56,7 @@ describe('ToolRegistry', () => {
       registry.register('tools', { execute: oldTool })
       registry.register('tools', { execute: newTool })
 
-      const result = registry.getTools('tools')!
+      const result = registry.getTools('tools') as DomainToolSet
       expect(result.execute).toBe(newTool)
     })
 
@@ -68,7 +69,7 @@ describe('ToolRegistry', () => {
     it('should preserve tool instances across registrations', () => {
       const tool1 = createMockTool('Tool 1')
       registry.register('tools', { tool1 })
-      const retrieved = registry.getTools('tools')!.tool1
+      const retrieved = (registry.getTools('tools') as DomainToolSet).tool1
       expect(retrieved).toBe(tool1)
     })
   })
@@ -89,7 +90,7 @@ describe('ToolRegistry', () => {
       const analyze = createMockTool('Analyze')
 
       registry.register('tools', { search, analyze })
-      const result = registry.getTools('tools')!
+      const result = registry.getTools('tools') as DomainToolSet
 
       expect(Object.keys(result).sort()).toEqual(['analyze', 'search'].sort())
       expect(result.search).toBe(search)
@@ -99,7 +100,7 @@ describe('ToolRegistry', () => {
     it('should not modify returned object after registration', () => {
       const originalTools = { search: createMockTool('Search') }
       registry.register('tools', originalTools)
-      const retrieved = registry.getTools('tools')!
+      const retrieved = registry.getTools('tools') as DomainToolSet
 
       expect(retrieved).toEqual(originalTools)
       expect(Object.keys(retrieved)).toEqual(Object.keys(originalTools))
@@ -291,8 +292,8 @@ describe('ToolRegistry', () => {
       registry.register('set1', { tool: tool1 })
       registry.register('set2', { tool: tool2 })
 
-      const set1 = registry.getTools('set1')!
-      const set2 = registry.getTools('set2')!
+      const set1 = registry.getTools('set1') as DomainToolSet
+      const set2 = registry.getTools('set2') as DomainToolSet
 
       expect(set1.tool).toBe(tool1)
       expect(set2.tool).toBe(tool2)

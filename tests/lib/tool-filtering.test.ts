@@ -253,7 +253,7 @@ describe('mergeToolSets', () => {
 
   describe('edge cases', () => {
     it('should work with empty carnet tools object', () => {
-      const emptyCarnetTools: Record<string, any> = {}
+      const emptyCarnetTools: Record<string, ReturnType<typeof createMockTool>> = {}
       const searchTool = createMockTool('Search')
 
       registry.register('search', { search: searchTool })
@@ -266,7 +266,7 @@ describe('mergeToolSets', () => {
     })
 
     it('should handle very large toolset', () => {
-      const tools: Record<string, any> = {}
+      const tools: Record<string, ReturnType<typeof createMockTool>> = {}
       for (let i = 0; i < 100; i++) {
         tools[`tool${i}`] = createMockTool(`Tool ${i}`)
       }
@@ -330,7 +330,7 @@ describe('mergeToolSets', () => {
       const expectedTools: string[] = []
 
       for (const toolsetName of toolsets) {
-        const tools: Record<string, any> = {}
+        const tools: Record<string, ReturnType<typeof createMockTool>> = {}
         for (let i = 0; i < 3; i++) {
           const toolName = `${toolsetName}_${i}`
           tools[toolName] = createMockTool(toolName)

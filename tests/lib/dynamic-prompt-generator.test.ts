@@ -311,7 +311,7 @@ describe('DynamicPromptGenerator', () => {
     })
 
     it('should handle many exposed tools', () => {
-      const tools: Record<string, any> = {}
+      const tools: Record<string, ReturnType<typeof createMockTool>> = {}
       const toolNames = new Set<string>()
 
       for (let i = 0; i < 10; i++) {
@@ -406,7 +406,7 @@ describe('DynamicPromptGenerator', () => {
         dataAnalysis: createMockSkill('dataAnalysis', ['analysis']),
       }
 
-      const tools: Record<string, any> = {
+      const tools = {
         googleSearch: createMockTool('Search Google'),
         bingSearch: createMockTool('Search Bing'),
         analyze: createMockTool('Analyze Data'),
