@@ -97,7 +97,7 @@ export class PromptGenerator {
   private generateSkillLoadingInstructions(): string {
     return `## How to Load Skills
 
-To access additional capabilities, use the \`loadSkill\` tool to load a skill by name.
+To access additional capabilities, use the \`loadSkill\` tool to load a skill by name from the catalog above.
 
 When you load a skill:
 1. You receive its full documentation and instructions
@@ -105,13 +105,12 @@ When you load a skill:
 3. You immediately have access to all the tools in those toolsets
 
 Example workflow:
-- Use \`listAvailableSkills()\` to see which skills you can load
+- Review the "Available Skills (On-Demand)" catalog above to see which skills you can load
 - Call \`loadSkill({ skillName: "research" })\` to load a skill
 - After loading, new tools become available for you to use
 
-Available tools for progressive discovery:
-- \`listAvailableSkills()\` - See all skills you can load
-- \`loadSkill(skillName)\` - Load a skill and get access to its tools
+Available tools for progressive loading:
+- \`loadSkill(skillName)\` - Load a skill from the catalog and get access to its tools
 
 Note: You do not need to manually load toolsets or individual tools - they become available automatically when you load their parent skill.`
   }

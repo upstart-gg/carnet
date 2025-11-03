@@ -31,7 +31,7 @@ const prompt = carnet.getSystemPrompt('researcher', {
 
 ### `getTools(agentName, options?): ToolSet`
 
-Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of built‑in meta‑tools used to support progressive loading. These meta‑tools are intentionally small (see below). Domain tools from your manifest's toolsets are merged into the returned `ToolSet` via the `tools` option.
+Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of built‑in meta‑tools used to support progressive loading. Domain tools from your manifest's toolsets are merged into the returned `ToolSet` via the `tools` option.
 
 > **Note:** Users do **not** need to create or manage the meta‑tools directly. Use `carnet.getTools()` which builds the appropriate `ToolSet` and merges domain tools at runtime.
 
@@ -41,8 +41,7 @@ Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of bui
 
 **Returns:** `ToolSet` – A Vercel AI SDK‑compatible set of tools automatically created by Carnet.
 
-**Included internal tools (meta‑tools):**
-- `listAvailableSkills` – lists all skills for an agent.
+- `loadSkill` – loads a skill by name to get its full content and capabilities. Skills are discovered via the system prompt's skill catalog.
 - `loadSkill` – loads and initializes a skill (and updates session state).
 
 These meta‑tools are always included and used alongside any domain tools you provide via the `tools` option. They are created internally and are not intended for direct instantiation.

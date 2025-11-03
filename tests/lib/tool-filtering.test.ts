@@ -11,11 +11,6 @@ describe('mergeToolSets', () => {
   let session: CarnetSessionState
 
   const createCarnetTools = () => ({
-    listAvailableSkills: tool({
-      description: 'List available skills',
-      inputSchema: z.object({}),
-      execute: async () => ({ skills: [] }),
-    }),
     loadSkill: tool({
       description: 'Load a skill',
       inputSchema: z.object({ skillName: z.string() }),
@@ -48,10 +43,8 @@ describe('mergeToolSets', () => {
     it('should return carnet tools when registry is empty', () => {
       const result = mergeToolSets(carnetTools, session, registry)
       expect(Object.keys(result).sort()).toEqual([
-        'listAvailableSkills',
         'loadSkill',
       ])
-      expect(result.listAvailableSkills).toBe(carnetTools.listAvailableSkills)
       expect(result.loadSkill).toBe(carnetTools.loadSkill)
     })
 
@@ -63,10 +56,9 @@ describe('mergeToolSets', () => {
 
       const result = mergeToolSets(carnetTools, session, registry)
 
-      expect(result.listAvailableSkills).toBe(carnetTools.listAvailableSkills)
       expect(result.loadSkill).toBe(carnetTools.loadSkill)
       expect(result.search).toBe(searchTool)
-      expect(Object.keys(result)).toHaveLength(3)
+      expect(Object.keys(result)).toHaveLength(2)
     })
 
     it('should preserve carnet tools when adding domain tools', () => {
@@ -81,11 +73,10 @@ describe('mergeToolSets', () => {
 
       const result = mergeToolSets(carnetTools, session, registry)
 
-      expect(result.listAvailableSkills).toBe(carnetTools.listAvailableSkills)
       expect(result.loadSkill).toBe(carnetTools.loadSkill)
       expect(result.search).toBe(searchTool)
       expect(result.analyze).toBe(analyzeTool)
-      expect(Object.keys(result)).toHaveLength(4)
+      expect(Object.keys(result)).toHaveLength(3)
     })
   })
 
@@ -101,9 +92,8 @@ describe('mergeToolSets', () => {
       const result = mergeToolSets(carnetTools, session, registry)
 
       expect(result.search).toBe(searchTool)
-      expect(result.listAvailableSkills).toBe(carnetTools.listAvailableSkills)
+      expect(result.loadSkill).toBe(carnetTools.loadSkill)
       expect(Object.keys(result).sort()).toEqual([
-        'listAvailableSkills',
         'loadSkill',
         'search',
       ])
@@ -116,7 +106,6 @@ describe('mergeToolSets', () => {
 
       const result = mergeToolSets(carnetTools, session, registry)
       expect(Object.keys(result).sort()).toEqual([
-        'listAvailableSkills',
         'loadSkill',
       ])
     })
@@ -181,7 +170,7 @@ describe('mergeToolSets', () => {
       expect(result.search).toBe(searchTool)
       expect(result.analyze).toBe(analyzeTool)
       expect(result.format).toBe(formatTool)
-      expect(Object.keys(result)).toHaveLength(5)
+      expect(Object.keys(result)).toHaveLength(4)
     })
 
     it('should give last toolset priority when both have same tool', () => {
@@ -220,7 +209,6 @@ describe('mergeToolSets', () => {
       expect(result.tool2).toBe(tool2)
       expect(result.tool3).toBe(tool3)
       expect(Object.keys(result).sort()).toEqual([
-        'listAvailableSkills',
         'loadSkill',
         'tool1',
         'tool2',
@@ -276,7 +264,7 @@ describe('mergeToolSets', () => {
 
       const result = mergeToolSets(carnetTools, session, registry)
 
-      expect(Object.keys(result)).toHaveLength(102) // 100 tools + 2 carnet tools
+      expect(Object.keys(result)).toHaveLength(101) // 100 tools + 1 carnet meta-tool (loadSkill)
       expect(result.tool0).toBe(tools.tool0)
       expect(result.tool99).toBe(tools.tool99)
     })
@@ -305,7 +293,6 @@ describe('mergeToolSets', () => {
       let result = mergeToolSets(carnetTools, session, registry)
       expect(Object.keys(result).sort()).toEqual([
         'google',
-        'listAvailableSkills',
         'loadSkill',
         'search',
       ])
@@ -319,7 +306,6 @@ describe('mergeToolSets', () => {
       expect(Object.keys(result).sort()).toEqual([
         'analyze',
         'google',
-        'listAvailableSkills',
         'loadSkill',
         'search',
       ])
@@ -342,8 +328,8 @@ describe('mergeToolSets', () => {
 
       const result = mergeToolSets(carnetTools, session, registry)
 
-      expect(Object.keys(result)).toContain('listAvailableSkills')
       expect(Object.keys(result)).toContain('loadSkill')
+      expect(Object.keys(result)).not.toContain('listAvailableSkills')
       for (const toolName of expectedTools) {
         expect(Object.keys(result)).toContain(toolName)
       }

@@ -76,105 +76,26 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   })
 
   describe('createCarnetTools', () => {
-    it('should create all tools by default', () => {
+    it('should create the loadSkill meta-tool by default', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      expect(Object.keys(tools)).toContain('listAvailableSkills')
       expect(Object.keys(tools)).toContain('loadSkill')
+      expect(Object.keys(tools)).toHaveLength(1)
     })
 
-    it('should create only specified tools when tools option is provided', () => {
+    it('should create only the loadSkill meta-tool', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      expect(Object.keys(tools)).toHaveLength(2)
-      expect(Object.keys(tools)).toContain('listAvailableSkills')
-      expect(Object.keys(tools)).toContain('loadSkill')
-      // Deprecated meta-tools like 'loadToolset' are not created by the factory anymore
+      expect(Object.keys(tools)).toEqual(['loadSkill'])
+      // Skills are discovered via the system prompt's skill catalog
     })
 
-    it('should create empty ToolSet when tools array is empty', () => {
+    it('should have loadSkill tool when creating tools', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      // Factory now always creates the minimal Carnet meta-tools; filtering is applied later by Carnet.getTools()
-      expect(Object.keys(tools)).toHaveLength(2)
+      // Factory now creates only the loadSkill meta-tool
+      expect(Object.keys(tools)).toHaveLength(1)
+      expect(Object.keys(tools)).toContain('loadSkill')
     })
   })
 
-  describe('listAvailableSkills tool', () => {
-    it('should list all available skills', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      const result = await tools.listAvailableSkills.execute?.(
-        {},
-        {
-          toolCallId: 'test-call-id',
-          messages: [],
-        }
-      )
-
-      if (!result || !('success' in result)) {
-        throw new Error('Expected result with success property')
-      }
-
-      expect(result.success).toBe(true)
-      if (result.success && 'skills' in result) {
-        expect(result.skills).toBeDefined()
-        expect(result.skills.length).toBe(2)
-        if (result.skills[0]) {
-          expect(result.skills[0].name).toBe('skillA')
-        }
-        if (result.skills[1]) {
-          expect(result.skills[1].name).toBe('skillB')
-        }
-      }
-    })
-
-    it('should include skill metadata in results', async () => {
-      const tools = createCarnetTools(carnet, 'testAgent')
-      if (!tools.listAvailableSkills.execute) {
-        throw new Error('execute function not found')
-      }
-
-      const result = await tools.listAvailableSkills.execute(
-        {},
-        {
-          toolCallId: 'test-call-id',
-          messages: [],
-        }
-      )
-
-      if (!result || !('success' in result) || !result.success || !('skills' in result)) {
-        throw new Error('Expected successful result with skills')
-      }
-
-      const skillA = result.skills.find((s) => s.name === 'skillA')
-      expect(skillA).toBeDefined()
-      if (skillA) {
-        expect(skillA.description).toBe('First skill')
-        expect(skillA.toolsets).toEqual(['toolsetA'])
-      }
-    })
-
-    it('should return error for invalid agent', async () => {
-      const tools = createCarnetTools(carnet, 'invalidAgent')
-      if (!tools.listAvailableSkills.execute) {
-        throw new Error('execute function not found')
-      }
-
-      const result = await tools.listAvailableSkills.execute(
-        {},
-        {
-          toolCallId: 'test-call-id',
-          messages: [],
-        }
-      )
-
-      if (!result || !('success' in result)) {
-        throw new Error('Expected result with success property')
-      }
-
-      expect(result.success).toBe(false)
-      if (!result.success && 'error' in result) {
-        expect(result.error).toBeDefined()
-      }
-    })
-  })
 
   describe('loadSkill tool', () => {
     it('should load skill content by name', async () => {
@@ -255,29 +176,16 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   })
 
   describe('progressive loading flow', () => {
-    it('should support full progressive loading workflow', async () => {
+    it('should support progressive loading workflow with loadSkill', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
 
-      // Step 1: List available skills
-      if (!tools.listAvailableSkills.execute) {
-        throw new Error('listAvailableSkills.execute not found')
-      }
-      const skillsList = await tools.listAvailableSkills.execute(
-        {},
-        {
-          toolCallId: 'test-call-id',
-          messages: [],
-        }
-      )
-      if (!skillsList || !('success' in skillsList)) {
-        throw new Error('Expected result with success property')
-      }
-      expect(skillsList.success).toBe(true)
-      if (skillsList.success && 'skills' in skillsList) {
-        expect(skillsList.skills).toHaveLength(2)
-      }
+      // Skills are discovered via the system prompt's skill catalog
+      const prompt = carnet.getSystemPrompt('testAgent')
+      expect(prompt).toContain('Available Skills')
+      expect(prompt).toContain('skillA')
+      expect(prompt).toContain('skillB')
 
-      // Step 2: Load a specific skill
+      // Load a specific skill when needed
       if (!tools.loadSkill.execute) {
         throw new Error('loadSkill.execute not found')
       }

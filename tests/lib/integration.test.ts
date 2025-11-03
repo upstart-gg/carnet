@@ -254,21 +254,19 @@ Creates charts and graphs from data.
       expect(tools).not.toBeNull()
     })
 
-    it('should include all five Carnet tools by default', () => {
+    it('should include the loadSkill Carnet tool by default', () => {
       const tools = carnet.getTools('researcher')
-      expect(Object.keys(tools)).toContain('listAvailableSkills')
       expect(Object.keys(tools)).toContain('loadSkill')
-      // The factory now exposes a minimal set of meta-tools. Domain tools are merged separately.
+      // Skills are discovered via the system prompt's skill catalog
+      // The factory now exposes only the loadSkill meta-tool. Domain tools are merged separately.
     })
 
-    it('should respect tools filter option', () => {
-      const tools = carnet.getTools('researcher', {
-        tools: ['listAvailableSkills', 'loadSkill'],
-      })
+    it('should include loadSkill meta-tool', () => {
+      const tools = carnet.getTools('researcher')
 
-      expect(Object.keys(tools)).toHaveLength(2)
-      expect(Object.keys(tools)).toContain('listAvailableSkills')
+      expect(Object.keys(tools)).toHaveLength(1)
       expect(Object.keys(tools)).toContain('loadSkill')
+      expect(Object.keys(tools)).not.toContain('listAvailableSkills')
       expect(Object.keys(tools)).not.toContain('loadToolset')
     })
 
@@ -306,13 +304,13 @@ Creates charts and graphs from data.
     })
 
     it('should support customizing tools for Vercel AI SDK', () => {
-      // Only expose listing and loading tools (not the full suite)
+      // Carnet provides the loadSkill meta-tool and any domain tools passed via tools option
       const tools = carnet.getTools('researcher', {
-        tools: ['listAvailableSkills', 'loadSkill', 'loadToolset'],
+        tools: {},
       })
 
-      // 'loadToolset' is not a supported meta-tool anymore; the filter will only include available meta-tools and domain tools present
-      expect(Object.keys(tools)).toHaveLength(2)
+      // Only loadSkill meta-tool is included (no domain tools in this example)
+      expect(Object.keys(tools)).toHaveLength(1)
 
       // Should still work with Vercel AI SDK
       const config = {
@@ -320,7 +318,7 @@ Creates charts and graphs from data.
         tools: tools,
       }
 
-      expect(Object.keys(config.tools)).toHaveLength(2)
+      expect(Object.keys(config.tools)).toHaveLength(1)
     })
   })
 

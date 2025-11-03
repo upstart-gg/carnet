@@ -258,7 +258,7 @@ describe('PromptGenerator', () => {
   })
 
   describe('generateSkillLoadingInstructions', () => {
-    it('should include correct tool references only (listAvailableSkills and loadSkill)', () => {
+    it('should include correct tool references only (loadSkill)', () => {
       const agent: Agent = {
         name: 'test-agent',
         description: 'Test agent',
@@ -274,8 +274,10 @@ describe('PromptGenerator', () => {
       const result = generator.generateAgentPrompt(agent, [], availableSkills)
 
       // Check for correct tools
-      expect(result.content).toContain('`listAvailableSkills()`')
       expect(result.content).toContain('`loadSkill(')
+
+      // Ensure listAvailableSkills is NOT mentioned (it's redundant with the catalog)
+      expect(result.content).not.toContain('listAvailableSkills')
 
       // Ensure non-existent tools are NOT mentioned
       expect(result.content).not.toContain('loadToolset')
