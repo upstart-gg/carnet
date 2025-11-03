@@ -30,7 +30,6 @@ Carnet is licensed under the [MIT License](./LICENSE).
 
 > Built with ❤️ by [Upstart](https://upstart.gg)
 
-
 ---
 
 **Happy building! 🚀**
