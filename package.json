@@ -43,7 +43,7 @@
     "llm",
     "tooling"
   ],
-  "author": "Upstart",
+  "author": "Upstart <dev@upstart.gg> (https://upstart.gg)",
   "license": "MIT",
   "engines": {
     "node": ">=22.0.0",
