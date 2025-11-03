@@ -93,8 +93,7 @@ const result = await streamText({
 })
 ```
 
-The returned ToolSet includes Carnet meta‑tools plus any domain tools you provided in `toolsets`:
-- **listAvailableSkills** - List all available skills for the agent
+The returned ToolSet includes Carnet meta‑tools plus any domain tools you provided in `tools` (filtered as needed).:
 - **loadSkill** - Load a skill by name with full content (updates session state)
 - Domain tools from your manifest's toolsets are merged in dynamically
 
