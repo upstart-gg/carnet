@@ -1,5 +1,5 @@
 ---
-"@upstart-gg/carnet": patch
+"@upstar.gg/carnet": patch
 ---
 
 Test release
