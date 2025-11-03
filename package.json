@@ -68,6 +68,10 @@
     "vitepress": "^1.6.4",
     "vitepress-plugin-tabs": "^0.7.3"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/upstart-gg/carnet.git"
+  },
   "publishConfig": {
     "access": "public"
   }
