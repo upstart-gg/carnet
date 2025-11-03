@@ -28,15 +28,11 @@ yarn global add @upstart-gg/carnet
 ```
 :::
 
-After installation, verify it works:
-
-```bash
-carnet --version
-```
 
 ## Local Installation (For programmatic use)
 
-Install Carnet in your project for programmatic use with Vercel AI SDK:
+Install Carnet in your project for programmatic use with Vercel AI SDK.
+"Packages "ai" and "zod" are peer dependencies required by Carnet.
 
 :::tabs key:pm
 == npm
@@ -59,16 +55,6 @@ pnpm add @upstart-gg/carnet ai zod
 yarn add @upstart-gg/carnet ai zod
 ```
 :::
-
-Then install your preferred language model provider:
-
-```bash
-npm install @ai-sdk/openai    # OpenAI provider
-# or
-npm install @ai-sdk/anthropic # Anthropic provider
-# or another Vercel AI SDK compatible provider
-```
-
 
 ## System Requirements
 
