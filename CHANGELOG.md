@@ -1,5 +1,13 @@
 # @upstart.gg/carnet
 
+## 0.1.5
+
+### Patch Changes
+
+- [#17](https://github.com/upstart-gg/carnet/pull/17) [`e30cd3d`](https://github.com/upstart-gg/carnet/commit/e30cd3dc35e6ecdd6c481f18de34f0b4c4036dce) Thanks [@mattallty](https://github.com/mattallty)! - Release with cli fixed
+
+- [#19](https://github.com/upstart-gg/carnet/pull/19) [`6647eca`](https://github.com/upstart-gg/carnet/commit/6647ecae059e60b6e970865363dd53ba062972c0) Thanks [@mattallty](https://github.com/mattallty)! - Fix release workflow
+
 ## 0.1.4
 
 ### Patch Changes
