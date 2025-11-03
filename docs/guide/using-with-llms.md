@@ -467,6 +467,92 @@ const result = await tools.loadSkill.execute({
 // Returns: { success: false, error: '...', available: ['skill1', 'skill2'] }
 ```
 
+## Session Management and Debugging
+
+As agents load skills, Carnet maintains session state tracking which skills have been discovered and which tools are currently available. You can inspect this state for debugging and monitoring.
+
+### Understanding Session State
+
+Each agent has a session that tracks:
+
+```typescript
+interface CarnetSessionState {
+  agentName: string                // Agent name
+  discoveredSkills: Set<string>    // Skills loaded during this session
+  loadedToolsets: Set<string>      // Toolsets exposed after skills load
+  exposedDomainTools: Set<string>  // Domain tools currently available
+}
+```
+
+### Inspecting Session State
+
+Use `getSessionState()` to understand what's been loaded:
+
+```typescript
+// After agent has loaded some skills
+const state = carnet.getSessionState('researcher')
+
+if (state) {
+  console.log('Discovered skills:', Array.from(state.discoveredSkills))
+  // Output: ['analysis', 'research']
+
+  console.log('Exposed tools:', Array.from(state.exposedDomainTools))
+  // Output: ['googleSearch', 'scholarArticles', 'summarize']
+}
+```
+
+### Debugging Tool Availability
+
+When tools aren't available or unexpected tools appear, use the diagnostics API:
+
+```typescript
+const diagnostics = carnet.getToolFilteringDiagnostics('researcher')
+
+if (diagnostics) {
+  console.log('Tools provided:', diagnostics.providedTools)
+  console.log('Tools exposed:', diagnostics.exposedTools)
+  console.log('Tools filtered out:', diagnostics.filteredOutTools)
+  console.log('Reason:', diagnostics.reason)
+}
+```
+
+This is useful for:
+- Understanding why a tool isn't available
+- Verifying the correct tools were merged
+- Debugging tool filtering logic
+
+### Resetting Sessions
+
+To reset an agent's session state (clearing discovered skills and tool exposure):
+
+```typescript
+// Reset to initial state
+carnet.resetSession('researcher')
+
+// All tools must be re-discovered via loadSkill calls
+```
+
+## Error Handling
+
+Carnet provides structured error classes for consistent error handling:
+
+```typescript
+import { isValidationError, isConfigError } from '@upstart-gg/carnet'
+
+try {
+  const skill = carnet.getSkillContent('unknown-skill')
+} catch (error) {
+  if (isValidationError(error)) {
+    console.error(`Skill not found: ${error.context.resourceName}`)
+    // Inform agent about available skills
+    const available = carnet.listAvailableSkills('agent')
+    console.log('Available:', available.map(s => s.name))
+  }
+}
+```
+
+For detailed error handling information, see [Error Handling](/api/error-handling.md).
+
 ## See Also
 
 - [API Reference](/api/carnet.md) - Complete Carnet API documentation

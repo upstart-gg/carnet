@@ -58,24 +58,22 @@ const skillContent = carnet.getSkillContent('react')
 // Returns: Full skill documentation with variables injected
 ```
 
-### 4. Agent Explores Toolsets
+### 4. Toolsets and Tools Auto-Load with Skills
+
+When an agent loads a skill, all associated toolsets and tools become immediately available:
 
 ```typescript
-// Agent: "What tools are in the components toolset?"
-const toolsets = carnet.listSkillToolsets('react')
-// Returns: [{ name: 'components', description: '...', tools: [...] }]
+// Agent calls: loadSkill('react')
+// Carnet automatically:
+// 1. Returns full skill documentation
+// 2. Exposes all tools in skill's toolsets
+// 3. Updates session state with loaded toolsets
 
-const tools = carnet.listToolsetTools('components')
-// Returns: Array of tool metadata
+// The agent can now immediately use any tools from those toolsets
+// No separate tool/toolset loading steps needed!
 ```
 
-### 5. Agent Loads Specific Tool
-
-```typescript
-// Agent: "Show me the Button component"
-const toolContent = carnet.getToolContent('button')
-// Returns: Full tool documentation
-```
+**Note:** The metadata inspection methods `listSkillToolsets()` and `listToolsetTools()` are for debugging and UI purposes only, not part of the LLM's typical workflow. Tools become available through the `loadSkill()` meta-tool automatically.
 
 ## Best Practices
 

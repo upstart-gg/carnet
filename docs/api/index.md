@@ -31,7 +31,7 @@ const prompt = carnet.getSystemPrompt('researcher', {
 
 ### `getTools(agentName, options?): ToolSet`
 
-Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of built‑in meta‑tools used to support progressive loading. These meta‑tools are intentionally small (see below). Domain tools from your manifest's toolsets are merged into the returned `ToolSet` via the `toolsets` option.
+Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of built‑in meta‑tools used to support progressive loading. These meta‑tools are intentionally small (see below). Domain tools from your manifest's toolsets are merged into the returned `ToolSet` via the `tools` option.
 
 > **Note:** Users do **not** need to create or manage the meta‑tools directly. Use `carnet.getTools()` which builds the appropriate `ToolSet` and merges domain tools at runtime.
 
@@ -45,14 +45,15 @@ Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of bui
 - `listAvailableSkills` – lists all skills for an agent.
 - `loadSkill` – loads and initializes a skill (and updates session state).
 
-These meta‑tools are used alongside any domain tools you provide via the `toolsets` option. They are created internally and are not intended for direct instantiation.
+These meta‑tools are always included and used alongside any domain tools you provide via the `tools` option. They are created internally and are not intended for direct instantiation.
 
 **Example:**
 ```typescript
-// Expose only Carnet meta‑tools (default) and your domain toolsets
+// Expose Carnet meta‑tools (always included) and your domain tools
 const tools = carnet.getTools('researcher', {
-  toolsets: {
+  tools: {
     search: searchTools,
+    analyze: analyzeTools,
   }
 })
 ```
@@ -72,6 +73,59 @@ Returns an array of the names of the domain tools that are currently exposed and
 ### `resetSession(agentName: string): void`
 
 Clears the session state for a specific agent, resetting its discovered skills and tool exposure to the initial state.
+
+## Debugging and Diagnostics
+
+These methods help you understand agent session state and tool availability for debugging purposes.
+
+### `getSessionState(agentName: string): CarnetSessionState | null`
+
+Inspect the current session state for an agent. Returns the complete session state including discovered skills, loaded toolsets, and exposed domain tools. Useful for debugging why certain tools are or aren't available.
+
+**Returns:** `CarnetSessionState` object or `null` if no session exists:
+```typescript
+interface CarnetSessionState {
+  agentName: string
+  discoveredSkills: Set<string>      // Skills loaded during this session
+  loadedToolsets: Set<string>        // Toolsets auto-loaded with skills
+  exposedDomainTools: Set<string>    // Domain tools currently available to the agent
+}
+```
+
+**Example:**
+```typescript
+// Check what's been loaded in the current session
+const state = carnet.getSessionState('researcher')
+if (state) {
+  console.log('Discovered skills:', Array.from(state.discoveredSkills))
+  console.log('Exposed tools:', Array.from(state.exposedDomainTools))
+}
+```
+
+### `getToolFilteringDiagnostics(agentName: string): ToolFilteringDiagnostics | null`
+
+Get detailed diagnostics about tool filtering. Helps understand why certain tools were or weren't exposed. Returns information about which tools were provided, which were filtered out, and why.
+
+**Returns:** `ToolFilteringDiagnostics` object or `null` if no session exists:
+```typescript
+interface ToolFilteringDiagnostics {
+  providedTools: string[]              // Tools provided to getTools()
+  exposedTools: string[]               // Tools that were exposed
+  filteredOutTools: string[]           // Tools that were filtered out
+  reason: string                       // Explanation of filtering
+}
+```
+
+**Example:**
+```typescript
+// Understand tool filtering decisions
+const diagnostics = carnet.getToolFilteringDiagnostics('coder')
+if (diagnostics) {
+  console.log('Exposed:', diagnostics.exposedTools)
+  console.log('Filtered out:', diagnostics.filteredOutTools)
+  console.log('Reason:', diagnostics.reason)
+}
+```
 
 ## Utility Methods
 
@@ -130,11 +184,9 @@ Options for `getTools()`:
 
 ```typescript
 interface ToolOptions {
-  // Explicit meta tool names you want to expose (default: Carnet exposes the minimal meta set)
-  tools?: Array<'listAvailableSkills' | 'loadSkill' | string>
-
-  // Domain toolsets to merge into the returned ToolSet (keyed by toolset name)
-  toolsets?: Record<string, any>
+  // Domain tools to merge into the returned ToolSet
+  // Keys should match tool names from your manifest
+  tools?: DomainToolSet  // e.g., { search: searchTools, analyze: analyzeTools }
 }
 ```
 
