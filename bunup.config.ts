@@ -7,6 +7,5 @@ export default defineConfig({
   outDir: 'dist',
   dts: {
     splitting: true,
-    // entry: ['src/lib/index.ts'],
   },
 })
