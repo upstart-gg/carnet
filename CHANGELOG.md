@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.7
+
+### Patch Changes
+
+- [#22](https://github.com/upstart-gg/carnet/pull/22) [`094c2a7`](https://github.com/upstart-gg/carnet/commit/094c2a7c735a24f15b07b5835a04f5c661a051ab) Thanks [@mattallty](https://github.com/mattallty)! - Minor change
+
 ## 0.1.6
 
 ### Patch Changes
