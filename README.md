@@ -27,6 +27,10 @@ Carnet is licensed under the [MIT License](./LICENSE).
 - 💬 [Discussions](https://github.com/upstart-gg/carnet/discussions)
 - 📦 [npm Package](https://www.npmjs.com/package/@upstart-gg/carnet)
 
+
+> Built with ❤️ by [Upstart](https://upstart.gg)
+
+
 ---
 
 **Happy building! 🚀**
