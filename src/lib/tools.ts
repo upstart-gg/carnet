@@ -1,7 +1,7 @@
 import { type Tool, tool } from 'ai'
 import { z } from 'zod'
 import type { Carnet } from './index'
-import type { DomainToolSet, SkillMetadata } from './types'
+import type { DomainToolSet, SkillFileReference, SkillMetadata } from './types'
 
 /**
  * Options for configuring which Carnet tools to expose
@@ -57,6 +57,7 @@ export function createCarnetTools(
         success: boolean
         content: string
         metadata: SkillMetadata
+        files: Array<Pick<SkillFileReference, 'path' | 'description'>>
         error?: undefined
         available?: undefined
       }
@@ -66,6 +67,25 @@ export function createCarnetTools(
         available: string[]
         content?: undefined
         metadata?: undefined
+        files?: undefined
+      }
+  >
+  loadSkillFile: Tool<
+    {
+      skillName: string
+      path: string
+    },
+    | {
+        success: boolean
+        content: string
+        path: string
+        error?: undefined
+      }
+    | {
+        success: boolean
+        error: string
+        path: string
+        content?: undefined
       }
   >
 } {
@@ -79,6 +99,13 @@ export function createCarnetTools(
         try {
           const content = carnet.getSkillContent(skillName)
           const metadata = carnet.getSkillMetadata(skillName)
+          const skill = carnet.getSkill(skillName)
+
+          // Extract file metadata (path and description only, not content)
+          const files = skill?.files?.map((f) => ({
+            path: f.path,
+            description: f.description,
+          })) ?? []
 
           // Update the session state with the newly discovered skill and its toolsets
           carnet._updateSessionOnSkillLoad(agentName, skillName)
@@ -87,6 +114,7 @@ export function createCarnetTools(
             success: true,
             content,
             metadata,
+            files,
           }
         } catch (_error) {
           return {
@@ -97,9 +125,34 @@ export function createCarnetTools(
         }
       },
     }),
+
+    loadSkillFile: tool({
+      description: 'Load the content of a file from a previously loaded skill',
+      inputSchema: z.object({
+        skillName: z.string().describe('The name of the skill that contains the file'),
+        path: z.string().describe('The path of the file to load (from the files array)'),
+      }),
+      execute: async ({ skillName, path }) => {
+        try {
+          const content = carnet.loadSkillFile(skillName, path)
+
+          return {
+            success: true,
+            content,
+            path,
+          }
+        } catch (error) {
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+            path,
+          }
+        }
+      },
+    }),
   }
 
-  // Note: only `loadSkill` is exported as a Carnet meta-tool.
+  // Note: both `loadSkill` and `loadSkillFile` are exported as Carnet meta-tools.
   // Skills are discovered via the system prompt's skill catalog.
   // Toolsets and individual tool loading are performed by domain tool providers
   // exposed via the `tools` option to `getTools()`.

@@ -97,16 +97,33 @@ export const agentSchema: z.ZodObject<{
   })
   .describe('Agent Schema')
 
+/**
+ * Schema for file references in skill frontmatter
+ */
+export const skillFileReferenceSchema: z.ZodObject<{
+  path: z.ZodString
+  description: z.ZodString
+  content: z.ZodString
+}> = z
+  .object({
+    path: z.string().min(1).describe('Path relative to skill root directory (no ./ prefix)'),
+    description: z.string().min(1).describe('Description to help LLM decide when to load this file'),
+    content: z.string().describe('File content embedded at build time'),
+  })
+  .describe('Skill File Reference Schema')
+
 export const skillSchema: z.ZodObject<{
   name: z.ZodString
   description: z.ZodString
   toolsets: z.ZodDefault<z.ZodArray<z.ZodString>>
+  files: z.ZodOptional<z.ZodDefault<z.ZodArray<typeof skillFileReferenceSchema>>>
   content: z.ZodString
 }> = z
   .object({
     name: z.string().min(1).describe('The name of the skill'),
     description: z.string().min(1).describe('A brief description of the skill'),
     toolsets: z.array(z.string()).default([]).describe('Toolsets associated with the skill'),
+    files: z.array(skillFileReferenceSchema).default([]).optional().describe('File references available for on-demand loading'),
     content: z.string().describe('Full markdown content of the skill'),
   })
   .describe('Skill Schema')
@@ -172,6 +189,7 @@ export const manifestSchema: z.ZodObject<{
         name: z.ZodString
         description: z.ZodString
         toolsets: z.ZodDefault<z.ZodArray<z.ZodString>>
+        files: z.ZodOptional<z.ZodDefault<z.ZodArray<typeof skillFileReferenceSchema>>>
         content: z.ZodString
       },
       z.core.$strip
@@ -205,7 +223,20 @@ export const manifestSchema: z.ZodObject<{
     version: z.number().default(1).describe('Version of the manifest schema'),
     app: appConfigSchema,
     agents: z.record(agentSchema.shape.name, agentSchema).describe('Full list of agents'),
-    skills: z.record(skillSchema.shape.name, skillSchema).describe('Full list of skills'),
+    skills: z
+      .record(
+        skillSchema.shape.name,
+        z
+          .object({
+            name: z.string().min(1),
+            description: z.string().min(1),
+            toolsets: z.array(z.string()).default([]),
+            files: z.array(skillFileReferenceSchema).default([]).optional(),
+            content: z.string(),
+          })
+          .describe('Skill with file references')
+      )
+      .describe('Full list of skills'),
     toolsets: z.record(toolsetSchema.shape.name, toolsetSchema).describe('Full list of toolsets'),
     tools: z.record(toolSchema.shape.name, toolSchema).describe('Full list of tools'),
   })

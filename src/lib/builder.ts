@@ -1,4 +1,5 @@
-import { promises as fs } from 'node:fs'
+import { constants, promises as fs } from 'node:fs'
+import { accessSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { discoverAgents, discoverSkills, discoverTools, discoverToolsets } from './discovery'
 import { parseMarkdownFile, parseToolFile } from './parser'
@@ -41,10 +42,16 @@ export async function validate(contentDir: string): Promise<void> {
 }
 
 export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
-  const { output } = options
+  const { output = './dist' } = options
   const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
 
   validateReferences(agents, skills, toolsets, tools)
+
+  // Validate file references exist and are accessible
+  validateSkillFileReferences(skills, carnetDir)
+
+  // Read and embed file contents
+  await readSkillFileContents(skills, carnetDir)
 
   const manifest: Manifest = {
     version: 1,
@@ -69,6 +76,88 @@ export async function build(options: CarnetConfig, carnetDir: string = './carnet
   await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
 
   console.log(`Build successful! Manifest written to ${manifestPath}`)
+}
+
+/**
+ * Validate that all file references in skills exist and are accessible
+ */
+function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: string): void {
+  for (const skill of skills.values()) {
+    if (!skill.files || skill.files.length === 0) {
+      continue
+    }
+
+    const skillDir = path.join(contentDir, 'skills', skill.name)
+
+    for (const fileRef of skill.files) {
+      // Ensure path doesn't start with ./ (normalize)
+      if (fileRef.path.startsWith('./') || fileRef.path.startsWith('.\\')) {
+        throw new Error(
+          `Skill "${skill.name}": file path "${fileRef.path}" should not start with "./". Use relative path: "${fileRef.path.slice(2)}"`
+        )
+      }
+
+      // Resolve path relative to skill directory
+      const absolutePath = path.resolve(skillDir, fileRef.path)
+
+      // Security: ensure file is within skill directory
+      const normalizedPath = path.normalize(absolutePath)
+      const normalizedSkillDir = path.normalize(skillDir)
+      if (!normalizedPath.startsWith(normalizedSkillDir)) {
+        throw new Error(
+          `Skill "${skill.name}": file path "${fileRef.path}" resolves outside skill directory (security violation)`
+        )
+      }
+
+      // Check file exists
+      if (!existsSync(absolutePath)) {
+        throw new Error(
+          `Skill "${skill.name}" references non-existent file: ${fileRef.path}\n` +
+          `Expected at: ${absolutePath}`
+        )
+      }
+
+      // Check file is readable
+      try {
+        accessSync(absolutePath, constants.R_OK)
+      } catch {
+        throw new Error(
+          `Skill "${skill.name}" references unreadable file: ${fileRef.path}\n` +
+          `Path: ${absolutePath}`
+        )
+      }
+    }
+  }
+}
+
+/**
+ * Read and embed file contents into skill file references
+ */
+async function readSkillFileContents(
+  skills: Map<string, Skill>,
+  contentDir: string
+): Promise<void> {
+  for (const skill of skills.values()) {
+    if (!skill.files || skill.files.length === 0) {
+      continue
+    }
+
+    const skillDir = path.join(contentDir, 'skills', skill.name)
+
+    for (const fileRef of skill.files) {
+      const absolutePath = path.resolve(skillDir, fileRef.path)
+
+      try {
+        // Read file and embed content
+        fileRef.content = await fs.readFile(absolutePath, 'utf-8')
+      } catch (error) {
+        throw new Error(
+          `Failed to read file "${fileRef.path}" from skill "${skill.name}": ` +
+          `${error instanceof Error ? error.message : String(error)}`
+        )
+      }
+    }
+  }
 }
 
 function validateReferences(

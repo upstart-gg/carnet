@@ -101,16 +101,20 @@ To access additional capabilities, use the \`loadSkill\` tool to load a skill by
 
 When you load a skill:
 1. You receive its full documentation and instructions
-2. All associated toolsets and tools are automatically loaded
-3. You immediately have access to all the tools in those toolsets
+2. You receive a list of available files (if any) with descriptions
+3. All associated toolsets and tools are automatically loaded
+4. You can load specific files on-demand using the \`loadSkillFile\` tool
 
 Example workflow:
-- Review the "Available Skills (On-Demand)" catalog above to see which skills you can load
-- Call \`loadSkill({ skillName: "research" })\` to load a skill
-- After loading, new tools become available for you to use
+- Review the "Available Skills (On-Demand)" catalog above
+- Call \`loadSkill({ skillName: "code-review" })\` to load a skill
+- Review the \`files\` array in the response to see available resources
+- Call \`loadSkillFile({ skillName: "code-review", path: "guidelines/python-pep8.md" })\` to load a specific file
+- Use the file content to inform your work
 
 Available tools for progressive loading:
-- \`loadSkill(skillName)\` - Load a skill from the catalog and get access to its tools
+- \`loadSkill(skillName)\` - Load a skill and get access to its tools
+- \`loadSkillFile(skillName, path)\` - Load a specific file from a loaded skill
 
 Note: You do not need to manually load toolsets or individual tools - they become available automatically when you load their parent skill.`
   }
