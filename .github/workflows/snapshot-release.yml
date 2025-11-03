@@ -38,7 +38,7 @@ jobs:
         run: bun run build
 
       - name: Publish Snapshot
-        run: pnpm changeset publish --tag next >> $GITHUB_STEP_SUMMARY
+        run: bunx changeset publish --tag next >> $GITHUB_STEP_SUMMARY
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
