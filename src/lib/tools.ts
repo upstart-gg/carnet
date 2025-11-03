@@ -102,10 +102,11 @@ export function createCarnetTools(
           const skill = carnet.getSkill(skillName)
 
           // Extract file metadata (path and description only, not content)
-          const files = skill?.files?.map((f) => ({
-            path: f.path,
-            description: f.description,
-          })) ?? []
+          const files =
+            skill?.files?.map((f) => ({
+              path: f.path,
+              description: f.description,
+            })) ?? []
 
           // Update the session state with the newly discovered skill and its toolsets
           carnet._updateSessionOnSkillLoad(agentName, skillName)

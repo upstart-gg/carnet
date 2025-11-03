@@ -107,7 +107,10 @@ export const skillFileReferenceSchema: z.ZodObject<{
 }> = z
   .object({
     path: z.string().min(1).describe('Path relative to skill root directory (no ./ prefix)'),
-    description: z.string().min(1).describe('Description to help LLM decide when to load this file'),
+    description: z
+      .string()
+      .min(1)
+      .describe('Description to help LLM decide when to load this file'),
     content: z.string().describe('File content embedded at build time'),
   })
   .describe('Skill File Reference Schema')
@@ -123,7 +126,11 @@ export const skillSchema: z.ZodObject<{
     name: z.string().min(1).describe('The name of the skill'),
     description: z.string().min(1).describe('A brief description of the skill'),
     toolsets: z.array(z.string()).default([]).describe('Toolsets associated with the skill'),
-    files: z.array(skillFileReferenceSchema).default([]).optional().describe('File references available for on-demand loading'),
+    files: z
+      .array(skillFileReferenceSchema)
+      .default([])
+      .optional()
+      .describe('File references available for on-demand loading'),
     content: z.string().describe('Full markdown content of the skill'),
   })
   .describe('Skill Schema')

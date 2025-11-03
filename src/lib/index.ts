@@ -260,15 +260,10 @@ export class Carnet {
     if (!fileRef) {
       const availableFiles = skill.files?.map((f) => f.path) || []
       const availableList = availableFiles.length > 0 ? availableFiles.join(', ') : 'none'
-      throw new ValidationError(
-        `File not found in skill`,
-        'file',
-        filePath,
-        {
-          skillName,
-          availableFiles: availableList,
-        }
-      )
+      throw new ValidationError(`File not found in skill`, 'file', filePath, {
+        skillName,
+        availableFiles: availableList,
+      })
     }
 
     // Return embedded content from manifest

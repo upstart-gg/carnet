@@ -1,5 +1,4 @@
-import { constants, promises as fs } from 'node:fs'
-import { accessSync, existsSync } from 'node:fs'
+import { accessSync, constants, existsSync, promises as fs } from 'node:fs'
 import path from 'node:path'
 import { discoverAgents, discoverSkills, discoverTools, discoverToolsets } from './discovery'
 import { parseMarkdownFile, parseToolFile } from './parser'
@@ -42,7 +41,7 @@ export async function validate(contentDir: string): Promise<void> {
 }
 
 export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
-  const { output = './dist' } = options
+  const { output = './dist', app = { globalInitialSkills: [], globalSkills: [] } } = options
   const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
 
   validateReferences(agents, skills, toolsets, tools)
@@ -55,7 +54,7 @@ export async function build(options: CarnetConfig, carnetDir: string = './carnet
 
   const manifest: Manifest = {
     version: 1,
-    app: options.app,
+    app,
     agents: Object.fromEntries(agents),
     skills: Object.fromEntries(skills),
     toolsets: Object.fromEntries(toolsets),
@@ -113,7 +112,7 @@ function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: str
       if (!existsSync(absolutePath)) {
         throw new Error(
           `Skill "${skill.name}" references non-existent file: ${fileRef.path}\n` +
-          `Expected at: ${absolutePath}`
+            `Expected at: ${absolutePath}`
         )
       }
 
@@ -123,7 +122,7 @@ function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: str
       } catch {
         throw new Error(
           `Skill "${skill.name}" references unreadable file: ${fileRef.path}\n` +
-          `Path: ${absolutePath}`
+            `Path: ${absolutePath}`
         )
       }
     }
@@ -153,7 +152,7 @@ async function readSkillFileContents(
       } catch (error) {
         throw new Error(
           `Failed to read file "${fileRef.path}" from skill "${skill.name}": ` +
-          `${error instanceof Error ? error.message : String(error)}`
+            `${error instanceof Error ? error.message : String(error)}`
         )
       }
     }

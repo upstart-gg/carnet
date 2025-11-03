@@ -222,12 +222,20 @@ Creates charts and graphs from data.
     })
 
     it('should accept variables for prompt generation', () => {
+      const baseResearcher = manifest.agents.researcher
+      if (!baseResearcher) {
+        throw new Error('baseResearcher is required')
+      }
+
       const manifest2: Manifest = {
         ...manifest,
         agents: {
           ...manifest.agents,
           researcher: {
-            ...manifest.agents.researcher,
+            name: baseResearcher.name,
+            description: baseResearcher.description,
+            initialSkills: baseResearcher.initialSkills,
+            skills: baseResearcher.skills,
             prompt: 'You are researching {{ TOPIC }}. Use your skills wisely.',
           },
         },
@@ -325,6 +333,11 @@ Creates charts and graphs from data.
 
   describe('integration with multiple agents', () => {
     it('should handle different agents independently', () => {
+      const baseResearcher = manifest.agents.researcher
+      if (!baseResearcher) {
+        throw new Error('baseResearcher is required')
+      }
+
       const manifest2: Manifest = {
         version: 1,
         app: {
@@ -332,7 +345,7 @@ Creates charts and graphs from data.
           globalSkills: [],
         },
         agents: {
-          researcher: manifest.agents.researcher,
+          researcher: baseResearcher,
           writer: {
             name: 'writer',
             description: 'A writing agent',

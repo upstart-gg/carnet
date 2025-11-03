@@ -110,7 +110,6 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
     })
   })
 
-
   describe('loadSkill tool', () => {
     it('should load skill content by name', async () => {
       const tools = createCarnetTools(carnet, 'testAgent')
@@ -284,7 +283,12 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       // Type guard: check for specific properties to narrow union type
       if (result && 'success' in result && 'metadata' in result) {
         expect(result.success).toBe(true)
-        if (result.success && 'files' in result && Array.isArray(result.files) && result.files.length > 0) {
+        if (
+          result.success &&
+          'files' in result &&
+          Array.isArray(result.files) &&
+          result.files.length > 0
+        ) {
           const files = result.files
           const firstFile = files[0]
           expect(files).toBeDefined()
