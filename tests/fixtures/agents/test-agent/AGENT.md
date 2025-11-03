@@ -5,10 +5,8 @@ initialSkills:
   - foo
 skills:
   - bar
-prompt: |
-  You are a test agent. Use your skills to help the user.
 ---
 
-# Test Agent
+You are a test agent. Use your skills to help the user.
 
 This is a test agent with {{ TEST_VAR }}.

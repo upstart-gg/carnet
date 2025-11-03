@@ -11,7 +11,7 @@ describe('parseMarkdownFile', () => {
     expect(agent.description).toBe('A test agent')
     expect(agent.initialSkills).toEqual(['foo'])
     expect(agent.skills).toEqual(['bar'])
-    expect(agent.prompt).toBe('You are a test agent. Use your skills to help the user.\n')
+    expect(agent.prompt).toBe('\nYou are a test agent. Use your skills to help the user.\n\nThis is a test agent.')
   })
 })
 

@@ -75,7 +75,47 @@ export const agentCapabilitySchema: z.ZodEnum<{
   createCustomAgent: 'createCustomAgent'
 }> = z.enum(['createCustomAgent']).describe('Capabilities that can be granted to an agent')
 
-export const agentSchema: z.ZodObject<{
+export const agentSchemaBase: z.ZodObject<{
+  name: z.ZodString
+  description: z.ZodString
+  initialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+  skills: z.ZodDefault<z.ZodArray<z.ZodString>>
+  content: z.ZodString
+}> = z
+  .object({
+    name: z.string().min(1).describe('The name of the agent'),
+    description: z.string().min(1).describe('A brief description of the agent'),
+    initialSkills: z
+      .array(z.string())
+      .default([])
+      .describe('Initial skills of the agent, loaded at creation'),
+    skills: z
+      .array(z.string())
+      .default([])
+      .describe('Skills that can be loaded on demand by the agent during its lifecycle'),
+    content: z.string().describe('Full markdown content of the agent (becomes the prompt)'),
+  })
+  .passthrough()
+  .describe('Agent Schema')
+
+export const agentSchema: z.ZodType<{
+  name: string
+  description: string
+  initialSkills: string[]
+  skills: string[]
+  prompt: string
+}> = agentSchemaBase.transform((data) => ({
+  name: data.name,
+  description: data.description,
+  initialSkills: data.initialSkills,
+  skills: data.skills,
+  prompt: data.content,
+}))
+
+/**
+ * Schema for agents in manifests (with prompt instead of content)
+ */
+export const agentManifestSchema: z.ZodObject<{
   name: z.ZodString
   description: z.ZodString
   initialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
@@ -93,9 +133,9 @@ export const agentSchema: z.ZodObject<{
       .array(z.string())
       .default([])
       .describe('Skills that can be loaded on demand by the agent during its lifecycle'),
-    prompt: z.string().describe('Prompt of the agent (markdown content)'),
+    prompt: z.string().describe('Prompt of the agent'),
   })
-  .describe('Agent Schema')
+  .describe('Agent Schema (for Manifest)')
 
 /**
  * Schema for file references in skill frontmatter
@@ -178,16 +218,7 @@ export const manifestSchema: z.ZodObject<{
   >
   agents: z.ZodRecord<
     z.ZodString,
-    z.ZodObject<
-      {
-        name: z.ZodString
-        description: z.ZodString
-        initialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
-        skills: z.ZodDefault<z.ZodArray<z.ZodString>>
-        prompt: z.ZodString
-      },
-      z.core.$strip
-    >
+    typeof agentManifestSchema
   >
   skills: z.ZodRecord<
     z.ZodString,
@@ -229,7 +260,7 @@ export const manifestSchema: z.ZodObject<{
   .object({
     version: z.number().default(1).describe('Version of the manifest schema'),
     app: appConfigSchema,
-    agents: z.record(agentSchema.shape.name, agentSchema).describe('Full list of agents'),
+    agents: z.record(agentManifestSchema.shape.name, agentManifestSchema).describe('Full list of agents'),
     skills: z
       .record(
         skillSchema.shape.name,
