@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.6
+
+### Patch Changes
+
+- [#20](https://github.com/upstart-gg/carnet/pull/20) [`911bef2`](https://github.com/upstart-gg/carnet/commit/911bef22ef45b7f42761419f2537ebaef89b447c) Thanks [@mattallty](https://github.com/mattallty)! - Work on release workflow
+
 ## 0.1.5
 
 ### Patch Changes
