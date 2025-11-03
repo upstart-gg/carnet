@@ -5,14 +5,10 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.js"
     },
-    "./schema": {
-      "types": "./dist/schema/index.d.ts",
-      "import": "./dist/schema/index.js"
-    },
-    "./schema/config.schema.json": "./schema/config.schema.json"
+    "./schema/config.schema.json": "./dist/lib/config.schema.json"
   },
   "bin": {
     "carnet": "./dist/cli/index.js"
@@ -22,8 +18,8 @@
     "schema"
   ],
   "scripts": {
-    "dev": "bun build --watch",
-    "build": "bun build src/lib/index.ts src/cli/index.ts --outdir dist --target node",
+    "dev": "bunup --watch",
+    "build": "bunup && bun scripts/generate-config-schema.ts",
     "test": "bun test",
     "lint": "biome lint src tests",
     "format": "biome format --write src",
@@ -64,6 +60,7 @@
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.7",
     "@types/bun": "latest",
+    "bunup": "^0.15.13",
     "ts-morph": "^27.0.2",
     "vitepress": "^1.6.4",
     "vitepress-plugin-tabs": "^0.7.3"

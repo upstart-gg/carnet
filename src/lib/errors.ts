@@ -20,6 +20,10 @@ export class CarnetError extends Error {
       name: this.name,
       message: this.message,
       context: this.context,
+    } as {
+      name: string
+      message: string
+      context?: Record<string, unknown>
     }
   }
 }

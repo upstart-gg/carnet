@@ -26,6 +26,9 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
+    "declaration": true,
+    "isolatedDeclarations": true,
+
     // Path aliases for easier imports in tests
     "baseUrl": ".",
     "paths": {

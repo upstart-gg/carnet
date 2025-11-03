@@ -1,7 +1,7 @@
-import { tool } from 'ai'
+import { type Tool, tool } from 'ai'
 import { z } from 'zod'
 import type { Carnet } from './index'
-import type { DomainToolSet } from './types'
+import type { DomainToolSet, SkillMetadata } from './types'
 
 /**
  * Options for configuring which Carnet tools to expose
@@ -45,7 +45,30 @@ export interface ToolOptions {
  * This function is used internally by Carnet.getTools() and should not be called directly by user code.
  * Users should invoke `carnet.getTools()` instead, which wraps and manages this factory internally.
  */
-export function createCarnetTools(carnet: Carnet, agentName: string) {
+export function createCarnetTools(
+  carnet: Carnet,
+  agentName: string
+): {
+  loadSkill: Tool<
+    {
+      skillName: string
+    },
+    | {
+        success: boolean
+        content: string
+        metadata: SkillMetadata
+        error?: undefined
+        available?: undefined
+      }
+    | {
+        success: boolean
+        error: string
+        available: string[]
+        content?: undefined
+        metadata?: undefined
+      }
+  >
+} {
   const tools = {
     loadSkill: tool({
       description: 'Load a skill by name to get its full content and capabilities',
