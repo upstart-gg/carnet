@@ -17,15 +17,26 @@ This enables memory-efficient agent architectures that scale beyond simple conte
 import { Carnet } from '@upstart-gg/carnet'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { tool } from 'ai'
+import { z } from 'zod'
 
 // Load your manifest
 const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+
+// Define your domain tools (from your toolsets)
+const searchTool = tool({
+  description: 'Search for information',
+  inputSchema: z.object({ query: z.string() }),
+  execute: async ({ query }) => ({ results: `Found results for "${query}"` })
+})
 
 // Stream response with system prompt and tools
 const result = await streamText({
   model: openai('gpt-4'),
   system: carnet.getSystemPrompt('my-agent'),
-  tools: carnet.getTools('my-agent'),
+  tools: carnet.getTools('my-agent', {
+    tools: { search: searchTool }
+  }),
   messages: [{ role: 'user', content: 'Help me with a task!' }]
 })
 
@@ -195,13 +206,30 @@ console.log(text)
 import { Carnet } from '@upstart-gg/carnet'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { tool } from 'ai'
+import { z } from 'zod'
 
 const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+
+// Define domain tools for research capabilities
+const searchTool = tool({
+  description: 'Search for information on the web',
+  inputSchema: z.object({ query: z.string() }),
+  execute: async ({ query }) => ({ results: `Search results for "${query}"` })
+})
+
+const analyzeTool = tool({
+  description: 'Analyze data or text',
+  inputSchema: z.object({ data: z.string() }),
+  execute: async ({ data }) => ({ analysis: `Analysis of: ${data}` })
+})
 
 const result = await streamText({
   model: openai('gpt-4'),
   system: carnet.getSystemPrompt('researcher'),
-  tools: carnet.getTools('researcher'),
+  tools: carnet.getTools('researcher', {
+    tools: { search: searchTool, analyze: analyzeTool }
+  }),
   messages: [
     {
       role: 'user',
@@ -286,14 +314,31 @@ const result = await streamText({
 import { Carnet } from '@upstart-gg/carnet'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { tool } from 'ai'
+import { z } from 'zod'
 
 const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+
+// Define domain tools for analytics
+const analyticsTool = tool({
+  description: 'Generate analytics reports',
+  inputSchema: z.object({ feature: z.string() }),
+  execute: async ({ feature }) => ({ report: `Analytics report for ${feature}` })
+})
+
+const planningTool = tool({
+  description: 'Create implementation plans',
+  inputSchema: z.object({ objective: z.string() }),
+  execute: async ({ objective }) => ({ plan: `Plan for ${objective}` })
+})
 
 // Start streaming with agent
 const result = await streamText({
   model: openai('gpt-4'),
   system: carnet.getSystemPrompt('researcher'),
-  tools: carnet.getTools('researcher'),
+  tools: carnet.getTools('researcher', {
+    tools: { analytics: analyticsTool, planning: planningTool }
+  }),
   messages: [
     {
       role: 'user',

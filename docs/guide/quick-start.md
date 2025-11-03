@@ -55,15 +55,26 @@ Integrate with Vercel AI SDK:
 import { Carnet } from '@upstart-gg/carnet'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { tool } from 'ai'
+import { z } from 'zod'
 
 // Load your manifest
 const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+
+// Define your domain tools (from your toolsets)
+const searchTool = tool({
+  description: 'Search for information',
+  inputSchema: z.object({ query: z.string() }),
+  execute: async ({ query }) => ({ results: `Results for "${query}"` })
+})
 
 // Get system prompt and tools for your agent
 const result = await streamText({
   model: openai('gpt-4'),
   system: carnet.getSystemPrompt('my-agent'),
-  tools: carnet.getTools('my-agent'),
+  tools: carnet.getTools('my-agent', {
+    tools: { search: searchTool }
+  }),
   messages: [{ role: 'user', content: 'Help me with a task!' }]
 })
 ```

@@ -209,13 +209,24 @@ interface ContentRetrievalOptions {
 import { Carnet } from '@upstart-gg/carnet'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { tool } from 'ai'
+import { z } from 'zod'
 
 const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+
+// Define your domain tools
+const helloTool = tool({
+  description: 'Greet the user',
+  inputSchema: z.object({ name: z.string() }),
+  execute: async ({ name }) => ({ greeting: `Hello, ${name}!` })
+})
 
 const result = await streamText({
   model: openai('gpt-4'),
   system: carnet.getSystemPrompt('my-agent'),
-  tools: carnet.getTools('my-agent'),
+  tools: carnet.getTools('my-agent', {
+    tools: { hello: helloTool }
+  }),
   messages: [{ role: 'user', content: 'Hello!' }]
 })
 ```
