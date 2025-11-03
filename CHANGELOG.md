@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.8
+
+### Patch Changes
+
+- [#24](https://github.com/upstart-gg/carnet/pull/24) [`097811e`](https://github.com/upstart-gg/carnet/commit/097811e4d47be884d30bca4e5c4f71c16656ddd5) Thanks [@mattallty](https://github.com/mattallty)! - Fix prompt handling
+
 ## 0.1.7
 
 ### Patch Changes
