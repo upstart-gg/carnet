@@ -6,7 +6,7 @@ import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
 import { colors } from '../colors'
 
-export function registerShowCommand(program: Command) {
+export function registerShowCommand(program: Command): void {
   program
     .command('show <type> <name>')
     .description('Show detailed information about an entity')

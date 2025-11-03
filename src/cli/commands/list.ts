@@ -6,7 +6,7 @@ import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
 import type { Agent, Skill, Toolset } from '../../lib/types'
 
-export function registerListCommand(program: Command) {
+export function registerListCommand(program: Command): void {
   program
     .command('list [agent]')
     .alias('ls')

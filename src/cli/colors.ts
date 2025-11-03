@@ -1,6 +1,9 @@
-import chalk from 'chalk'
+import chalk, { type ChalkInstance } from 'chalk'
 
-export const colors = {
+export const colors: Record<
+  'success' | 'warning' | 'error' | 'info' | 'dimmed' | 'bold',
+  ChalkInstance
+> = {
   success: chalk.hex('#77dd77'), // Pastel green
   warning: chalk.hex('#fdfd96'), // Pastel yellow
   error: chalk.hex('#ff6961'), // Pastel red

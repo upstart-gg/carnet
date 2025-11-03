@@ -4,7 +4,7 @@ import { configSchema } from '@lib/schemas'
 import type { Command } from 'commander'
 import { colors } from '../colors'
 
-export function registerInitCommand(program: Command) {
+export function registerInitCommand(program: Command): void {
   program
     .command('init [dir]')
     .description('Initialize a new Carnet project')
