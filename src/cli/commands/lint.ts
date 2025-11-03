@@ -3,7 +3,7 @@ import { validate } from '../../lib/builder'
 import { loadConfigFile, loadEnvConfig, mergeConfigurations } from '../../lib/config'
 import { colors } from '../colors'
 
-export function registerLintCommand(program: Command) {
+export function registerLintCommand(program: Command): void {
   program
     .command('lint')
     .description('Lint markdown files')

@@ -5,7 +5,7 @@ import type { Command } from 'commander'
 import { build } from '../../lib/builder'
 import { colors } from '../colors'
 
-export function registerBuildCommand(program: Command) {
+export function registerBuildCommand(program: Command): void {
   program
     .command('build')
     .description('Build markdown files into JSON artifacts')
