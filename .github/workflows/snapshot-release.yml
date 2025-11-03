@@ -37,46 +37,28 @@ jobs:
       - name: Build packages
         run: bun run build
 
-      - name: Create snapshot version
-        id: version
-        run: |
-          SHA=${{ github.sha }}
-          SNAPSHOT_SHA="${SHA:0:7}"
-          bun run version:packages -- --snapshot "$SNAPSHOT_SHA"
+      - name: Publish Snapshot
+        run: pnpm changeset publish --tag next >> $GITHUB_STEP_SUMMARY
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish snapshot to npm
-        id: publish
-        run: |
-          OUTPUT=$(bun run publish:packages -- --tag next 2>&1)
-          echo "$OUTPUT"
-          echo "output=$OUTPUT" >> $GITHUB_OUTPUT
-        env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Parse published packages
-        id: parsed
-        run: |
-          OUTPUT='${{ steps.publish.outputs.output }}'
-          # Extract package names and versions from npm output
-          PACKAGES=$(echo "$OUTPUT" | grep -oP '@upstart-gg/\w+@[\d\.\-\w]+' || true)
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-        if: always()
-
-      - name: Comment on PR
-        if: github.event_name == 'pull_request' && steps.parsed.outputs.packages != ''
+      - name: Parse output
+        id: parse_published_packages
         uses: actions/github-script@v7
         with:
           script: |
-            const packages = '${{ steps.parsed.outputs.packages }}'.split('\n').filter(p => p.trim());
-            if (packages.length === 0) return;
+            const fs = require('fs');
+            const output = fs.readFileSync(process.env.GITHUB_STEP_SUMMARY, 'utf8');
+            const packages = Array.from(
+              output.matchAll(/Publishing "([^"]+)" at "([^"]+)"/gm), m => ({ package: m[1], version: m[2] })
+            )
 
-            const comment = `## Snapshot Release\n\nPublished snapshot releases:\n${packages.map(p => `- ${p}`).join('\n')}\n\nInstall with: \`npm install ${packages[0]}\``;
+            console.log('Published:', JSON.stringify(packages, null, 2));
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
+            let body = "";
+            (packages || []).forEach(({ package, version }) => {
+              body += `- ${package}@${version}\n`;
             });
+
+            return packages.length > 0 ? { packages, message } : null;
