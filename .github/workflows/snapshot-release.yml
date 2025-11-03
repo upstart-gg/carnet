@@ -26,6 +26,14 @@ jobs:
         with:
           node-version-file: ".tool-versions"
 
+      - name: Creating .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
