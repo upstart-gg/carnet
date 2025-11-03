@@ -125,7 +125,6 @@ try {
 
 ## See Also
 
-- [Metadata Retrieval](../methods/metadata-retrieval.md) - Lightweight discovery
-- [Content Retrieval](../methods/content-retrieval.md) - Full content loading
-- [Prompt Generation](../methods/prompt-generation.md) - Initial prompt setup
-- [Examples](../examples.md) - Working progressive loading examples
+- [API Reference](../) - Complete API documentation
+- [Variable Injection](../variable-injection) - Dynamic variable injection
+- [Using with Vercel AI SDK](/guide/vercel-ai-sdk) - Practical implementation guide

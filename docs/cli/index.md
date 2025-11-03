@@ -174,4 +174,4 @@ carnet --version                 # Show version
 - Detailed [command reference](/cli/)
 - [Configuration options](/configuration/)
 - [API reference](/api/)
-- [Examples and patterns](/guide/example-projects)
+- [Quick start guide](/guide/quick-start)

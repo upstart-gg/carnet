@@ -551,12 +551,12 @@ try {
 }
 ```
 
-For detailed error handling information, see [Error Handling](/api/error-handling.md).
+For detailed error handling information, see [Error Handling](/api/error-handling).
 
 ## See Also
 
-- [API Reference](/api/carnet.md) - Complete Carnet API documentation
+- [API Reference](/api/) - Complete Carnet API documentation
 - [Progressive Loading](/api/concepts/progressive-loading) - The pattern explained
+- [Error Handling](/api/error-handling) - Structured error handling guide
 - [Vercel AI SDK Docs](https://sdk.vercel.ai) - Complete SDK API reference
-- [Example Projects](/guide/example-projects) - Working examples
 - [Quick Start](/guide/quick-start) - Get started in 5 minutes

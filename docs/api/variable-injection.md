@@ -151,6 +151,6 @@ const carnet = new Carnet(manifest, {
 
 ## See Also
 
-- [Content Retrieval](../methods/content-retrieval.md) - How to retrieve content with injection
-- [Prompt Generation](../methods/prompt-generation.md) - Prompts with variable injection
-- [Examples](../examples.md) - Working examples with variables
+- [API Reference](../) - Complete API documentation
+- [Progressive Loading](./concepts/progressive-loading) - Loading skills with variables
+- [Using with Vercel AI SDK](/guide/vercel-ai-sdk) - Practical implementation guide

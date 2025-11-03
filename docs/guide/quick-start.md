@@ -74,9 +74,7 @@ See [Using with Vercel AI SDK](/guide/vercel-ai-sdk) for complete examples and a
 ## Next Steps
 
 - Learn about [Core Concepts](/guide/concepts)
-- Explore [Using with LLMs](/guide/vercel-ai-sdk) - Full LLM integration guide
-- Check [Patterns](/guide/patterns) - Architectural patterns
-- See [Example Projects](/guide/example-projects) - Working examples
+- Explore [Using with Vercel AI SDK](/guide/vercel-ai-sdk) - Full LLM integration guide
 - Browse [CLI Commands](/cli/)
 - Check [API Reference](/api/)
 

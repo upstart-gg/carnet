@@ -41,13 +41,13 @@ Global agent configuration.
 ### variables
 Template variables for content substitution.
 - Type: Record<string, string>
-- See [Variables](/configuration/variables) for details
+- See [Variable Injection](/api/variable-injection) for details
 
 ### envPrefixes
 Environment variable prefixes allowed for substitution.
 - Default: `["CARNET_", "PUBLIC_"]`
 - Type: string[]
-- See [Variables](/configuration/variables) for details
+- See [Variable Injection](/api/variable-injection) for details
 
 ### include
 Glob patterns to include.
@@ -73,5 +73,6 @@ After you've structured your content, the `carnet build` command compiles everyt
 ## Learn More
 
 - [Config File](/configuration/config-file) - Detailed configuration options
-- [Variables](/configuration/variables) - Template variables and environment substitution
-- [Configuration Patterns](/configuration/patterns) - Common configuration patterns and best practices
+- [Variable Injection](/api/variable-injection) - Template variables and environment substitution
+- [Quick Start](/guide/quick-start) - Get started quickly
+- [API Reference](/api/) - Complete API documentation
