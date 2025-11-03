@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "Carnet"
-  text: "Build AI agents with Vercel AI SDK"
+  text: "Manage your AI agents prompt using markdown"
   tagline: Define, validate, and manage AI agents through markdown files
   actions:
     - theme: brand
