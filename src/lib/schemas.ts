@@ -26,39 +26,46 @@ export const appConfigSchema: z.ZodDefault<
   .describe('Application config')
 
 export const configSchema: z.ZodObject<{
-  app: z.ZodDefault<
-    z.ZodObject<
-      {
-        globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
-        globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
-      },
-      z.core.$strip
+  app: z.ZodOptional<
+    z.ZodDefault<
+      z.ZodObject<
+        {
+          globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+          globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+        },
+        z.core.$strip
+      >
     >
   >
-  output: z.ZodDefault<z.ZodString>
-  variables: z.ZodDefault<z.ZodRecord<z.ZodString, z.ZodString>>
-  envPrefix: z.ZodDefault<z.ZodArray<z.ZodString>>
-  include: z.ZodDefault<z.ZodArray<z.ZodString>>
-  exclude: z.ZodDefault<z.ZodArray<z.ZodString>>
+  output: z.ZodOptional<z.ZodDefault<z.ZodString>>
+  variables: z.ZodOptional<z.ZodDefault<z.ZodRecord<z.ZodString, z.ZodString>>>
+  envPrefix: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
+  include: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
+  exclude: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
 }> = z.object({
-  app: appConfigSchema,
-  output: z.string().default('./dist').describe('Path to the output directory'),
+  schema: z.string().optional().describe('Schema url/path'),
+  app: appConfigSchema.optional(),
+  output: z.string().default('./dist').describe('Path to the output directory').optional(),
   variables: z
     .record(z.string(), z.string())
     .default({})
+    .optional()
     .describe('Custom variables to be injected into prompts'),
   envPrefix: z
     .string()
     .array()
     .default(['CARNET_', 'PUBLIC_'])
+    .optional()
     .describe('Environment variable prefixes allowed to be injected into prompts'),
   include: z
     .array(z.string())
     .default([])
+    .optional()
     .describe('Globs of content files or directories to include in processing'),
   exclude: z
     .array(z.string())
     .default([])
+    .optional()
     .describe('Globs of content files or directories to exclude from processing'),
 })
 
