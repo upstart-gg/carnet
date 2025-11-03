@@ -1,18 +1,14 @@
 name: Snapshot Release
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [main]
-    paths:
-      - "src/**"
-      - "package.json"
-      - "bun.lock"
-      - ".changeset/**"
 
 jobs:
   snapshot-release:
     # Only run if this is NOT a changeset release commit (to avoid duplicate releases)
-    if: github.repository == 'upstart-gg/carnet' && !startsWith(github.event.head_commit.message, 'chore(release):')
+    if: github.repository == 'upstart-gg/carnet' && github.event.pull_request.merged == true && !startsWith(github.event.pull_request.title, 'chore(release):')
     name: Snapshot Release
     runs-on: ubuntu-latest
     permissions:

@@ -58,6 +58,4 @@ jobs:
 
       - name: Publish preview packages
         if: github.event_name == 'pull_request'
-        run: bunx pkg-pr-new publish '.' --no-template --bun
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bunx pkg-pr-new publish --no-template --bun
