@@ -28,7 +28,6 @@ async function generateConfigSchema() {
       './dist/config.schema.json',
       `${JSON.stringify(schemaWithMetadata, null, 2)}\n`
     )
-
     console.log('✓ Generated dist/config.schema.json')
   } catch (error) {
     console.error('✗ Failed to generate config schema:', error)
