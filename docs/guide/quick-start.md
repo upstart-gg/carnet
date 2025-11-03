@@ -10,24 +10,21 @@ See the [Installation Guide](/guide/installation) for detailed instructions.
 ## 2. Initialize a Project
 
 ```bash
-carnet init my-app
 cd my-app
+carnet init
 ```
 
-This creates:
+This creates a `carnet/` folder with the following structure:
 ```
 my-app/
-├── carnet.config.json
-└── content/
+└── carnet/
+    ├── carnet.config.json
     ├── agents/
-    │   └── my-agent/AGENT.md
     ├── skills/
-    │   └── example-skill/SKILL.md
     └── toolsets/
-        └── example-toolset/
-            ├── TOOLSET.md
-            └── example-tool.md
 ```
+
+> **Note:** `carnet init` creates a `carnet/` directory by default. You can specify a different name with `carnet init <directory-name>`, or use `carnet init .` to initialize in the current directory.
 
 ## 3. Build Your Content
 

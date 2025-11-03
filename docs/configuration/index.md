@@ -4,11 +4,10 @@ Configure Carnet with `carnet.config.json`.
 
 ## Configuration File
 
-Create `carnet.config.json` in your project root:
+Create `carnet.config.json` in your carnet directory (alongside `agents/`, `skills/`, and `toolsets/`):
 
 ```json
 {
-  "baseDir": "./content",
   "output": "./dist",
   "app": {
     "globalInitialSkills": [],
@@ -22,11 +21,6 @@ Create `carnet.config.json` in your project root:
 ```
 
 ## Options
-
-### baseDir
-Directory containing entity markdown files.
-- Default: `./content`
-- Type: string
 
 ### output
 Directory where manifest is written.

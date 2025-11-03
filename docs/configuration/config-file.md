@@ -1,16 +1,10 @@
 # Configuration Schema
 
-The `carnet.config.json` configuration file defines how your Carnet project builds and processes content.
+The `carnet.config.json` configuration file defines how your Carnet project builds and processes content. This file should be located in the same directory as your `agents/`, `skills/`, and `toolsets/` directories.
 
 ## Configuration Options
 
 All options are optional and have sensible defaults.
-
-### `baseDir`
-
-- **Type:** `string`
-- **Default:** `"./carnet"`
-- **Description:** Path to the content directory containing agents, skills, toolsets, and tools
 
 ### `output`
 
@@ -51,7 +45,6 @@ All options are optional and have sensible defaults.
 
 ```json
 {
-  "baseDir": "./content",
   "output": "./dist",
   "app": {
     "globalInitialSkills": ["common"],
