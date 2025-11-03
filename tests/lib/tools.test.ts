@@ -30,6 +30,18 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
           name: 'skillA',
           description: 'First skill',
           toolsets: ['toolsetA'],
+          files: [
+            {
+              path: 'examples/example1.md',
+              description: 'First example file',
+              content: '# Example 1\n\nExample content 1',
+            },
+            {
+              path: 'examples/example2.md',
+              description: 'Second example file',
+              content: '# Example 2\n\nExample content 2',
+            },
+          ],
           content: '# Skill A\n\nSkill A content',
         },
         skillB: {
@@ -76,26 +88,27 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
   })
 
   describe('createCarnetTools', () => {
-    it('should create the loadSkill meta-tool by default', () => {
+    it('should create the loadSkill and loadSkillFile meta-tools by default', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
       expect(Object.keys(tools)).toContain('loadSkill')
-      expect(Object.keys(tools)).toHaveLength(1)
+      expect(Object.keys(tools)).toContain('loadSkillFile')
+      expect(Object.keys(tools)).toHaveLength(2)
     })
 
-    it('should create only the loadSkill meta-tool', () => {
+    it('should create both loadSkill and loadSkillFile meta-tools', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      expect(Object.keys(tools)).toEqual(['loadSkill'])
+      expect(Object.keys(tools)).toEqual(['loadSkill', 'loadSkillFile'])
       // Skills are discovered via the system prompt's skill catalog
     })
 
-    it('should have loadSkill tool when creating tools', () => {
+    it('should have both meta-tools when creating tools', () => {
       const tools = createCarnetTools(carnet, 'testAgent')
-      // Factory now creates only the loadSkill meta-tool
-      expect(Object.keys(tools)).toHaveLength(1)
+      // Factory now creates both meta-tools for progressive loading
+      expect(Object.keys(tools)).toHaveLength(2)
       expect(Object.keys(tools)).toContain('loadSkill')
+      expect(Object.keys(tools)).toContain('loadSkillFile')
     })
   })
-
 
   describe('loadSkill tool', () => {
     it('should load skill content by name', async () => {
@@ -167,6 +180,150 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
 
       if (result && 'available' in result) {
         expect(result.available).toEqual(['skillA', 'skillB'])
+      }
+    })
+  })
+
+  describe('loadSkillFile tool', () => {
+    it('should load file content by skill name and path', async () => {
+      const tools = createCarnetTools(carnet, 'testAgent')
+      if (!tools.loadSkillFile.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkillFile.execute(
+        {
+          skillName: 'skillA',
+          path: 'examples/example1.md',
+        },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      // Type guard: check for specific properties to narrow union type
+      if (result && 'success' in result && 'path' in result) {
+        expect(result.success).toBe(true)
+        if (result.success && 'content' in result) {
+          expect(result.content).toContain('# Example 1')
+          expect(result.path).toBe('examples/example1.md')
+        }
+      }
+    })
+
+    it('should return error for non-existent file', async () => {
+      const tools = createCarnetTools(carnet, 'testAgent')
+      if (!tools.loadSkillFile.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkillFile.execute(
+        {
+          skillName: 'skillA',
+          path: 'non-existent.md',
+        },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      // Type guard: check for specific properties to narrow union type
+      if (result && 'success' in result && 'path' in result) {
+        expect(result.success).toBe(false)
+        if (!result.success && 'error' in result) {
+          expect(result.error).toContain('not found')
+        }
+      }
+    })
+
+    it('should return error for non-existent skill', async () => {
+      const tools = createCarnetTools(carnet, 'testAgent')
+      if (!tools.loadSkillFile.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkillFile.execute(
+        {
+          skillName: 'non-existent',
+          path: 'example.md',
+        },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      // Type guard: check for specific property to narrow union type
+      if (result && 'success' in result && 'path' in result) {
+        expect(result.success).toBe(false)
+        if (!result.success && 'error' in result) {
+          expect(result.error).toContain('Skill not found')
+        }
+      }
+    })
+  })
+
+  describe('loadSkill with files', () => {
+    it('should return files array when skill has files', async () => {
+      const tools = createCarnetTools(carnet, 'testAgent')
+      if (!tools.loadSkill.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkill.execute(
+        { skillName: 'skillA' },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      // Type guard: check for specific properties to narrow union type
+      if (result && 'success' in result && 'metadata' in result) {
+        expect(result.success).toBe(true)
+        if (
+          result.success &&
+          'files' in result &&
+          Array.isArray(result.files) &&
+          result.files.length > 0
+        ) {
+          const files = result.files
+          const firstFile = files[0]
+          expect(files).toBeDefined()
+          expect(files.length).toBe(2)
+          if (firstFile) {
+            expect(firstFile.path).toBe('examples/example1.md')
+            expect(firstFile.description).toBe('First example file')
+            // Ensure content is NOT included in metadata
+            expect('content' in firstFile).toBe(false)
+          }
+        }
+      }
+    })
+
+    it('should return empty files array when skill has no files', async () => {
+      const tools = createCarnetTools(carnet, 'testAgent')
+      if (!tools.loadSkill.execute) {
+        throw new Error('execute function not found')
+      }
+
+      const result = await tools.loadSkill.execute(
+        { skillName: 'skillB' },
+        {
+          toolCallId: 'test-call-id',
+          messages: [],
+        }
+      )
+
+      // Type guard: check for specific properties to narrow union type
+      if (result && 'success' in result && 'metadata' in result) {
+        expect(result.success).toBe(true)
+        if (result.success && 'files' in result && result.files) {
+          expect(result.files).toBeDefined()
+          expect(result.files.length).toBe(0)
+        }
       }
     })
   })

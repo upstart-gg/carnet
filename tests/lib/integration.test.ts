@@ -222,12 +222,20 @@ Creates charts and graphs from data.
     })
 
     it('should accept variables for prompt generation', () => {
+      const baseResearcher = manifest.agents.researcher
+      if (!baseResearcher) {
+        throw new Error('baseResearcher is required')
+      }
+
       const manifest2: Manifest = {
         ...manifest,
         agents: {
           ...manifest.agents,
           researcher: {
-            ...manifest.agents.researcher,
+            name: baseResearcher.name,
+            description: baseResearcher.description,
+            initialSkills: baseResearcher.initialSkills,
+            skills: baseResearcher.skills,
             prompt: 'You are researching {{ TOPIC }}. Use your skills wisely.',
           },
         },
@@ -261,11 +269,12 @@ Creates charts and graphs from data.
       // The factory now exposes only the loadSkill meta-tool. Domain tools are merged separately.
     })
 
-    it('should include loadSkill meta-tool', () => {
+    it('should include loadSkill and loadSkillFile meta-tools', () => {
       const tools = carnet.getTools('researcher')
 
-      expect(Object.keys(tools)).toHaveLength(1)
+      expect(Object.keys(tools)).toHaveLength(2)
       expect(Object.keys(tools)).toContain('loadSkill')
+      expect(Object.keys(tools)).toContain('loadSkillFile')
       expect(Object.keys(tools)).not.toContain('listAvailableSkills')
       expect(Object.keys(tools)).not.toContain('loadToolset')
     })
@@ -304,13 +313,13 @@ Creates charts and graphs from data.
     })
 
     it('should support customizing tools for Vercel AI SDK', () => {
-      // Carnet provides the loadSkill meta-tool and any domain tools passed via tools option
+      // Carnet provides the loadSkill and loadSkillFile meta-tools and any domain tools passed via tools option
       const tools = carnet.getTools('researcher', {
         tools: {},
       })
 
-      // Only loadSkill meta-tool is included (no domain tools in this example)
-      expect(Object.keys(tools)).toHaveLength(1)
+      // Both meta-tools are included (no domain tools in this example)
+      expect(Object.keys(tools)).toHaveLength(2)
 
       // Should still work with Vercel AI SDK
       const config = {
@@ -318,12 +327,17 @@ Creates charts and graphs from data.
         tools: tools,
       }
 
-      expect(Object.keys(config.tools)).toHaveLength(1)
+      expect(Object.keys(config.tools)).toHaveLength(2)
     })
   })
 
   describe('integration with multiple agents', () => {
     it('should handle different agents independently', () => {
+      const baseResearcher = manifest.agents.researcher
+      if (!baseResearcher) {
+        throw new Error('baseResearcher is required')
+      }
+
       const manifest2: Manifest = {
         version: 1,
         app: {
@@ -331,7 +345,7 @@ Creates charts and graphs from data.
           globalSkills: [],
         },
         agents: {
-          researcher: manifest.agents.researcher,
+          researcher: baseResearcher,
           writer: {
             name: 'writer',
             description: 'A writing agent',

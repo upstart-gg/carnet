@@ -147,8 +147,11 @@ describe('Configuration Precedence', () => {
     const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
 
     // CLI wins for both
-    expect(config.app.globalSkills).toEqual(['cli-skill'])
-    expect(config.app.globalInitialSkills).toEqual([])
+    expect(config.app).toBeDefined()
+    if (config.app) {
+      expect(config.app.globalSkills).toEqual(['cli-skill'])
+      expect(config.app.globalInitialSkills).toEqual([])
+    }
   })
 
   it('should handle mixed undefined values in precedence chain', () => {

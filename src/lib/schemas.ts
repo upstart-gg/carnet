@@ -26,39 +26,46 @@ export const appConfigSchema: z.ZodDefault<
   .describe('Application config')
 
 export const configSchema: z.ZodObject<{
-  app: z.ZodDefault<
-    z.ZodObject<
-      {
-        globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
-        globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
-      },
-      z.core.$strip
+  app: z.ZodOptional<
+    z.ZodDefault<
+      z.ZodObject<
+        {
+          globalInitialSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+          globalSkills: z.ZodDefault<z.ZodArray<z.ZodString>>
+        },
+        z.core.$strip
+      >
     >
   >
-  output: z.ZodDefault<z.ZodString>
-  variables: z.ZodDefault<z.ZodRecord<z.ZodString, z.ZodString>>
-  envPrefix: z.ZodDefault<z.ZodArray<z.ZodString>>
-  include: z.ZodDefault<z.ZodArray<z.ZodString>>
-  exclude: z.ZodDefault<z.ZodArray<z.ZodString>>
+  output: z.ZodOptional<z.ZodDefault<z.ZodString>>
+  variables: z.ZodOptional<z.ZodDefault<z.ZodRecord<z.ZodString, z.ZodString>>>
+  envPrefix: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
+  include: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
+  exclude: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
 }> = z.object({
-  app: appConfigSchema,
-  output: z.string().default('./dist').describe('Path to the output directory'),
+  schema: z.string().optional().describe('Schema url/path'),
+  app: appConfigSchema.optional(),
+  output: z.string().default('./dist').describe('Path to the output directory').optional(),
   variables: z
     .record(z.string(), z.string())
     .default({})
+    .optional()
     .describe('Custom variables to be injected into prompts'),
   envPrefix: z
     .string()
     .array()
     .default(['CARNET_', 'PUBLIC_'])
+    .optional()
     .describe('Environment variable prefixes allowed to be injected into prompts'),
   include: z
     .array(z.string())
     .default([])
+    .optional()
     .describe('Globs of content files or directories to include in processing'),
   exclude: z
     .array(z.string())
     .default([])
+    .optional()
     .describe('Globs of content files or directories to exclude from processing'),
 })
 
@@ -90,16 +97,40 @@ export const agentSchema: z.ZodObject<{
   })
   .describe('Agent Schema')
 
+/**
+ * Schema for file references in skill frontmatter
+ */
+export const skillFileReferenceSchema: z.ZodObject<{
+  path: z.ZodString
+  description: z.ZodString
+  content: z.ZodString
+}> = z
+  .object({
+    path: z.string().min(1).describe('Path relative to skill root directory (no ./ prefix)'),
+    description: z
+      .string()
+      .min(1)
+      .describe('Description to help LLM decide when to load this file'),
+    content: z.string().describe('File content embedded at build time'),
+  })
+  .describe('Skill File Reference Schema')
+
 export const skillSchema: z.ZodObject<{
   name: z.ZodString
   description: z.ZodString
   toolsets: z.ZodDefault<z.ZodArray<z.ZodString>>
+  files: z.ZodOptional<z.ZodDefault<z.ZodArray<typeof skillFileReferenceSchema>>>
   content: z.ZodString
 }> = z
   .object({
     name: z.string().min(1).describe('The name of the skill'),
     description: z.string().min(1).describe('A brief description of the skill'),
     toolsets: z.array(z.string()).default([]).describe('Toolsets associated with the skill'),
+    files: z
+      .array(skillFileReferenceSchema)
+      .default([])
+      .optional()
+      .describe('File references available for on-demand loading'),
     content: z.string().describe('Full markdown content of the skill'),
   })
   .describe('Skill Schema')
@@ -165,6 +196,7 @@ export const manifestSchema: z.ZodObject<{
         name: z.ZodString
         description: z.ZodString
         toolsets: z.ZodDefault<z.ZodArray<z.ZodString>>
+        files: z.ZodOptional<z.ZodDefault<z.ZodArray<typeof skillFileReferenceSchema>>>
         content: z.ZodString
       },
       z.core.$strip
@@ -198,7 +230,20 @@ export const manifestSchema: z.ZodObject<{
     version: z.number().default(1).describe('Version of the manifest schema'),
     app: appConfigSchema,
     agents: z.record(agentSchema.shape.name, agentSchema).describe('Full list of agents'),
-    skills: z.record(skillSchema.shape.name, skillSchema).describe('Full list of skills'),
+    skills: z
+      .record(
+        skillSchema.shape.name,
+        z
+          .object({
+            name: z.string().min(1),
+            description: z.string().min(1),
+            toolsets: z.array(z.string()).default([]),
+            files: z.array(skillFileReferenceSchema).default([]).optional(),
+            content: z.string(),
+          })
+          .describe('Skill with file references')
+      )
+      .describe('Full list of skills'),
     toolsets: z.record(toolsetSchema.shape.name, toolsetSchema).describe('Full list of toolsets'),
     tools: z.record(toolSchema.shape.name, toolSchema).describe('Full list of tools'),
   })

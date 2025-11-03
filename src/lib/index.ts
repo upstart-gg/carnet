@@ -241,6 +241,36 @@ export class Carnet {
   }
 
   /**
+   * Load the content of a file from a skill
+   *
+   * @param skillName - Name of the skill
+   * @param filePath - Path to the file (relative to skill directory)
+   * @returns File content as string
+   * @throws Error if skill not found or file not found
+   */
+  loadSkillFile(skillName: string, filePath: string): string {
+    // Get skill from manifest
+    const skill = this.manifest.skills[skillName]
+    if (!skill) {
+      throw new ValidationError(`Skill not found`, 'skill', skillName)
+    }
+
+    // Find file in skill's files array
+    const fileRef = skill.files?.find((f) => f.path === filePath)
+    if (!fileRef) {
+      const availableFiles = skill.files?.map((f) => f.path) || []
+      const availableList = availableFiles.length > 0 ? availableFiles.join(', ') : 'none'
+      throw new ValidationError(`File not found in skill`, 'file', filePath, {
+        skillName,
+        availableFiles: availableList,
+      })
+    }
+
+    // Return embedded content from manifest
+    return fileRef.content
+  }
+
+  /**
    * Get a toolset by name
    * @param name The name of the toolset to retrieve
    * @returns The toolset definition, or undefined if not found
@@ -327,10 +357,10 @@ export class Carnet {
   // Metadata retrieval for progressive loading
 
   /**
-   * Get skill metadata (name, description, toolsets) without full content
+   * Get skill metadata (name, description, toolsets, files) without full content
    * Useful for listing available skills without loading full content
    * @param name The name of the skill
-   * @returns Metadata object with name, description, and toolsets list
+   * @returns Metadata object with name, description, toolsets, and file references
    * @throws Error if skill not found
    */
   getSkillMetadata(name: string): SkillMetadata {
@@ -343,6 +373,7 @@ export class Carnet {
       name: skill.name,
       description: skill.description,
       toolsets: skill.toolsets,
+      files: skill.files,
     }
   }
 

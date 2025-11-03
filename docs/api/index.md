@@ -41,8 +41,8 @@ Returns a `ToolSet` for the specified agent. Carnet exposes a minimal set of bui
 
 **Returns:** `ToolSet` – A Vercel AI SDK‑compatible set of tools automatically created by Carnet.
 
-- `loadSkill` – loads a skill by name to get its full content and capabilities. Skills are discovered via the system prompt's skill catalog.
-- `loadSkill` – loads and initializes a skill (and updates session state).
+- `loadSkill(skillName)` – Load a skill by name to get its full content and capabilities. Returns the skill metadata, content, and list of available files (if any). Skills are discovered via the system prompt's skill catalog.
+- `loadSkillFile(skillName, path)` – Load the content of a file from a previously loaded skill. Returns the file content, allowing LLMs to fetch resources on-demand.
 
 These meta‑tools are always included and used alongside any domain tools you provide via the `tools` option. They are created internally and are not intended for direct instantiation.
 
@@ -151,6 +151,7 @@ getTool(name: string): Tool
 getSkillContent(name: string, options?: ContentRetrievalOptions): string
 getToolsetContent(name: string, options?: ContentRetrievalOptions): string
 getToolContent(name: string, options?: ContentRetrievalOptions): string
+loadSkillFile(skillName: string, filePath: string): string
 
 // Get metadata (without content)
 getSkillMetadata(name: string): SkillMetadata

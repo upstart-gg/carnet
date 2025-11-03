@@ -8,9 +8,6 @@ import { configSchema } from '../src/lib/schemas'
  */
 async function generateConfigSchema() {
   try {
-    // Ensure schema directory exists
-    await fs.mkdir('./schema', { recursive: true })
-
     const jsonSchema = z.toJSONSchema(configSchema)
 
     if (!jsonSchema || typeof jsonSchema !== 'object' || Object.keys(jsonSchema).length === 0) {

@@ -3,6 +3,7 @@ import type {
   agentSchema,
   appConfigSchema,
   manifestSchema,
+  skillFileReferenceSchema,
   skillSchema,
   toolSchema,
   toolsetSchema,
@@ -11,12 +12,13 @@ import type {
 export type AppConfig = z.infer<typeof appConfigSchema>
 export type Agent = z.infer<typeof agentSchema>
 export type Skill = z.infer<typeof skillSchema>
+export type SkillFileReference = z.infer<typeof skillFileReferenceSchema>
 export type Toolset = z.infer<typeof toolsetSchema>
 export type Tool = z.infer<typeof toolSchema>
 export type Manifest = z.infer<typeof manifestSchema>
 
 // Metadata types for progressive loading
-export type SkillMetadata = Pick<Skill, 'name' | 'description' | 'toolsets'>
+export type SkillMetadata = Pick<Skill, 'name' | 'description' | 'toolsets' | 'files'>
 export type ToolsetMetadata = Pick<Toolset, 'name' | 'description' | 'tools'>
 export type ToolMetadata = Pick<Tool, 'name' | 'description'>
 

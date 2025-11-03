@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { tool } from 'ai'
 import { z } from 'zod'
 import { mergeToolSets } from '../../src/lib/tool-filtering'
@@ -42,9 +42,7 @@ describe('mergeToolSets', () => {
   describe('basic merging', () => {
     it('should return carnet tools when registry is empty', () => {
       const result = mergeToolSets(carnetTools, session, registry)
-      expect(Object.keys(result).sort()).toEqual([
-        'loadSkill',
-      ])
+      expect(Object.keys(result).sort()).toEqual(['loadSkill'])
       expect(result.loadSkill).toBe(carnetTools.loadSkill)
     })
 
@@ -93,10 +91,7 @@ describe('mergeToolSets', () => {
 
       expect(result.search).toBe(searchTool)
       expect(result.loadSkill).toBe(carnetTools.loadSkill)
-      expect(Object.keys(result).sort()).toEqual([
-        'loadSkill',
-        'search',
-      ])
+      expect(Object.keys(result).sort()).toEqual(['loadSkill', 'search'])
     })
 
     it('should return only carnet tools when session has no loaded toolsets', () => {
@@ -105,9 +100,7 @@ describe('mergeToolSets', () => {
       })
 
       const result = mergeToolSets(carnetTools, session, registry)
-      expect(Object.keys(result).sort()).toEqual([
-        'loadSkill',
-      ])
+      expect(Object.keys(result).sort()).toEqual(['loadSkill'])
     })
 
     it('should handle session with missing toolsets in registry', () => {
@@ -148,8 +141,11 @@ describe('mergeToolSets', () => {
 
       const result = mergeToolSets(carnetWithConflict, session, registry)
 
-      expect(result.execute).toBe(userExecute)
-      expect(result.execute.description).toBe('User execute')
+      expect(result.execute).toBeDefined()
+      if (result.execute) {
+        expect(result.execute).toBe(userExecute)
+        expect(result.execute.description).toBe('User execute')
+      }
     })
 
     it('should merge multiple toolsets with no conflicts', () => {
@@ -208,12 +204,7 @@ describe('mergeToolSets', () => {
       expect(result.tool1).toBe(tool1)
       expect(result.tool2).toBe(tool2)
       expect(result.tool3).toBe(tool3)
-      expect(Object.keys(result).sort()).toEqual([
-        'loadSkill',
-        'tool1',
-        'tool2',
-        'tool3',
-      ])
+      expect(Object.keys(result).sort()).toEqual(['loadSkill', 'tool1', 'tool2', 'tool3'])
     })
 
     it('should handle complex toolset combinations', () => {
@@ -291,11 +282,7 @@ describe('mergeToolSets', () => {
       session.loadedToolsets.add('search')
 
       let result = mergeToolSets(carnetTools, session, registry)
-      expect(Object.keys(result).sort()).toEqual([
-        'google',
-        'loadSkill',
-        'search',
-      ])
+      expect(Object.keys(result).sort()).toEqual(['google', 'loadSkill', 'search'])
 
       // Later: analysis tools also loaded
       const analyzeTool = createMockTool('Analyze')
@@ -303,12 +290,7 @@ describe('mergeToolSets', () => {
       session.loadedToolsets.add('analysis')
 
       result = mergeToolSets(carnetTools, session, registry)
-      expect(Object.keys(result).sort()).toEqual([
-        'analyze',
-        'google',
-        'loadSkill',
-        'search',
-      ])
+      expect(Object.keys(result).sort()).toEqual(['analyze', 'google', 'loadSkill', 'search'])
     })
 
     it('should handle tool registry with many toolsets', () => {
