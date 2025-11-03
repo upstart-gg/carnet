@@ -8,7 +8,7 @@ describe('agentSchema', () => {
       description: 'desc',
       initialSkills: ['foo'],
       skills: ['bar'],
-      prompt: 'You are an agent',
+      content: 'You are an agent',
     }
     expect(() => agentSchema.parse(data)).not.toThrow()
   })
