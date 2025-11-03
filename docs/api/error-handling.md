@@ -280,4 +280,4 @@ catch (error) {
 
 - [API Reference](/api/index.md) - Full API documentation
 - [Quick Start](/guide/quick-start.md) - Getting started guide
-- [Using with Vercel AI SDK](/guide/using-with-llms.md) - Integration guide
+- [Using with Vercel AI SDK](/guide/vercel-ai-sdk) - Integration guide

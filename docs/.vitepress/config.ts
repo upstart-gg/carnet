@@ -51,7 +51,7 @@ export default defineConfig({
           text: 'Learning',
           items: [
             { text: 'Core Concepts', link: '/guide/concepts' },
-            { text: 'Using with Vercel AI SDK', link: '/guide/using-with-llms' },
+            { text: 'Using with Vercel AI SDK', link: '/guide/vercel-ai-sdk' },
           ],
         },
       ],
@@ -74,6 +74,7 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/api/' },
             { text: 'Variable Injection', link: '/api/variable-injection' },
+            { text: 'Error Handling', link: '/api/error-handling' },
           ],
         },
         {

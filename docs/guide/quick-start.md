@@ -68,13 +68,13 @@ const result = await streamText({
 })
 ```
 
-See [Using with Vercel AI SDK](/guide/using-with-llms) for complete examples and advanced patterns.
+See [Using with Vercel AI SDK](/guide/vercel-ai-sdk) for complete examples and advanced patterns.
 
 
 ## Next Steps
 
 - Learn about [Core Concepts](/guide/concepts)
-- Explore [Using with LLMs](/guide/using-with-llms) - Full LLM integration guide
+- Explore [Using with LLMs](/guide/vercel-ai-sdk) - Full LLM integration guide
 - Check [Patterns](/guide/patterns) - Architectural patterns
 - See [Example Projects](/guide/example-projects) - Working examples
 - Browse [CLI Commands](/cli/)

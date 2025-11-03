@@ -243,7 +243,7 @@ const prompt = carnet.getSystemPrompt('agent', {
 
 ## Related Documentation
 
-- [Using with Vercel AI SDK](/guide/using-with-llms) - Complete integration guide
+- [Using with Vercel AI SDK](/guide/vercel-ai-sdk) - Complete integration guide
 - [Quick Start](/guide/quick-start) - 5-minute setup
 - [Progressive Loading](/api/concepts/progressive-loading) - Pattern explanation
 - [Variable Injection](/api/variable-injection) - Variables documentation
