@@ -80,18 +80,18 @@ html.dark {
 }
 
 .VPHero .heading {
-  text-align: center;
-  align-items: center;
+  /* text-align: center;
+  align-items: center; */
   gap: 1.1rem;
 }
 .VPHero .name {
-  text-align: center;
+  /* text-align: center; */
   font-size: 5rem;
   font-weight: 600;
 }
 
 .VPHero .text {
-  text-align: center;
+  /* text-align: center; */
   font: 2.4rem / 1.3 var(--vp-font-family-base);
   font-weight: 600;
   /* max-width: unset; */
@@ -99,12 +99,13 @@ html.dark {
 }
 
 .VPHero .tagline {
-  text-align: center;
+  /* text-align: center; */
   max-width: none;
+  text-wrap: nowrap;
   font-size: 1.3rem;
   letter-spacing: -0.025em;
 }
-
+/* 
 .VPHero .actions {
   justify-content: center;
-}
+} */

@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import * as z from 'zod/v4'
 
 export const appConfigSchema: z.ZodDefault<
   z.ZodObject<
@@ -216,10 +216,7 @@ export const manifestSchema: z.ZodObject<{
       z.core.$strip
     >
   >
-  agents: z.ZodRecord<
-    z.ZodString,
-    typeof agentManifestSchema
-  >
+  agents: z.ZodRecord<z.ZodString, typeof agentManifestSchema>
   skills: z.ZodRecord<
     z.ZodString,
     z.ZodObject<
@@ -260,7 +257,9 @@ export const manifestSchema: z.ZodObject<{
   .object({
     version: z.number().default(1).describe('Version of the manifest schema'),
     app: appConfigSchema,
-    agents: z.record(agentManifestSchema.shape.name, agentManifestSchema).describe('Full list of agents'),
+    agents: z
+      .record(agentManifestSchema.shape.name, agentManifestSchema)
+      .describe('Full list of agents'),
     skills: z
       .record(
         skillSchema.shape.name,

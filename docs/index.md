@@ -4,7 +4,10 @@ layout: home
 hero:
   name: "Carnet"
   text: "Manage your AI agents prompt using markdown"
-  tagline: Define, validate, and manage AI agents through markdown files
+  image:
+    src: /dog-running.svg
+    alt: Carnet
+  tagline: Define, validate, and manage agents through markdown files
   actions:
     - theme: brand
       text: Get Started
