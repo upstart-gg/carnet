@@ -16,9 +16,7 @@
 
 ## Documentation
 
-- [Documentation](./docs/index.md)
-- [API Reference](./docs/api/)
-- [Examples & Patterns](./docs/guide/example-projects.md)
+- [Check out our Documentation!](https://carnet.upstart.gg)
 
 ## License
 
@@ -26,13 +24,12 @@ Carnet is licensed under the [MIT License](./LICENSE).
 
 ## Support
 
-- 📖 [Documentation](https://upstart-gg.github.io/carnet/)
 - 🐛 [Report Issues](https://github.com/upstart-gg/carnet/issues)
 - 💬 [Discussions](https://github.com/upstart-gg/carnet/discussions)
 - 📦 [npm Package](https://www.npmjs.com/package/@upstart-gg/carnet)
 
 
-> Built with ❤️ by [Upstart](https://upstart.gg)
+> Built with ❤️ at [Upstart](https://upstart.gg)
 
 ---
 
