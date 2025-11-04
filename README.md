@@ -1,8 +1,8 @@
 # Carnet
 
-<div style="text-align: center;">
-<img src="./docs/public/carnet.svg" alt="Carnet" width="150"/>
-</div>
+<p align="center">
+<img src="./docs/public/carnet.svg" alt="Carnet" width="250"/>
+</p>
 
 > A framework for building AI agents with Vercel AI SDK using markdown-based content management
 
