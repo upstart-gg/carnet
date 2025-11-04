@@ -1,5 +1,9 @@
 # Carnet
 
+<div style="text-align: center;">
+<img src="./docs/public/carnet.svg" alt="Carnet" width="150"/>
+</div>
+
 > A framework for building AI agents with Vercel AI SDK using markdown-based content management
 
 **Carnet** (French for "notebook") is a production-ready framework for managing AI agent definitions, skills, toolsets, and tools through markdown files. Designed for **Vercel AI SDK**, it provides intelligent prompt generation and progressive skill loading to build scalable, context-aware AI agents.
