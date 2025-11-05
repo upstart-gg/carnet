@@ -32,7 +32,7 @@ my-app/
 carnet build
 ```
 
-This generates `dist/carnet.manifest.json` with all your agents compiled.
+This generates `carnet/carnet.manifest.json` with all your agents compiled.
 
 See [*carnet build* usage](/cli/build) for options.
 
@@ -54,9 +54,10 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { tool } from 'ai'
 import { z } from 'zod'
+import manifest from './carnet/carnet.manifest.json'
 
 // Load your manifest
-const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 // Define your domain tools (from your toolsets)
 const searchTool = tool({

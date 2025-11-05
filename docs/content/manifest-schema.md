@@ -223,8 +223,9 @@ The manifest has the following top-level properties:
 
 ```typescript
 import { Carnet } from '@upstart-gg/carnet'
+import manifest from './carnet/carnet.manifest.json'
 
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 const agent = carnet.getAgent('my-agent')
 ```
 
@@ -235,7 +236,7 @@ Parse the JSON file directly:
 ```python
 import json
 
-with open('dist/carnet.manifest.json', 'r') as f:
+with open('carnet/carnet.manifest.json', 'r') as f:
     manifest = json.load(f)
 
 agent = manifest['agents']['my-agent']

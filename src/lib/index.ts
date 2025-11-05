@@ -1,7 +1,6 @@
-import { existsSync, promises as fs } from 'node:fs'
 import type { ToolSet } from 'ai'
 import { DynamicPromptGenerator } from './dynamic-prompt-generator'
-import { ConfigError, ValidationError } from './errors'
+import { ValidationError } from './errors'
 import type { PromptGenerator } from './prompt-generator'
 import { manifestSchema } from './schemas'
 import { mergeToolSets } from './tool-filtering'
@@ -43,14 +42,16 @@ export { VariableInjector } from './variable-injector'
  *
  * @example
  * ```typescript
- * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+ * import { Carnet } from '@upstart-gg/carnet'
+ * import manifest from './carnet/carnet.manifest.json'
+ *
+ * const carnet = new Carnet(manifest)
  * const agent = carnet.getAgent('myAgent')
  * const prompt = carnet.generateAgentPrompt('myAgent')
  * ```
  */
 export class Carnet {
   protected manifest: Manifest
-  protected cwd: string
   protected variableInjector: VariableInjector
   protected promptGenerator: PromptGenerator
   protected readonly sessions: Map<string, CarnetSessionState>
@@ -60,55 +61,24 @@ export class Carnet {
   /**
    * Create a new Carnet instance
    * @param manifest The parsed manifest object containing agents, skills, toolsets, and tools
-   * @param cwd Current working directory for relative file paths (defaults to process.cwd())
    * @param options Configuration options for variable injection
    * @param options.variables Custom variables to inject into prompts
    * @param options.envPrefixes Environment variable prefixes to allow (e.g., ['CARNET_', 'PUBLIC_'])
    */
   constructor(
     manifest: Manifest,
-    cwd: string = process.cwd(),
     options: {
       variables?: Record<string, string>
       envPrefixes?: string[]
     } = {}
   ) {
     this.manifest = this.validateManifest(manifest)
-    this.cwd = cwd
     this.variableInjector = new VariableInjector({
       variables: options.variables,
       envPrefixes: options.envPrefixes,
     })
     this.promptGenerator = new DynamicPromptGenerator(this.variableInjector)
     this.sessions = new Map()
-  }
-
-  /**
-   * Load a Carnet instance from a manifest file
-   * @param manifestPath Path to the carnet.manifest.json file
-   * @param options Configuration options for variable injection
-   * @param cwd Current working directory (defaults to process.cwd())
-   * @returns A new Carnet instance
-   * @throws Error if manifest file not found or invalid
-   * @example
-   * ```typescript
-   * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
-   * ```
-   */
-  static async fromManifest(
-    manifestPath: string,
-    options?: {
-      variables?: Record<string, string>
-      envPrefixes?: string[]
-    },
-    cwd?: string
-  ): Promise<Carnet> {
-    if (!existsSync(manifestPath)) {
-      throw new ConfigError(`Manifest file not found`, { manifestPath })
-    }
-    const content = await fs.readFile(manifestPath, 'utf-8')
-    const manifest = JSON.parse(content)
-    return new Carnet(manifest, cwd, options)
   }
 
   private validateManifest(manifest: unknown): Manifest {

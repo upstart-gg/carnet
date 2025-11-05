@@ -19,9 +19,10 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { tool } from 'ai'
 import { z } from 'zod'
+import manifest from './carnet/carnet.manifest.json'
 
 // Load your manifest
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 // Define your domain tools (from your toolsets)
 const searchTool = tool({
@@ -141,9 +142,10 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import * as searchTools from './tools/search'
 import * as analysisTools from './tools/analysis'
+import manifest from './carnet/carnet.manifest.json'
 
 // 1. Setup
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 const messages = [{ role: 'user', content: 'Search for AI papers and then analyze the results.' }]
 
@@ -187,8 +189,9 @@ const result2 = await streamText({
 import { Carnet } from '@upstart-gg/carnet'
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import manifest from './carnet/carnet.manifest.json'
 
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 const { text } = await generateText({
   model: openai('gpt-4'),
@@ -207,8 +210,9 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { tool } from 'ai'
 import { z } from 'zod'
+import manifest from './carnet/carnet.manifest.json'
 
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 // Define domain tools for research capabilities
 const searchTool = tool({
@@ -249,8 +253,9 @@ for await (const chunk of result.textStream) {
 import { Carnet } from '@upstart-gg/carnet'
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import manifest from './carnet/carnet.manifest.json'
 
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 const systemPrompt = carnet.getSystemPrompt('assistant')
 
 interface Message {
@@ -287,9 +292,10 @@ console.log('Assistant:', response2)
 import { Carnet } from '@upstart-gg/carnet'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import manifest from './carnet/carnet.manifest.json'
 
 // Load with custom variables
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json', {
+const carnet = new Carnet(manifest, {
   variables: {
     COMPANY: 'Acme Corp',
     TEAM: 'Engineering',
@@ -315,8 +321,9 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { tool } from 'ai'
 import { z } from 'zod'
+import manifest from './carnet/carnet.manifest.json'
 
-const carnet = await Carnet.fromManifest('./dist/carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 // Define domain tools for analytics
 const analyticsTool = tool({
@@ -432,7 +439,9 @@ const tools = carnet.getTools('agent', {
 Use variables for agent-facing context:
 
 ```typescript
-const carnet = await Carnet.fromManifest('./manifest.json', {
+import manifest from './carnet/carnet.manifest.json'
+
+const carnet = new Carnet(manifest, {
   variables: {
     COMPANY_CONTEXT: 'user is a senior developer',
     FEATURE_AREA: 'payment processing',
@@ -488,8 +497,10 @@ const result = await streamText({
 Check that variables are passed at both manifest load and prompt generation:
 
 ```typescript
+import manifest from './carnet/carnet.manifest.json'
+
 // Manifest-level variables (defaults)
-const carnet = await Carnet.fromManifest('./manifest.json', {
+const carnet = new Carnet(manifest, {
   variables: { GLOBAL_VAR: 'value' }
 })
 
