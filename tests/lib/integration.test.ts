@@ -250,6 +250,66 @@ Creates charts and graphs from data.
       expect(prompt).not.toContain('{{ TOPIC }}')
     })
 
+    it('should support dynamic prompt adaptation with runtime variables', () => {
+      // Create agent with variable placeholders for dynamic adaptation
+      const baseResearcher = manifest.agents.researcher
+      if (!baseResearcher) {
+        throw new Error('baseResearcher is required')
+      }
+
+      const dynamicManifest: Manifest = {
+        ...manifest,
+        agents: {
+          ...manifest.agents,
+          support: {
+            name: 'support',
+            description: 'Customer support agent',
+            initialSkills: [],
+            skills: [],
+            prompt:
+              'You are a {{ CUSTOMER_TIER }} support agent for {{ COMPANY_NAME }}. Use a {{ RESPONSE_STYLE }} approach.',
+          },
+        },
+      }
+
+      // Constructor variables are static (apply to all calls)
+      const dynamicCarnet = new Carnet(dynamicManifest, {
+        variables: { COMPANY_NAME: 'Acme Corp' },
+      })
+
+      // Generate different prompts based on runtime context
+      const premiumPrompt = dynamicCarnet.getSystemPrompt('support', {
+        variables: {
+          CUSTOMER_TIER: 'premium',
+          RESPONSE_STYLE: 'detailed and personalized',
+        },
+      })
+
+      const basicPrompt = dynamicCarnet.getSystemPrompt('support', {
+        variables: {
+          CUSTOMER_TIER: 'basic',
+          RESPONSE_STYLE: 'concise and efficient',
+        },
+      })
+
+      // Verify both prompts contain the static company name
+      expect(premiumPrompt).toContain('Acme Corp')
+      expect(basicPrompt).toContain('Acme Corp')
+
+      // Verify prompts are dynamically adapted
+      expect(premiumPrompt).toContain('premium')
+      expect(premiumPrompt).toContain('detailed and personalized')
+      expect(premiumPrompt).not.toContain('basic')
+
+      expect(basicPrompt).toContain('basic')
+      expect(basicPrompt).toContain('concise and efficient')
+      expect(basicPrompt).not.toContain('premium')
+
+      // Ensure no placeholder remains
+      expect(premiumPrompt).not.toContain('{{')
+      expect(basicPrompt).not.toContain('{{')
+    })
+
     it('should throw error for non-existent agent', () => {
       expect(() => carnet.getSystemPrompt('non-existent')).toThrow('Agent not found')
     })
