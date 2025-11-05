@@ -45,7 +45,6 @@ All options are optional and have sensible defaults.
 
 ```json
 {
-  "output": "./dist",
   "app": {
     "globalInitialSkills": ["common"],
     "globalSkills": ["utilities"]

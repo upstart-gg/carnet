@@ -45,7 +45,7 @@ export const configSchema: z.ZodObject<{
 }> = z.object({
   schema: z.string().optional().describe('Schema url/path'),
   app: appConfigSchema.optional(),
-  output: z.string().default('./dist').describe('Path to the output directory').optional(),
+  output: z.string().default('./carnet').describe('Path to the output directory').optional(),
   variables: z
     .record(z.string(), z.string())
     .default({})
