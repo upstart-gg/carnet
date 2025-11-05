@@ -1,5 +1,13 @@
 # @upstart.gg/carnet
 
+## 0.1.9
+
+### Patch Changes
+
+- [#26](https://github.com/upstart-gg/carnet/pull/26) [`291c635`](https://github.com/upstart-gg/carnet/commit/291c63589c35ddffce28dc454f178f0b70b60a1f) Thanks [@mattallty](https://github.com/mattallty)! - Docs update
+
+- [#30](https://github.com/upstart-gg/carnet/pull/30) [`7c62f19`](https://github.com/upstart-gg/carnet/commit/7c62f198ca9054b4630c5dbd94420e00f34b43d6) Thanks [@mattallty](https://github.com/mattallty)! - feat: Simplify API using direct constructor call
+
 ## 0.1.8
 
 ### Patch Changes
