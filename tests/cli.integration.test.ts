@@ -31,7 +31,7 @@ describe('CLI Integration', () => {
   describe('build command', () => {
     it('builds successfully with fixtures', async () => {
       execSync(`${cli} build --dir tests/fixtures --output ${outputDir}`, { stdio: 'inherit' })
-      const manifestPath = path.join(outputDir, 'manifest.json')
+      const manifestPath = path.join(outputDir, 'carnet.manifest.json')
       expect(existsSync(manifestPath)).toBe(true)
 
       // Check manifest content
