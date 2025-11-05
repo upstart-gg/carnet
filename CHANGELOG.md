@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.10
+
+### Patch Changes
+
+- [#31](https://github.com/upstart-gg/carnet/pull/31) [`ad7e389`](https://github.com/upstart-gg/carnet/commit/ad7e389a1b95a94bf39cd8997254291ad53f3b7e) Thanks [@mattallty](https://github.com/mattallty)! - Update docs and fix default output dir
+
 ## 0.1.9
 
 ### Patch Changes
