@@ -85,7 +85,7 @@ describe('loadEnvConfig', () => {
 describe('Configuration Precedence', () => {
   it('should apply defaults when no config provided', () => {
     const config = mergeConfigurations({}, {}, {})
-    expect(config.output).toBe('./dist')
+    expect(config.output).toBe('./carnet')
   })
 
   it('should override defaults with file config', () => {

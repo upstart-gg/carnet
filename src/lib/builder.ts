@@ -41,7 +41,7 @@ export async function validate(contentDir: string): Promise<void> {
 }
 
 export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
-  const { output = './dist', app = { globalInitialSkills: [], globalSkills: [] } } = options
+  const { output = carnetDir, app = { globalInitialSkills: [], globalSkills: [] } } = options
   const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
 
   validateReferences(agents, skills, toolsets, tools)

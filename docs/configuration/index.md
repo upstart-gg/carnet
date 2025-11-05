@@ -8,7 +8,6 @@ Create `carnet.config.json` in your carnet directory (alongside `agents/`, `skil
 
 ```json
 {
-  "output": "./dist",
   "app": {
     "globalInitialSkills": [],
     "globalSkills": []
@@ -24,7 +23,7 @@ Create `carnet.config.json` in your carnet directory (alongside `agents/`, `skil
 
 ### output
 Directory where manifest is written.
-- Default: `./dist`
+- Default: same directory as config file or `./carnet`
 - Type: string
 
 ### app
