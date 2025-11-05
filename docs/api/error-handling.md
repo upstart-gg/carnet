@@ -52,8 +52,10 @@ Thrown when configuration is invalid or incomplete.
 
 **Example:**
 ```typescript
+import manifest from './carnet/carnet.manifest.json'
+
 try {
-  const carnet = await Carnet.fromManifest('./missing.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   if (isConfigError(error)) {
     console.error(`Configuration error: ${error.message}`)
@@ -72,8 +74,10 @@ Thrown when parsing manifest files fails (JSON syntax errors, invalid YAML, etc.
 
 **Example:**
 ```typescript
+import manifest from './carnet/carnet.manifest.json'
+
 try {
-  const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   if (isParseError(error)) {
     console.error(`Failed to parse manifest: ${error.message}`)
@@ -92,8 +96,10 @@ Thrown when building the Carnet instance fails.
 
 **Example:**
 ```typescript
+import manifest from './carnet/carnet.manifest.json'
+
 try {
-  const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   if (isBuildError(error)) {
     console.error(`Build failed: ${error.message}`)
@@ -139,13 +145,14 @@ Use the `formatError()` utility for consistent error messages:
 
 ```typescript
 import { formatError } from '@upstart-gg/carnet'
+import manifest from './carnet/carnet.manifest.json'
 
 try {
-  const carnet = await Carnet.fromManifest('./manifest.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   const formatted = formatError(error)
   console.error(formatted)
-  // Output: "ConfigError: Manifest file not found at ./manifest.json"
+  // Output: "ConfigError: Invalid manifest format"
 }
 ```
 
@@ -167,17 +174,19 @@ try {
 }
 ```
 
-### Scenario 2: Missing Manifest File
+### Scenario 2: Invalid Manifest
 
-When the manifest file cannot be found:
+When the manifest structure is invalid:
 
 ```typescript
+import manifest from './carnet/carnet.manifest.json'
+
 try {
-  const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   if (isConfigError(error)) {
-    // Check if file exists and provide helpful message
-    console.error('Manifest file not found. Please ensure carnet.manifest.json exists.')
+    // Check manifest structure and provide helpful message
+    console.error('Invalid manifest structure. Please ensure carnet.manifest.json is properly formatted.')
   }
 }
 ```
@@ -222,21 +231,23 @@ try {
 ### 2. Use Type Guards for Specific Handling
 
 ```typescript
+import manifest from './carnet/carnet.manifest.json'
+
 // ❌ Generic error handling
 try {
-  const carnet = await Carnet.fromManifest('./manifest.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   console.error('Error:', error)
 }
 
 // ✅ Specific handling by error type
 try {
-  const carnet = await Carnet.fromManifest('./manifest.json')
+  const carnet = new Carnet(manifest)
 } catch (error) {
   if (isParseError(error)) {
     console.error('Invalid manifest format')
   } else if (isConfigError(error)) {
-    console.error('Manifest file not found')
+    console.error('Invalid manifest structure')
   }
 }
 ```

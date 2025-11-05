@@ -211,8 +211,9 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { tool } from 'ai'
 import { z } from 'zod'
+import manifest from './carnet/carnet.manifest.json'
 
-const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+const carnet = new Carnet(manifest)
 
 // Define your domain tools
 const helloTool = tool({
@@ -243,7 +244,9 @@ const tools = carnet.getTools('agent', {
 ### Advanced: Variable Injection
 
 ```typescript
-const carnet = await Carnet.fromManifest('./manifest.json', {
+import manifest from './carnet/carnet.manifest.json'
+
+const carnet = new Carnet(manifest, {
   variables: { COMPANY: 'Acme' }
 })
 

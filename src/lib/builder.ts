@@ -71,7 +71,7 @@ export async function build(options: CarnetConfig, carnetDir: string = './carnet
     await fs.mkdir(output, { recursive: true })
   }
 
-  const manifestPath = path.join(output, 'manifest.json')
+  const manifestPath = path.join(output, 'carnet.manifest.json')
   await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
 
   console.log(`Build successful! Manifest written to ${manifestPath}`)

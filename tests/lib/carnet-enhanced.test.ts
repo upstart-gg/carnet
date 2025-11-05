@@ -69,7 +69,7 @@ describe('Carnet - Enhanced API', () => {
       },
     }
 
-    carnet = new Carnet(manifest, process.cwd(), {
+    carnet = new Carnet(manifest, {
       variables: { VAR: 'injected-value' },
     })
   })
@@ -401,10 +401,6 @@ describe('Carnet - Enhanced API', () => {
 
   describe('constructor options', () => {
     it('should accept and use custom variables', () => {
-      const _customCarnet = new Carnet(manifest, process.cwd(), {
-        variables: { CUSTOM: 'custom-value' },
-      })
-
       const testManifest: Manifest = {
         ...manifest,
         skills: {
@@ -417,7 +413,7 @@ describe('Carnet - Enhanced API', () => {
         },
       }
 
-      const testCarnet = new Carnet(testManifest, process.cwd(), {
+      const testCarnet = new Carnet(testManifest, {
         variables: { CUSTOM: 'test-value' },
       })
 
@@ -441,7 +437,7 @@ describe('Carnet - Enhanced API', () => {
         },
       }
 
-      const customCarnet = new Carnet(testManifest, process.cwd(), {
+      const customCarnet = new Carnet(testManifest, {
         envPrefixes: ['MYAPP_'],
       })
 
@@ -451,14 +447,6 @@ describe('Carnet - Enhanced API', () => {
 
       delete process.env.MYAPP_VAR
       delete process.env.CARNET_VAR
-    })
-  })
-
-  describe('fromManifest', () => {
-    it('should support options in fromManifest', async () => {
-      // This test verifies that fromManifest properly passes options to constructor
-      // We can't actually test file loading without a real file, but we verify the signature exists
-      expect(Carnet.fromManifest).toBeDefined()
     })
   })
 

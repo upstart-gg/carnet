@@ -29,7 +29,7 @@ export interface ToolOptions {
  *
  * @example
  * ```typescript
- * const carnet = await Carnet.fromManifest('./carnet.manifest.json')
+ * const carnet = new Carnet(manifest)
  * const tools = createCarnetTools(carnet, 'my-agent')
  *
  * // Use with streamText
