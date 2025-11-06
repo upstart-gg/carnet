@@ -31,7 +31,7 @@ By default, these prefixes are allowed:
 Specify custom prefixes when creating a Carnet instance:
 
 ```typescript
-const carnet = new Carnet(manifest, process.cwd(), {
+const carnet = new Carnet(manifest, {
   envPrefixes: ['MYAPP_', 'PUBLIC_'],
 })
 ```
@@ -42,7 +42,7 @@ const carnet = new Carnet(manifest, process.cwd(), {
 
 ```typescript
 // Setup with variables
-const carnet = new Carnet(manifest, process.cwd(), {
+const carnet = new Carnet(manifest, {
   variables: { userFullName: 'John Doe' },
   envPrefixes: ['MYAPP_'],
 })
@@ -130,6 +130,40 @@ const lightPrompt = carnet.generateAgentPrompt('coder', {
   variables: { THEME: 'light' }
 })
 ```
+
+### Dynamic Prompt Adaptation
+
+The most powerful use case for variables is **dynamic prompt adaptation**. By passing variables to `getSystemPrompt()`, you can customize prompts at runtime based on user context:
+
+```typescript
+// Example: Customer support agent with dynamic context
+const carnet = new Carnet(manifest, {
+  variables: { COMPANY_NAME: 'Acme Corp' }
+})
+
+// Adapt prompt based on customer tier
+const premiumPrompt = carnet.getSystemPrompt('support', {
+  variables: {
+    CUSTOMER_TIER: 'premium',
+    RESPONSE_STYLE: 'detailed and personalized'
+  }
+})
+
+const basicPrompt = carnet.getSystemPrompt('support', {
+  variables: {
+    CUSTOMER_TIER: 'basic',
+    RESPONSE_STYLE: 'concise and efficient'
+  }
+})
+
+// Each call generates a customized prompt for the specific context
+```
+
+**Benefits of Dynamic Variables:**
+- **Context-aware agents**: Adapt behavior based on user, session, or request context
+- **A/B testing**: Test different prompt variations dynamically
+- **Multi-tenant systems**: Customize prompts per tenant without duplicating content
+- **Personalization**: Inject user-specific data into prompts at runtime
 
 ## Security Considerations
 

@@ -62,8 +62,23 @@ export class Carnet {
    * Create a new Carnet instance
    * @param manifest The parsed manifest object containing agents, skills, toolsets, and tools
    * @param options Configuration options for variable injection
-   * @param options.variables Custom variables to inject into prompts
+   * @param options.variables Custom variables to inject into prompts (static across all calls)
    * @param options.envPrefixes Environment variable prefixes to allow (e.g., ['CARNET_', 'PUBLIC_'])
+   * @example
+   * ```typescript
+   * // Basic usage
+   * const carnet = new Carnet(manifest)
+   *
+   * // With static variables (applied to all prompts)
+   * const carnet = new Carnet(manifest, {
+   *   variables: { COMPANY_NAME: 'Acme Corp', API_VERSION: 'v2' }
+   * })
+   *
+   * // With custom environment variable prefixes
+   * const carnet = new Carnet(manifest, {
+   *   envPrefixes: ['MYAPP_', 'PUBLIC_']
+   * })
+   * ```
    */
   constructor(
     manifest: Manifest,
@@ -503,8 +518,35 @@ export class Carnet {
   /**
    * Generate a system prompt for an agent, ready to use with Vercel AI SDK
    *
+   * @param agentName The name of the agent to generate a prompt for
+   * @param options Prompt generation options
+   * @param options.variables Runtime variables for dynamic prompt adaptation (overrides constructor variables)
+   * @param options.includeInitialSkills Include initial skills content (default: true)
+   * @param options.includeSkillCatalog Include available skills catalog (default: true)
+   * @param options.includeLoadedSkills Include loaded skills section (default: true)
+   * @param options.includeAvailableTools Include available tools section (default: true)
    * @returns The system prompt string
    * @throws Error if agent not found
+   * @example
+   * ```typescript
+   * // Basic usage
+   * const prompt = carnet.getSystemPrompt('support-agent')
+   *
+   * // With dynamic variables for runtime adaptation
+   * const prompt = carnet.getSystemPrompt('support-agent', {
+   *   variables: {
+   *     CUSTOMER_TIER: 'premium',
+   *     USER_NAME: 'John Doe',
+   *     CONTEXT: 'billing inquiry'
+   *   }
+   * })
+   *
+   * // Customize what's included in the prompt
+   * const minimalPrompt = carnet.getSystemPrompt('support-agent', {
+   *   includeInitialSkills: false,
+   *   includeSkillCatalog: false
+   * })
+   * ```
    */
   getSystemPrompt(agentName: string, options: PromptOptions = {}): string {
     const prompt = this.generateAgentPrompt(agentName, options)
