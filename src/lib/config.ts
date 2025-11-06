@@ -1,5 +1,6 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { ConfigError } from './errors'
 import { type CarnetConfig, configSchema } from './schemas'
 
 /**
@@ -17,6 +18,19 @@ export async function loadConfigFile(dir = './carnet'): Promise<CarnetConfig> {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       // File doesn't exist - return defaults instead of throwing
       return getDefaultConfig()
+    }
+    // Wrap JSON parse or schema validation errors
+    if (error instanceof SyntaxError) {
+      throw new ConfigError(
+        `Failed to parse config file: ${error.message}`,
+        { path: configFilePath }
+      )
+    }
+    if (error instanceof Error && error.name === 'ZodError') {
+      throw new ConfigError(
+        `Invalid configuration: ${error.message}`,
+        { path: configFilePath }
+      )
     }
     throw error
   }
@@ -109,5 +123,15 @@ export function mergeConfigurations(
   }
 
   // Validate final merged config
-  return configSchema.parse(merged)
+  try {
+    return configSchema.parse(merged)
+  } catch (error) {
+    if (error instanceof Error && error.name === 'ZodError') {
+      throw new ConfigError(
+        `Invalid merged configuration: ${error.message}`,
+        { sources: { fileConfig: !!fileConfig, envConfig: !!envConfig, cliConfig: !!cliConfig } }
+      )
+    }
+    throw error
+  }
 }

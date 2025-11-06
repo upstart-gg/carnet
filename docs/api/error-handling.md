@@ -43,66 +43,78 @@ try {
 
 ### `ConfigError`
 
-Thrown when configuration is invalid or incomplete.
+Thrown when configuration loading or validation fails.
 
 **When it occurs:**
-- Manifest file not found
-- Invalid manifest structure
-- Missing required configuration
+- Config file has invalid JSON syntax
+- Config schema validation fails
+- Environment variable configuration is invalid
+- Merged configuration doesn't meet schema requirements
 
 **Example:**
 ```typescript
-import manifest from './carnet/carnet.manifest.json'
+import { loadConfigFile, isConfigError } from '@upstart-gg/carnet'
 
 try {
-  const carnet = new Carnet(manifest)
+  const config = await loadConfigFile('./carnet')
 } catch (error) {
   if (isConfigError(error)) {
     console.error(`Configuration error: ${error.message}`)
+    console.error('Context:', error.context)
   }
 }
 ```
 
 ### `ParseError`
 
-Thrown when parsing manifest files fails (JSON syntax errors, invalid YAML, etc.).
+Thrown when parsing markdown files fails during the build process.
 
 **When it occurs:**
-- Invalid JSON in manifest file
-- Malformed manifest content
-- UTF-8 decoding issues
+- Invalid frontmatter in agent/skill/toolset/tool markdown files
+- File not found during parsing
+- Schema validation fails on parsed frontmatter
+- Unable to read or decode file content
 
 **Example:**
 ```typescript
-import manifest from './carnet/carnet.manifest.json'
+import { parseMarkdownFile, isParseError, skillSchema } from '@upstart-gg/carnet'
 
 try {
-  const carnet = new Carnet(manifest)
+  const skill = await parseMarkdownFile('./skills/research.md', skillSchema)
 } catch (error) {
   if (isParseError(error)) {
-    console.error(`Failed to parse manifest: ${error.message}`)
+    console.error(`Failed to parse file: ${error.message}`)
+    console.error(`File: ${error.filePath}`)
+    if (error.lineNumber) {
+      console.error(`Line: ${error.lineNumber}`)
+    }
   }
 }
 ```
 
 ### `BuildError`
 
-Thrown when building the Carnet instance fails.
+Thrown when the build process fails while compiling the manifest.
 
 **When it occurs:**
-- Circular dependencies in skills/toolsets
-- Invalid manifest version
-- Migration errors
+- Agent references non-existent skill
+- Skill references non-existent toolset
+- Toolset references non-existent tool
+- Skill file reference paths are invalid (starts with `./`, outside skill directory, etc.)
+- Referenced skill files don't exist or aren't readable
+- File I/O errors during build
 
 **Example:**
 ```typescript
-import manifest from './carnet/carnet.manifest.json'
+import { build, isBuildError } from '@upstart-gg/carnet'
 
 try {
-  const carnet = new Carnet(manifest)
+  await build(config, './carnet')
 } catch (error) {
   if (isBuildError(error)) {
     console.error(`Build failed: ${error.message}`)
+    console.error(`Phase: ${error.phase}`)
+    console.error('Context:', error.context)
   }
 }
 ```

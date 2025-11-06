@@ -22,12 +22,6 @@ export type SkillMetadata = Pick<Skill, 'name' | 'description' | 'toolsets' | 'f
 export type ToolsetMetadata = Pick<Toolset, 'name' | 'description' | 'tools'>
 export type ToolMetadata = Pick<Tool, 'name' | 'description'>
 
-export interface GeneratePromptOptions {
-  includeSkills?: string[]
-  excludeSkills?: string[]
-  variables?: Record<string, string>
-}
-
 // Runtime content retrieval options
 export interface ContentRetrievalOptions {
   variables?: Record<string, string>
@@ -77,12 +71,4 @@ export interface CarnetSessionState {
   loadedToolsets: Set<string>
   exposedDomainTools: Set<string>
   __toolFilteringDiagnostics?: ToolFilteringDiagnostics
-}
-
-// Public session state interface for inspection and debugging
-export interface SessionState {
-  agentName: string
-  discoveredSkills: readonly string[]
-  loadedToolsets: readonly string[]
-  exposedDomainTools: readonly string[]
 }

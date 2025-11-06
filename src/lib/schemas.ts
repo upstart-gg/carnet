@@ -71,10 +71,6 @@ export const configSchema: z.ZodObject<{
 
 export type CarnetConfig = z.infer<typeof configSchema>
 
-export const agentCapabilitySchema: z.ZodEnum<{
-  createCustomAgent: 'createCustomAgent'
-}> = z.enum(['createCustomAgent']).describe('Capabilities that can be granted to an agent')
-
 export const agentSchemaBase: z.ZodObject<{
   name: z.ZodString
   description: z.ZodString
