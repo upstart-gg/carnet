@@ -490,4 +490,115 @@ describe('Carnet - Enhanced API', () => {
       }
     })
   })
+
+  describe('debugging helper methods', () => {
+    it('should return discovered skills for an agent', () => {
+      // Trigger session creation by generating a prompt
+      carnet.generateAgentPrompt('testAgent')
+
+      const discoveredSkills = carnet.getDiscoveredSkills('testAgent')
+      expect(discoveredSkills).toContain('skillA')
+      expect(discoveredSkills).toHaveLength(1) // Only initial skill
+    })
+
+    it('should return empty array when session does not exist', () => {
+      const discoveredSkills = carnet.getDiscoveredSkills('nonExistentAgent')
+      expect(discoveredSkills).toEqual([])
+    })
+
+    it('should return available tools for an agent', () => {
+      // Trigger session creation
+      carnet.generateAgentPrompt('testAgent')
+
+      const availableTools = carnet.getAvailableTools('testAgent')
+      expect(availableTools).toContain('toolA1')
+      expect(availableTools).toContain('toolA2')
+      expect(availableTools).toHaveLength(2)
+    })
+
+    it('should return empty array for available tools when session does not exist', () => {
+      const availableTools = carnet.getAvailableTools('nonExistentAgent')
+      expect(availableTools).toEqual([])
+    })
+
+    it('should return session state for an agent', () => {
+      // Trigger session creation
+      carnet.generateAgentPrompt('testAgent')
+
+      const sessionState = carnet.getSessionState('testAgent')
+      expect(sessionState).not.toBeNull()
+      expect(sessionState?.agentName).toBe('testAgent')
+      expect(sessionState?.discoveredSkills).toBeInstanceOf(Set)
+      expect(sessionState?.loadedToolsets).toBeInstanceOf(Set)
+      expect(sessionState?.exposedDomainTools).toBeInstanceOf(Set)
+      expect(sessionState?.discoveredSkills.has('skillA')).toBe(true)
+      expect(sessionState?.loadedToolsets.has('toolsetA')).toBe(true)
+    })
+
+    it('should return null for session state when session does not exist', () => {
+      const sessionState = carnet.getSessionState('nonExistentAgent')
+      expect(sessionState).toBeNull()
+    })
+
+    it('should reset session for an agent', () => {
+      // Create session
+      carnet.generateAgentPrompt('testAgent')
+
+      // Verify session exists
+      let sessionState = carnet.getSessionState('testAgent')
+      expect(sessionState).not.toBeNull()
+
+      // Reset session
+      carnet.resetSession('testAgent')
+
+      // Verify session no longer exists
+      sessionState = carnet.getSessionState('testAgent')
+      expect(sessionState).toBeNull()
+    })
+
+    it('should not throw when resetting non-existent session', () => {
+      expect(() => carnet.resetSession('nonExistentAgent')).not.toThrow()
+    })
+
+    it('should track skill loading in session', () => {
+      // Create session
+      carnet.generateAgentPrompt('testAgent')
+
+      // Initially should only have skillA
+      let discoveredSkills = carnet.getDiscoveredSkills('testAgent')
+      expect(discoveredSkills).toHaveLength(1)
+      expect(discoveredSkills).toContain('skillA')
+
+      // Simulate loading a new skill
+      carnet._updateSessionOnSkillLoad('testAgent', 'skillB')
+
+      // Should now have both skills
+      discoveredSkills = carnet.getDiscoveredSkills('testAgent')
+      expect(discoveredSkills).toHaveLength(2)
+      expect(discoveredSkills).toContain('skillA')
+      expect(discoveredSkills).toContain('skillB')
+
+      // Should have tools from both toolsets
+      const availableTools = carnet.getAvailableTools('testAgent')
+      expect(availableTools).toContain('toolA1')
+      expect(availableTools).toContain('toolA2')
+      expect(availableTools).toContain('toolB1')
+    })
+
+    it('should provide session state copies not references', () => {
+      // Create session
+      carnet.generateAgentPrompt('testAgent')
+
+      const state1 = carnet.getSessionState('testAgent')
+      const state2 = carnet.getSessionState('testAgent')
+
+      // Should be different Set instances (copies)
+      expect(state1?.discoveredSkills).not.toBe(state2?.discoveredSkills)
+
+      // But with same content
+      expect(Array.from(state1?.discoveredSkills ?? [])).toEqual(
+        Array.from(state2?.discoveredSkills ?? [])
+      )
+    })
+  })
 })

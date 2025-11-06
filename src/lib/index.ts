@@ -31,6 +31,19 @@ export type { ToolOptions } from './tools'
 export type { ToolFilteringDiagnostics } from './types'
 export * from './types'
 export { VariableInjector } from './variable-injector'
+export {
+  CarnetError,
+  ConfigError,
+  ParseError,
+  BuildError,
+  ValidationError,
+  isCarnetError,
+  isConfigError,
+  isParseError,
+  isBuildError,
+  isValidationError,
+  formatError,
+} from './errors'
 
 /**
  * Main Carnet class for loading and using AI agent manifests
@@ -55,8 +68,6 @@ export class Carnet {
   protected variableInjector: VariableInjector
   protected promptGenerator: PromptGenerator
   protected readonly sessions: Map<string, CarnetSessionState>
-
-  static MANIFEST_FILENAME = 'carnet.manifest.json'
 
   /**
    * Create a new Carnet instance

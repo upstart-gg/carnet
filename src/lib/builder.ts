@@ -1,6 +1,7 @@
 import { accessSync, constants, existsSync, promises as fs } from 'node:fs'
 import path from 'node:path'
 import { discoverAgents, discoverSkills, discoverTools, discoverToolsets } from './discovery'
+import { BuildError } from './errors'
 import { parseMarkdownFile, parseToolFile } from './parser'
 import { agentSchema, type CarnetConfig, skillSchema, toolsetSchema } from './schemas'
 import type { Agent, Manifest, Skill, Tool, Toolset } from './types'
@@ -42,39 +43,53 @@ export async function validate(contentDir: string): Promise<void> {
 
 export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
   const { output = carnetDir, app = { globalInitialSkills: [], globalSkills: [] } } = options
-  const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
-
-  validateReferences(agents, skills, toolsets, tools)
-
-  // Validate file references exist and are accessible
-  validateSkillFileReferences(skills, carnetDir)
-
-  // Read and embed file contents
-  await readSkillFileContents(skills, carnetDir)
-
-  const manifest: Manifest = {
-    version: 1,
-    app,
-    agents: Object.fromEntries(agents),
-    skills: Object.fromEntries(skills),
-    toolsets: Object.fromEntries(toolsets),
-    tools: Object.fromEntries(tools),
-  }
 
   try {
-    const stats = await fs.stat(output)
-    if (!stats.isDirectory()) {
+    const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
+
+    validateReferences(agents, skills, toolsets, tools)
+
+    // Validate file references exist and are accessible
+    validateSkillFileReferences(skills, carnetDir)
+
+    // Read and embed file contents
+    await readSkillFileContents(skills, carnetDir)
+
+    const manifest: Manifest = {
+      version: 1,
+      app,
+      agents: Object.fromEntries(agents),
+      skills: Object.fromEntries(skills),
+      toolsets: Object.fromEntries(toolsets),
+      tools: Object.fromEntries(tools),
+    }
+
+    try {
+      const stats = await fs.stat(output)
+      if (!stats.isDirectory()) {
+        await fs.mkdir(output, { recursive: true })
+      }
+    } catch {
+      // Directory doesn't exist, create it
       await fs.mkdir(output, { recursive: true })
     }
-  } catch {
-    // Directory doesn't exist, create it
-    await fs.mkdir(output, { recursive: true })
+
+    const manifestPath = path.join(output, 'carnet.manifest.json')
+    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
+
+    console.log(`Build successful! Manifest written to ${manifestPath}`)
+  } catch (error) {
+    // Wrap non-Carnet errors in BuildError
+    if (error instanceof Error && error.name.endsWith('Error') && error.name.startsWith('Carnet')) {
+      // Already a Carnet error, re-throw
+      throw error
+    }
+    throw new BuildError(
+      `Build failed: ${error instanceof Error ? error.message : String(error)}`,
+      'build',
+      { carnetDir, output }
+    )
   }
-
-  const manifestPath = path.join(output, 'carnet.manifest.json')
-  await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
-
-  console.log(`Build successful! Manifest written to ${manifestPath}`)
 }
 
 /**
@@ -91,8 +106,10 @@ function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: str
     for (const fileRef of skill.files) {
       // Ensure path doesn't start with ./ (normalize)
       if (fileRef.path.startsWith('./') || fileRef.path.startsWith('.\\')) {
-        throw new Error(
-          `Skill "${skill.name}": file path "${fileRef.path}" should not start with "./". Use relative path: "${fileRef.path.slice(2)}"`
+        throw new BuildError(
+          `Skill "${skill.name}": file path "${fileRef.path}" should not start with "./". Use relative path: "${fileRef.path.slice(2)}"`,
+          'validation',
+          { skill: skill.name, filePath: fileRef.path }
         )
       }
 
@@ -103,16 +120,19 @@ function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: str
       const normalizedPath = path.normalize(absolutePath)
       const normalizedSkillDir = path.normalize(skillDir)
       if (!normalizedPath.startsWith(normalizedSkillDir)) {
-        throw new Error(
-          `Skill "${skill.name}": file path "${fileRef.path}" resolves outside skill directory (security violation)`
+        throw new BuildError(
+          `Skill "${skill.name}": file path "${fileRef.path}" resolves outside skill directory (security violation)`,
+          'validation',
+          { skill: skill.name, filePath: fileRef.path, absolutePath }
         )
       }
 
       // Check file exists
       if (!existsSync(absolutePath)) {
-        throw new Error(
-          `Skill "${skill.name}" references non-existent file: ${fileRef.path}\n` +
-            `Expected at: ${absolutePath}`
+        throw new BuildError(
+          `Skill "${skill.name}" references non-existent file: ${fileRef.path}\nExpected at: ${absolutePath}`,
+          'validation',
+          { skill: skill.name, filePath: fileRef.path, expectedPath: absolutePath }
         )
       }
 
@@ -120,9 +140,10 @@ function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: str
       try {
         accessSync(absolutePath, constants.R_OK)
       } catch {
-        throw new Error(
-          `Skill "${skill.name}" references unreadable file: ${fileRef.path}\n` +
-            `Path: ${absolutePath}`
+        throw new BuildError(
+          `Skill "${skill.name}" references unreadable file: ${fileRef.path}\nPath: ${absolutePath}`,
+          'validation',
+          { skill: skill.name, filePath: fileRef.path, absolutePath }
         )
       }
     }
@@ -150,9 +171,10 @@ async function readSkillFileContents(
         // Read file and embed content
         fileRef.content = await fs.readFile(absolutePath, 'utf-8')
       } catch (error) {
-        throw new Error(
-          `Failed to read file "${fileRef.path}" from skill "${skill.name}": ` +
-            `${error instanceof Error ? error.message : String(error)}`
+        throw new BuildError(
+          `Failed to read file "${fileRef.path}" from skill "${skill.name}": ${error instanceof Error ? error.message : String(error)}`,
+          'file-read',
+          { skill: skill.name, filePath: fileRef.path, absolutePath }
         )
       }
     }
@@ -168,21 +190,33 @@ function validateReferences(
   for (const agent of agents.values()) {
     for (const skillName of [...agent.initialSkills, ...agent.skills]) {
       if (!skills.has(skillName)) {
-        throw new Error(`Agent "${agent.name}" references non-existent skill "${skillName}"`)
+        throw new BuildError(
+          `Agent "${agent.name}" references non-existent skill "${skillName}"`,
+          'validation',
+          { agent: agent.name, missingSkill: skillName }
+        )
       }
     }
   }
   for (const skill of skills.values()) {
     for (const toolsetName of skill.toolsets) {
       if (!toolsets.has(toolsetName)) {
-        throw new Error(`Skill "${skill.name}" references non-existent toolset "${toolsetName}"`)
+        throw new BuildError(
+          `Skill "${skill.name}" references non-existent toolset "${toolsetName}"`,
+          'validation',
+          { skill: skill.name, missingToolset: toolsetName }
+        )
       }
     }
   }
   for (const toolset of toolsets.values()) {
     for (const toolName of toolset.tools) {
       if (!tools.has(toolName)) {
-        throw new Error(`Toolset "${toolset.name}" references non-existent tool "${toolName}"`)
+        throw new BuildError(
+          `Toolset "${toolset.name}" references non-existent tool "${toolName}"`,
+          'validation',
+          { toolset: toolset.name, missingTool: toolName }
+        )
       }
     }
   }
