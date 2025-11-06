@@ -69,8 +69,6 @@ export class Carnet {
   protected promptGenerator: PromptGenerator
   protected readonly sessions: Map<string, CarnetSessionState>
 
-  static MANIFEST_FILENAME = 'carnet.manifest.json'
-
   /**
    * Create a new Carnet instance
    * @param manifest The parsed manifest object containing agents, skills, toolsets, and tools

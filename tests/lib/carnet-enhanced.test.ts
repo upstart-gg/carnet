@@ -492,10 +492,6 @@ describe('Carnet - Enhanced API', () => {
   })
 
   describe('debugging helper methods', () => {
-    it('should have MANIFEST_FILENAME constant', () => {
-      expect(Carnet.MANIFEST_FILENAME).toBe('carnet.manifest.json')
-    })
-
     it('should return discovered skills for an agent', () => {
       // Trigger session creation by generating a prompt
       carnet.generateAgentPrompt('testAgent')
