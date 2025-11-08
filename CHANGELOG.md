@@ -1,5 +1,42 @@
 # @upstart.gg/carnet
 
+## 0.1.11
+
+### Patch Changes
+
+- [#33](https://github.com/upstart-gg/carnet/pull/33) [`a9c5a47`](https://github.com/upstart-gg/carnet/commit/a9c5a47343ba9cc1ca52249a15f8afde75599bc2) Thanks [@mattallty](https://github.com/mattallty)! - Improve variable injection documentation and examples
+
+  Enhanced documentation for the variable injection feature with clearer examples demonstrating both static (constructor-level) and dynamic (method-level) variable usage patterns. Fixed incorrect API signatures and added comprehensive JSDoc examples showing how to use getSystemPrompt() with runtime variables for dynamic prompt adaptation.
+
+- [#35](https://github.com/upstart-gg/carnet/pull/35) [`7325f3d`](https://github.com/upstart-gg/carnet/commit/7325f3dec77145cba039bb023cb409aad5846256) Thanks [@mattallty](https://github.com/mattallty)! - Export error classes and add comprehensive error handling
+
+  This release fixes a critical documentation/implementation mismatch and improves error handling across the library:
+
+  **New Exports:**
+
+  - All error classes now properly exported: `CarnetError`, `ConfigError`, `ParseError`, `BuildError`, `ValidationError`
+  - Error type guards: `isCarnetError`, `isConfigError`, `isParseError`, `isBuildError`, `isValidationError`
+  - Error formatting utility: `formatError`
+
+  **Error Handling Improvements:**
+
+  - `ConfigError` now thrown for config loading and validation failures in `loadConfigFile()` and `mergeConfigurations()`
+  - `ParseError` now thrown for markdown parsing errors in `parseMarkdownFile()` and `parseToolFile()`
+  - `BuildError` now thrown for build validation failures including reference validation and file operations
+
+  **Testing:**
+
+  - Added comprehensive test coverage for debugging helper methods: `getDiscoveredSkills()`, `getAvailableTools()`, `getSessionState()`, `resetSession()`, and `MANIFEST_FILENAME`
+  - 10 new test cases ensuring session management and debugging features work correctly
+
+  **Code Quality:**
+
+  - Removed unused type definitions: `GeneratePromptOptions`, `SessionState`
+  - Removed unused schema: `agentCapabilitySchema`
+  - Updated error handling documentation with accurate usage examples
+
+  This is a **non-breaking change** - only additions to the public API surface. All existing code will continue to work unchanged.
+
 ## 0.1.10
 
 ### Patch Changes
