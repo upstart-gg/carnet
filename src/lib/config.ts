@@ -21,16 +21,12 @@ export async function loadConfigFile(dir = './carnet'): Promise<CarnetConfig> {
     }
     // Wrap JSON parse or schema validation errors
     if (error instanceof SyntaxError) {
-      throw new ConfigError(
-        `Failed to parse config file: ${error.message}`,
-        { path: configFilePath }
-      )
+      throw new ConfigError(`Failed to parse config file: ${error.message}`, {
+        path: configFilePath,
+      })
     }
     if (error instanceof Error && error.name === 'ZodError') {
-      throw new ConfigError(
-        `Invalid configuration: ${error.message}`,
-        { path: configFilePath }
-      )
+      throw new ConfigError(`Invalid configuration: ${error.message}`, { path: configFilePath })
     }
     throw error
   }
@@ -127,10 +123,9 @@ export function mergeConfigurations(
     return configSchema.parse(merged)
   } catch (error) {
     if (error instanceof Error && error.name === 'ZodError') {
-      throw new ConfigError(
-        `Invalid merged configuration: ${error.message}`,
-        { sources: { fileConfig: !!fileConfig, envConfig: !!envConfig, cliConfig: !!cliConfig } }
-      )
+      throw new ConfigError(`Invalid merged configuration: ${error.message}`, {
+        sources: { fileConfig: !!fileConfig, envConfig: !!envConfig, cliConfig: !!cliConfig },
+      })
     }
     throw error
   }

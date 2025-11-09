@@ -15,12 +15,9 @@ export async function parseMarkdownFile<T extends z.ZodTypeAny>(
     const result = schema.safeParse({ ...data, content })
 
     if (!result.success) {
-      throw new ParseError(
-        `Invalid frontmatter: ${result.error.message}`,
-        filePath,
-        undefined,
-        { validationError: result.error.message }
-      )
+      throw new ParseError(`Invalid frontmatter: ${result.error.message}`, filePath, undefined, {
+        validationError: result.error.message,
+      })
     }
 
     return result.data
@@ -29,12 +26,7 @@ export async function parseMarkdownFile<T extends z.ZodTypeAny>(
       throw error
     }
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      throw new ParseError(
-        'File not found',
-        filePath,
-        undefined,
-        { error: 'ENOENT' }
-      )
+      throw new ParseError('File not found', filePath, undefined, { error: 'ENOENT' })
     }
     throw new ParseError(
       `Failed to read or parse file: ${error instanceof Error ? error.message : String(error)}`,
@@ -67,12 +59,7 @@ export async function parseToolFile(
       throw error
     }
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      throw new ParseError(
-        'Tool file not found',
-        filePath,
-        undefined,
-        { error: 'ENOENT' }
-      )
+      throw new ParseError('Tool file not found', filePath, undefined, { error: 'ENOENT' })
     }
     throw new ParseError(
       `Failed to read or parse tool file: ${error instanceof Error ? error.message : String(error)}`,
