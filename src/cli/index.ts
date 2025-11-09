@@ -13,6 +13,7 @@ import { registerInitCommand } from './commands/init'
 import { registerLintCommand } from './commands/lint'
 import { registerListCommand } from './commands/list'
 import { registerShowCommand } from './commands/show'
+import { registerSimulateCommand } from './commands/simulate'
 
 const program = new Command()
 
@@ -35,5 +36,6 @@ registerBuildCommand(program)
 registerLintCommand(program)
 registerListCommand(program)
 registerShowCommand(program)
+registerSimulateCommand(program)
 
 program.parse()

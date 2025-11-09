@@ -2,7 +2,12 @@ import path from 'node:path'
 import type { Command } from 'commander'
 import type { z } from 'zod'
 import { loadConfigFile } from '../../lib/config'
-import { discoverAgents, discoverSkills, discoverTools, discoverToolsets } from '../../lib/discovery'
+import {
+  discoverAgents,
+  discoverSkills,
+  discoverTools,
+  discoverToolsets,
+} from '../../lib/discovery'
 import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolSchema, toolsetSchema } from '../../lib/schemas'
 import type { Agent, Skill, Tool, Toolset } from '../../lib/types'
@@ -90,7 +95,8 @@ function generateTree(
   if (agent.initialSkills && agent.initialSkills.length > 0) {
     console.log('├── Initial Skills')
     agent.initialSkills.forEach((skillName, index) => {
-      const isLastInitialSkill = index === agent.initialSkills.length - 1 && agent.skills.length === 0
+      const isLastInitialSkill =
+        index === agent.initialSkills.length - 1 && agent.skills.length === 0
       displaySkill(skillName, skills, toolsets, tools, isLastInitialSkill, '│   ', maxDepth)
     })
   }
@@ -133,7 +139,14 @@ function displaySkill(
       skill.toolsets.forEach((toolsetName, toolsetIndex) => {
         const isLastToolset = toolsetIndex === skill.toolsets.length - 1
         const childPrefix = isLast ? '    ' : '│   '
-        displayToolset(toolsetName, toolsets, tools, isLastToolset, `${parentPrefix}${childPrefix}`, maxDepth)
+        displayToolset(
+          toolsetName,
+          toolsets,
+          tools,
+          isLastToolset,
+          `${parentPrefix}${childPrefix}`,
+          maxDepth
+        )
       })
     }
   } else {
@@ -178,12 +191,7 @@ function displayToolset(
   }
 }
 
-function displayTool(
-  toolName: string,
-  tools: Tool[],
-  isLast: boolean,
-  parentPrefix: string
-) {
+function displayTool(toolName: string, tools: Tool[], isLast: boolean, parentPrefix: string) {
   const prefix = isLast ? '└── ' : '├── '
   const tool = tools.find((t) => t.name === toolName)
 
