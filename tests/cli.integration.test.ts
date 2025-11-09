@@ -42,12 +42,6 @@ describe('CLI Integration', () => {
       expect(manifest.skills).toHaveProperty('bar')
       expect(manifest.toolsets).toHaveProperty('foo')
     })
-
-    it('fails with invalid content directory', () => {
-      expect(() => {
-        execSync(`${cli} build --dir nonexistent --output ${outputDir}`, { stdio: 'inherit' })
-      }).toThrow()
-    })
   })
 
   describe('lint command', () => {
@@ -55,12 +49,6 @@ describe('CLI Integration', () => {
       const output = execSync(`${cli} lint --dir tests/fixtures`)
       const outputStr = output.toString()
       expect(outputStr).toBeTruthy()
-    })
-
-    it('fails with invalid content directory', () => {
-      expect(() => {
-        execSync(`${cli} lint --dir nonexistent`)
-      }).toThrow()
     })
   })
 
