@@ -20,7 +20,7 @@ export function registerShowCommand(program: Command): void {
 }
 
 async function runShowCommand(type: string, name: string, options: { dir?: string }) {
-  const carnetDir = options.dir || './carnet'
+  const carnetDir = path.resolve(options.dir || './carnet')
   await loadConfigFile(carnetDir)
   let filePath: string
   let schema: z.ZodType<unknown>
