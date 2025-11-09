@@ -1,5 +1,16 @@
 # @upstart.gg/carnet
 
+## 0.2.0
+
+### Minor Changes
+
+- [#45](https://github.com/upstart-gg/carnet/pull/45) [`1e6ae1a`](https://github.com/upstart-gg/carnet/commit/1e6ae1a4451525c8f06fb2a952068d93a66d0876) Thanks [@mattallty](https://github.com/mattallty)! - Enhance list command with comprehensive display features:
+  - Display tools within toolsets (depth level 4)
+  - Add entity type suffixes: (skill), (toolset), (tool)
+  - Differentiate between "Initial Skills" and "Skills" sections
+  - Show descriptions for skills, toolsets, and tools
+  - Improve tree structure formatting for better readability
+
 ## 0.1.15
 
 ### Patch Changes
