@@ -12,7 +12,10 @@ export function registerInitCommand(program: Command): void {
     .action(async (dir, options) => {
       // Commander passes positional arg as first param, and flag as options.dir
       const inputDir = options.dir ?? dir ?? './carnet'
-      const targetDir = inputDir === '.' ? process.cwd() : path.resolve(process.cwd(), inputDir)
+      // Use INIT_CWD (set by npm/pnpm/yarn) to get the directory where the command was invoked
+      // Fall back to process.cwd() if INIT_CWD is not available
+      const cwd = process.env.INIT_CWD || process.cwd()
+      const targetDir = inputDir === '.' ? cwd : path.resolve(cwd, inputDir)
       console.log(colors.info(`Resolved init directory: ${targetDir}`))
       await runInitCommand(targetDir)
     })
@@ -21,8 +24,12 @@ export function registerInitCommand(program: Command): void {
 async function runInitCommand(dir: string = './carnet') {
   const targetDir = path.resolve(dir)
 
+  // Use INIT_CWD (set by npm/pnpm/yarn) to get the directory where the command was invoked
+  // Fall back to process.cwd() if INIT_CWD is not available
+  const cwd = process.env.INIT_CWD || process.cwd()
+
   // If dir is ".", use current working directory directly
-  if (targetDir === process.cwd()) {
+  if (targetDir === cwd) {
     console.log(colors.info(`Initializing Carnet project in current directory...`))
   } else {
     console.log(colors.info(`Initializing Carnet project in ${targetDir}...`))

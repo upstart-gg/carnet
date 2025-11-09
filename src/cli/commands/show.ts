@@ -20,7 +20,10 @@ export function registerShowCommand(program: Command): void {
 }
 
 async function runShowCommand(type: string, name: string, options: { dir?: string }) {
-  const carnetDir = path.resolve(options.dir || './carnet')
+  // Use INIT_CWD (set by npm/pnpm/yarn) to get the directory where the command was invoked
+  // Fall back to process.cwd() if INIT_CWD is not available
+  const cwd = process.env.INIT_CWD || process.cwd()
+  const carnetDir = path.resolve(cwd, options.dir || './carnet')
   await loadConfigFile(carnetDir)
   let filePath: string
   let schema: z.ZodType<unknown>

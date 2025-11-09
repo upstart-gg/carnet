@@ -30,7 +30,10 @@ async function runListCommand(
   agentName: string | undefined,
   options: { dir?: string; depth?: string }
 ) {
-  const carnetDir = path.resolve(options.dir || './carnet')
+  // Use INIT_CWD (set by npm/pnpm/yarn) to get the directory where the command was invoked
+  // Fall back to process.cwd() if INIT_CWD is not available
+  const cwd = process.env.INIT_CWD || process.cwd()
+  const carnetDir = path.resolve(cwd, options.dir || './carnet')
   await loadConfigFile(carnetDir)
   const maxDepth = Math.max(1, parseInt(options.depth || '3', 10))
   const agents = await collect<Agent>(discoverAgents(carnetDir), agentSchema)
