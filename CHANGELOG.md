@@ -1,5 +1,17 @@
 # @upstart.gg/carnet
 
+## 0.3.0
+
+### Minor Changes
+
+- [#47](https://github.com/upstart-gg/carnet/pull/47) [`cd28a6d`](https://github.com/upstart-gg/carnet/commit/cd28a6da4a20286494cdf54e5834a30cee8e3af6) Thanks [@mattallty](https://github.com/mattallty)! - Add interactive `simulate` CLI command for testing agent behavior
+
+  - New `carnet simulate` command allows users to interactively test how their agents work
+  - Users can select agents, load skills dynamically, and see how the system prompt evolves
+  - Shows session state, exposed tools, and skill catalog in real-time
+  - Helps users understand Carnet's progressive skill loading without actual integration
+  - Adds `@inquirer/prompts` dependency for interactive CLI prompts
+
 ## 0.2.0
 
 ### Minor Changes

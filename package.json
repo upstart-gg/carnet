@@ -1,6 +1,6 @@
 {
   "name": "@upstart.gg/carnet",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A framework for building AI agents with Vercel AI SDK using markdown-based agent definitions, skills, toolsets, and tools with smart prompt generation",
   "type": "module",
   "exports": {
