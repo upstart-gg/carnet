@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.12
+
+### Patch Changes
+
+- [#37](https://github.com/upstart-gg/carnet/pull/37) [`faa456a`](https://github.com/upstart-gg/carnet/commit/faa456ab1f012defcc94811e313e4358eb4c7ccb) Thanks [@mattallty](https://github.com/mattallty)! - Fix CLI directory path resolution to properly handle relative paths against process.cwd(). All CLI commands (build, lint, list, show) now use path.resolve() to ensure directory paths work correctly regardless of the current working directory.
+
 ## 0.1.11
 
 ### Patch Changes
