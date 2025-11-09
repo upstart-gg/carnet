@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.13
+
+### Patch Changes
+
+- [#39](https://github.com/upstart-gg/carnet/pull/39) [`30e5f51`](https://github.com/upstart-gg/carnet/commit/30e5f51abc601a818b9ac4a95102da040e379ad9) Thanks [@mattallty](https://github.com/mattallty)! - Fix CLI directory resolution to respect the directory where commands are invoked. All CLI commands now use the INIT_CWD environment variable (set by npm/pnpm/yarn) to correctly resolve the carnet directory relative to where the command was run, not where the package is installed. This fixes issues when running commands from subdirectories in monorepos.
+
 ## 0.1.12
 
 ### Patch Changes
