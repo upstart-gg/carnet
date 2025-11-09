@@ -1,7 +1,7 @@
 import path from 'node:path'
 import type { Command } from 'commander'
 import { validate } from '../../lib/builder'
-import { loadConfigFile, loadEnvConfig, mergeConfigurations } from '../../lib/config'
+import { loadConfigFile } from '../../lib/config'
 import { colors } from '../colors'
 
 export function registerLintCommand(program: Command): void {
@@ -75,19 +75,6 @@ async function runLintCommand(options: {
       globalSkills: options.globalSkills || [],
       globalInitialSkills: options.globalInitialSkills || [],
     }
-  }
-
-  // Load environment variables and merge configurations with proper precedence
-  const envConfig = loadEnvConfig()
-  const _config = mergeConfigurations(fileConfig, envConfig, cliConfig)
-
-  // Validate that content directory exists
-  const { promises: fs } = await import('node:fs')
-  const contentDir = `${carnetDir}/agents`
-  try {
-    await fs.access(contentDir)
-  } catch {
-    throw new Error(`Content directory does not exist: ${contentDir}`)
   }
 
   console.log(colors.info('Linting Carnet project...'))

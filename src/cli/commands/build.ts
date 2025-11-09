@@ -87,15 +87,6 @@ async function runBuildCommand(options: {
   const envConfig = loadEnvConfig()
   const buildConfig = mergeConfigurations(fileConfig, envConfig, cliConfig)
 
-  // Validate that content directory exists
-  const { promises: fs } = await import('node:fs')
-  const contentDir = path.join(carnetDir, 'agents')
-  try {
-    await fs.access(contentDir)
-  } catch {
-    throw new Error(`Content directory does not exist: ${contentDir}`)
-  }
-
   const runBuild = async () => {
     console.log(colors.info('Building Carnet project...'))
     try {
