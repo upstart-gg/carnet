@@ -50,7 +50,7 @@ async function runBuildCommand(options: {
   globalSkills?: string[]
   globalInitialSkills?: string[]
 }) {
-  const carnetDir = options.dir || './carnet'
+  const carnetDir = path.resolve(options.dir || './carnet')
   const fileConfig = await loadConfigFile(carnetDir)
 
   // Parse CLI variables (format: "KEY=VALUE")

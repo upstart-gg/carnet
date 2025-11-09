@@ -1,3 +1,4 @@
+import path from 'node:path'
 import type { Command } from 'commander'
 import type { z } from 'zod'
 import { loadConfigFile } from '../../lib/config'
@@ -29,7 +30,7 @@ async function runListCommand(
   agentName: string | undefined,
   options: { dir?: string; depth?: string }
 ) {
-  const carnetDir = options.dir || './carnet'
+  const carnetDir = path.resolve(options.dir || './carnet')
   await loadConfigFile(carnetDir)
   const maxDepth = Math.max(1, parseInt(options.depth || '3', 10))
   const agents = await collect<Agent>(discoverAgents(carnetDir), agentSchema)

@@ -1,3 +1,4 @@
+import path from 'node:path'
 import type { Command } from 'commander'
 import { validate } from '../../lib/builder'
 import { loadConfigFile, loadEnvConfig, mergeConfigurations } from '../../lib/config'
@@ -44,7 +45,7 @@ async function runLintCommand(options: {
   globalSkills?: string[]
   globalInitialSkills?: string[]
 }) {
-  const carnetDir = options.dir || './carnet'
+  const carnetDir = path.resolve(options.dir || './carnet')
   const fileConfig = await loadConfigFile(carnetDir)
 
   // Parse CLI variables (format: "KEY=VALUE")
