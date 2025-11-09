@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.15
+
+### Patch Changes
+
+- [#43](https://github.com/upstart-gg/carnet/pull/43) [`8f7a379`](https://github.com/upstart-gg/carnet/commit/8f7a3790a20626858a4d606052bc988aaad70ab1) Thanks [@mattallty](https://github.com/mattallty)! - Fix cwd path
+
 ## 0.1.14
 
 ### Patch Changes
