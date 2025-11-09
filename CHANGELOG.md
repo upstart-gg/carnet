@@ -1,5 +1,11 @@
 # @upstart.gg/carnet
 
+## 0.1.14
+
+### Patch Changes
+
+- [#41](https://github.com/upstart-gg/carnet/pull/41) [`d0ad3c9`](https://github.com/upstart-gg/carnet/commit/d0ad3c9f8e904c5f34b41582924800c32b8a0084) Thanks [@mattallty](https://github.com/mattallty)! - Fix cli fs handling
+
 ## 0.1.13
 
 ### Patch Changes
