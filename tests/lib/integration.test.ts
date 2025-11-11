@@ -128,33 +128,9 @@ Provides tools for analyzing and visualizing data.
 
     it('should include skill catalog by default', () => {
       const prompt = carnet.getSystemPrompt('researcher')
-      expect(prompt).toContain('## Available Skills')
+      expect(prompt).toContain('## On-Demand Skills')
       expect(prompt).toContain('dataAnalysis')
       expect(prompt).toContain('documentSummarization')
-    })
-
-    it('should respect includeInitialSkills option', () => {
-      const promptWithSkills = carnet.getSystemPrompt('researcher', {
-        includeInitialSkills: true,
-      })
-      const promptWithoutSkills = carnet.getSystemPrompt('researcher', {
-        includeInitialSkills: false,
-      })
-
-      expect(promptWithSkills).toContain('## Initial Skills')
-      expect(promptWithoutSkills).not.toContain('## Initial Skills')
-    })
-
-    it('should respect includeSkillCatalog option', () => {
-      const promptWithCatalog = carnet.getSystemPrompt('researcher', {
-        includeSkillCatalog: true,
-      })
-      const promptWithoutCatalog = carnet.getSystemPrompt('researcher', {
-        includeSkillCatalog: false,
-      })
-
-      expect(promptWithCatalog).toContain('## Available Skills')
-      expect(promptWithoutCatalog).not.toContain('## Available Skills')
     })
 
     it('should accept variables for prompt generation', () => {

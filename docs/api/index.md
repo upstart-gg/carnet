@@ -14,7 +14,6 @@ Generate a system prompt for an agent with optional skill catalogs and variable 
 - `agentName: string` - The name of the agent to generate a prompt for
 - `options?: PromptOptions` - Generation options
   - `includeInitialSkills?: boolean` - Include initial skill content (default: true)
-  - `includeSkillCatalog?: boolean` - Include available skills list (default: true)
   - `includeLoadedSkills?: boolean` - Include a section listing skills loaded during the session (default: true).
   - `includeAvailableTools?: boolean` - Include a section listing currently available domain tools (default: true).
   - `variables?: Record<string, string>` - Custom variables for injection
@@ -24,7 +23,6 @@ Generate a system prompt for an agent with optional skill catalogs and variable 
 **Example:**
 ```typescript
 const prompt = carnet.getSystemPrompt('researcher', {
-  includeSkillCatalog: true,
   variables: { TOPIC: 'machine learning' }
 })
 ```
@@ -174,7 +172,6 @@ Options for `getSystemPrompt()`:
 interface PromptOptions {
   variables?: Record<string, string>
   includeInitialSkills?: boolean  // default: true
-  includeSkillCatalog?: boolean   // default: true
 }
 ```
 

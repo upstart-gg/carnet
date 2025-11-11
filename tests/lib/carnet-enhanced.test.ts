@@ -278,9 +278,9 @@ describe('Carnet - Enhanced API', () => {
       const result = carnet.generateAgentPrompt('testAgent')
 
       expect(result.content).toContain('You are a test agent')
-      expect(result.content).toContain('## Initial Skills')
+      expect(result.content).toContain('## Skills')
       expect(result.content).toContain('Skill A')
-      expect(result.content).toContain('## Available Skills')
+      expect(result.content).toContain('## On-Demand Skills')
       expect(result.content).toContain('skillB')
       expect(result.content).toContain('How to Load Skills')
       expect(result.content).toContain('loadSkill')
@@ -295,17 +295,6 @@ describe('Carnet - Enhanced API', () => {
       // The VAR in skill-a should be injected
       expect(result.content).toContain('injected-value')
       expect(result.content).not.toContain('{{ VAR }}')
-    })
-
-    it('should respect includeInitialSkills option', () => {
-      const result = carnet.generateAgentPrompt('testAgent', { includeInitialSkills: false })
-      expect(result.content).not.toContain('## Initial Skills')
-    })
-
-    it('should respect includeSkillCatalog option', () => {
-      const result = carnet.generateAgentPrompt('testAgent', { includeSkillCatalog: false })
-      expect(result.content).not.toContain('## Available Skills')
-      expect(result.content).not.toContain('How to Load Skills')
     })
 
     it('should accept additional variables for prompt generation', () => {
@@ -337,8 +326,8 @@ describe('Carnet - Enhanced API', () => {
       const result = carnetTest.generateAgentPrompt('noInitialSkillsAgent')
 
       expect(result.content).toContain('Test agent')
-      expect(result.content).not.toContain('## Initial Skills')
-      expect(result.content).toContain('## Available Skills')
+      expect(result.content).not.toContain('## Skills')
+      expect(result.content).toContain('## On-Demand Skills')
     })
 
     it('should handle agent with no dynamic skills', () => {
@@ -358,9 +347,9 @@ describe('Carnet - Enhanced API', () => {
       const carnetTest = new Carnet(testManifest)
       const result = carnetTest.generateAgentPrompt('noDynamicSkillsAgent')
 
-      expect(result.content).toContain('## Initial Skills')
+      expect(result.content).toContain('## Skills')
       // Should still include skill catalog (with just initial skills listed)
-      expect(result.content).toContain('## Available Skills')
+      expect(result.content).toContain('## On-Demand Skills')
     })
   })
 

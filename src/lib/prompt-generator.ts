@@ -37,7 +37,7 @@ export class PromptGenerator {
     availableSkills: SkillMetadata[],
     options: GenerateAgentPromptOptions = {}
   ): GeneratedPrompt {
-    const { variables = {}, includeInitialSkills = true, includeSkillCatalog = true } = options
+    const { variables = {}, includeInitialSkills = true } = options
 
     // Inject variables into agent prompt
     const agentPrompt = this.variableInjector.inject(agent.prompt, variables)
@@ -51,7 +51,7 @@ export class PromptGenerator {
     }
 
     // Add available skills catalog and loading instructions if requested
-    if (includeSkillCatalog && availableSkills.length > 0) {
+    if (availableSkills.length > 0) {
       sections.push(this.generateSkillCatalogSection(availableSkills))
       sections.push(this.generateSkillLoadingInstructions())
     }
@@ -76,7 +76,7 @@ export class PromptGenerator {
       return `${skillContent}`
     })
 
-    return `## Initial Skills\n\nYou have the following skills available immediately:\n\n${skillSections.join('\n\n---\n\n')}`
+    return `## Skills\n\nYou have the following skills available immediately:\n\n${skillSections.join('\n\n---\n\n')}`
   }
 
   /**

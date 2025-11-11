@@ -442,37 +442,35 @@ export class Carnet {
     )
 
     const dynamicSections = []
-    if (options.includeLoadedSkills) {
-      dynamicSections.push(
-        (this.promptGenerator as DynamicPromptGenerator).generateLoadedSkillsSection(
-          session,
-          this.manifest
-        )
+    // Always include loaded skills section
+    dynamicSections.push(
+      (this.promptGenerator as DynamicPromptGenerator).generateLoadedSkillsSection(
+        session,
+        this.manifest
       )
+    )
+    // Always include available tools section
+    // Convert flat domain tools to ToolRegistry
+    // Only include tools that match the currently exposed domain tools
+    const toolRegistry = new ToolRegistry()
+    const runtimeTools = options.tools ?? {}
+    if (Object.keys(runtimeTools).length > 0) {
+      const exposedRuntimeTools: typeof runtimeTools = {}
+      for (const toolName of session.exposedDomainTools) {
+        const tool = runtimeTools[toolName]
+        if (tool) {
+          exposedRuntimeTools[toolName] = tool
+        }
+      }
+      if (Object.keys(exposedRuntimeTools).length > 0) {
+        toolRegistry.register('runtime-tools', exposedRuntimeTools)
+      }
     }
-    if (options.includeAvailableTools) {
-      // Convert flat domain tools to ToolRegistry
-      // Only include tools that match the currently exposed domain tools
-      const toolRegistry = new ToolRegistry()
-      const runtimeTools = options.tools ?? {}
-      if (Object.keys(runtimeTools).length > 0) {
-        const exposedRuntimeTools: typeof runtimeTools = {}
-        for (const toolName of session.exposedDomainTools) {
-          const tool = runtimeTools[toolName]
-          if (tool) {
-            exposedRuntimeTools[toolName] = tool
-          }
-        }
-        if (Object.keys(exposedRuntimeTools).length > 0) {
-          toolRegistry.register('runtime-tools', exposedRuntimeTools)
-        }
-      }
-      const availableToolsSection = (
-        this.promptGenerator as DynamicPromptGenerator
-      ).generateAvailableToolsSection(session, toolRegistry)
-      if (availableToolsSection.trim().length > 0) {
-        dynamicSections.push(availableToolsSection)
-      }
+    const availableToolsSection = (
+      this.promptGenerator as DynamicPromptGenerator
+    ).generateAvailableToolsSection(session, toolRegistry)
+    if (availableToolsSection.trim().length > 0) {
+      dynamicSections.push(availableToolsSection)
     }
 
     prompt.content = [prompt.content, ...dynamicSections].filter(Boolean).join('\n\n')
@@ -486,10 +484,6 @@ export class Carnet {
    * @param agentName The name of the agent to generate a prompt for
    * @param options Prompt generation options
    * @param options.variables Runtime variables for dynamic prompt adaptation (overrides constructor variables)
-   * @param options.includeInitialSkills Include initial skills content (default: true)
-   * @param options.includeSkillCatalog Include available skills catalog (default: true)
-   * @param options.includeLoadedSkills Include loaded skills section (default: true)
-   * @param options.includeAvailableTools Include available tools section (default: true)
    * @returns The system prompt string
    * @throws Error if agent not found
    * @example
@@ -504,12 +498,6 @@ export class Carnet {
    *     USER_NAME: 'John Doe',
    *     CONTEXT: 'billing inquiry'
    *   }
-   * })
-   *
-   * // Customize what's included in the prompt
-   * const minimalPrompt = carnet.getSystemPrompt('support-agent', {
-   *   includeInitialSkills: false,
-   *   includeSkillCatalog: false
    * })
    * ```
    */
