@@ -1,12 +1,11 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { select } from '@inquirer/prompts'
+import type { Carnet } from '@lib/index'
 import { manifestSchema } from '@lib/schemas'
 import type { Manifest } from '@lib/types'
-import { select } from '@inquirer/prompts'
 import type { Command } from 'commander'
-import { loadConfigFile } from '../../lib/config'
 import { colors } from '../colors'
-import type { Carnet } from '@lib/index'
 
 export function registerSimulateCommand(program: Command): void {
   program
@@ -27,16 +26,12 @@ async function runSimulateCommand(
   agentName: string | undefined,
   options: { dir?: string; output?: string }
 ) {
-  const cwd = process.cwd()
+  const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd()
   const carnetDir = path.resolve(cwd, options.dir || './carnet')
 
   try {
-    // Load config to get output directory
-    const config = await loadConfigFile(carnetDir)
-    const outputDir = path.resolve(cwd, options.output || config.output || '.carnet')
-
     // Load manifest
-    const manifestPath = path.join(outputDir, 'carnet.manifest.json')
+    const manifestPath = path.join(carnetDir, 'carnet.manifest.json')
     console.log(colors.info(`Loading manifest from ${manifestPath}...\n`))
 
     const manifestContent = await readFile(manifestPath, 'utf-8')
@@ -256,7 +251,7 @@ async function loadSkill(carnet: Carnet, agentName: string, manifest: Manifest) 
     for (const toolsetName of skill.toolsets) {
       const toolset = manifest.toolsets[toolsetName]
       if (toolset?.tools) {
-        newTools.push(...toolset.tools)
+        newTools.push(...toolset.tools.map((tool) => tool.name))
       }
     }
     if (newTools.length > 0) {

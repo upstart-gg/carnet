@@ -17,7 +17,6 @@ import type {
   PromptOptions,
   Skill,
   SkillMetadata,
-  Tool,
   ToolFilteringDiagnostics,
   ToolMetadata,
   Toolset,
@@ -25,25 +24,25 @@ import type {
 } from './types'
 import { VariableInjector } from './variable-injector'
 
+export {
+  BuildError,
+  CarnetError,
+  ConfigError,
+  formatError,
+  isBuildError,
+  isCarnetError,
+  isConfigError,
+  isParseError,
+  isValidationError,
+  ParseError,
+  ValidationError,
+} from './errors'
 export { PromptGenerator } from './prompt-generator'
 export { ToolRegistry } from './tool-registry'
 export type { ToolOptions } from './tools'
 export type { ToolFilteringDiagnostics } from './types'
 export * from './types'
 export { VariableInjector } from './variable-injector'
-export {
-  CarnetError,
-  ConfigError,
-  ParseError,
-  BuildError,
-  ValidationError,
-  isCarnetError,
-  isConfigError,
-  isParseError,
-  isBuildError,
-  isValidationError,
-  formatError,
-} from './errors'
 
 /**
  * Main Carnet class for loading and using AI agent manifests
@@ -175,8 +174,8 @@ export class Carnet {
 
     // Update the set of exposed domain tools with new tools from loaded skill
     const newExposedTools = skill.toolsets.flatMap((t) => this.getToolset(t)?.tools ?? [])
-    for (const toolName of newExposedTools) {
-      session.exposedDomainTools.add(toolName)
+    for (const tool of newExposedTools) {
+      session.exposedDomainTools.add(tool.name)
     }
   }
 
@@ -200,7 +199,9 @@ export class Carnet {
       }
 
       const exposedDomainTools = new Set(
-        Array.from(loadedToolsets).flatMap((t) => this.getToolset(t)?.tools ?? [])
+        Array.from(loadedToolsets)
+          .flatMap((t) => this.getToolset(t)?.tools ?? [])
+          .map((tool) => tool.name)
       )
 
       this.sessions.set(agentName, {
@@ -275,15 +276,6 @@ export class Carnet {
     return this.manifest.toolsets[name] as Toolset | undefined
   }
 
-  /**
-   * Get a tool by name
-   * @param name The name of the tool to retrieve
-   * @returns The tool definition, or undefined if not found
-   */
-  getTool(name: string) {
-    return this.manifest.tools[name] as Tool | undefined
-  }
-
   // Content retrieval with variable injection
 
   /**
@@ -330,26 +322,6 @@ export class Carnet {
     return this.variableInjector.inject(toolset.content, options.variables)
   }
 
-  /**
-   * Get tool content with optional variable injection
-   * @param name The name of the tool to retrieve
-   * @param options Retrieval options (raw: skip variable injection)
-   * @returns The tool content with variables injected (unless raw is true)
-   * @throws Error if tool not found
-   */
-  getToolContent(name: string, options: ContentRetrievalOptions = {}): string {
-    const tool = this.manifest.tools[name]
-    if (!tool) {
-      throw new ValidationError(`Tool not found`, 'tool', name)
-    }
-
-    if (options.raw) {
-      return tool.content
-    }
-
-    return this.variableInjector.inject(tool.content, options.variables)
-  }
-
   // Metadata retrieval for progressive loading
 
   /**
@@ -386,21 +358,6 @@ export class Carnet {
       name: toolset.name,
       description: toolset.description,
       tools: toolset.tools,
-    }
-  }
-
-  /**
-   * Get tool metadata (name, description) without full content
-   */
-  getToolMetadata(name: string): ToolMetadata {
-    const tool = this.manifest.tools[name]
-    if (!tool) {
-      throw new ValidationError(`Tool not found`, 'tool', name)
-    }
-
-    return {
-      name: tool.name,
-      description: tool.description,
     }
   }
 
@@ -442,10 +399,7 @@ export class Carnet {
     if (!toolset) {
       throw new ValidationError(`Toolset not found`, 'toolset', toolsetName)
     }
-
     return toolset.tools
-      .map((name) => this.getToolMetadata(name))
-      .filter((tool) => tool !== undefined)
   }
 
   /**

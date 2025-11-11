@@ -2,15 +2,10 @@ import path from 'node:path'
 import type { Command } from 'commander'
 import type { z } from 'zod'
 import { loadConfigFile } from '../../lib/config'
-import {
-  discoverAgents,
-  discoverSkills,
-  discoverTools,
-  discoverToolsets,
-} from '../../lib/discovery'
+import { discoverAgents, discoverSkills, discoverToolsets } from '../../lib/discovery'
 import { parseMarkdownFile } from '../../lib/parser'
-import { agentSchema, skillSchema, toolSchema, toolsetSchema } from '../../lib/schemas'
-import type { Agent, Skill, Tool, Toolset } from '../../lib/types'
+import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
+import type { Agent, Skill, Toolset } from '../../lib/types'
 
 export function registerListCommand(program: Command): void {
   program
@@ -35,7 +30,7 @@ async function runListCommand(
   agentName: string | undefined,
   options: { dir?: string; depth?: string }
 ) {
-  const cwd = process.cwd()
+  const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd()
   const carnetDir = path.resolve(cwd, options.dir || './carnet')
   await loadConfigFile(carnetDir)
   const maxDepth = Math.max(1, parseInt(options.depth || '3', 10))
@@ -43,24 +38,14 @@ async function runListCommand(
   const skills = await collect<Skill>(discoverSkills(carnetDir), skillSchema)
   const toolsets = await collect<Toolset>(discoverToolsets(carnetDir), toolsetSchema)
 
-  // Collect all tools from all toolsets
-  const tools: Tool[] = []
-  for await (const toolsetFile of discoverToolsets(carnetDir)) {
-    const toolsetDir = path.dirname(toolsetFile)
-    for await (const toolFile of discoverTools(toolsetDir)) {
-      const tool = await parseMarkdownFile(toolFile, toolSchema)
-      tools.push(tool)
-    }
-  }
-
   if (agentName) {
     const agent = agents.find((a) => a.name === agentName)
     if (agent) {
-      generateTree(agent, skills, toolsets, tools, maxDepth)
+      generateTree(agent, skills, toolsets, maxDepth)
     }
   } else {
     for (const agent of agents) {
-      generateTree(agent, skills, toolsets, tools, maxDepth)
+      generateTree(agent, skills, toolsets, maxDepth)
     }
   }
 }
@@ -73,13 +58,7 @@ async function collect<T>(iterator: AsyncIterable<string>, schema: z.ZodType<T>)
   return results
 }
 
-function generateTree(
-  agent: Agent,
-  skills: Skill[],
-  toolsets: Toolset[],
-  tools: Tool[],
-  maxDepth: number = 3
-) {
+function generateTree(agent: Agent, skills: Skill[], toolsets: Toolset[], maxDepth: number = 3) {
   // Display agent name with description
   console.log(`${agent.name}`)
   if (agent.description) {
@@ -97,7 +76,7 @@ function generateTree(
     agent.initialSkills.forEach((skillName, index) => {
       const isLastInitialSkill =
         index === agent.initialSkills.length - 1 && agent.skills.length === 0
-      displaySkill(skillName, skills, toolsets, tools, isLastInitialSkill, '│   ', maxDepth)
+      displaySkill(skillName, skills, toolsets, isLastInitialSkill, '│   ', maxDepth)
     })
   }
 
@@ -106,7 +85,7 @@ function generateTree(
     console.log('└── Skills')
     agent.skills.forEach((skillName, index) => {
       const isLastSkill = index === agent.skills.length - 1
-      displaySkill(skillName, skills, toolsets, tools, isLastSkill, '    ', maxDepth)
+      displaySkill(skillName, skills, toolsets, isLastSkill, '    ', maxDepth)
     })
   }
 }
@@ -115,7 +94,6 @@ function displaySkill(
   skillName: string,
   skills: Skill[],
   toolsets: Toolset[],
-  tools: Tool[],
   isLast: boolean,
   parentPrefix: string,
   maxDepth: number
@@ -142,7 +120,6 @@ function displaySkill(
         displayToolset(
           toolsetName,
           toolsets,
-          tools,
           isLastToolset,
           `${parentPrefix}${childPrefix}`,
           maxDepth
@@ -158,7 +135,6 @@ function displaySkill(
 function displayToolset(
   toolsetName: string,
   toolsets: Toolset[],
-  tools: Tool[],
   isLast: boolean,
   parentPrefix: string,
   maxDepth: number
@@ -179,10 +155,10 @@ function displayToolset(
 
     // Display tools within this toolset
     if (toolset.tools && toolset.tools.length > 0) {
-      toolset.tools.forEach((toolName, toolIndex) => {
+      toolset.tools.forEach((tool, toolIndex) => {
         const isLastTool = toolIndex === toolset.tools.length - 1
         const childPrefix = isLast ? '    ' : '│   '
-        displayTool(toolName, tools, isLastTool, `${parentPrefix}${childPrefix}`)
+        displayTool(tool.name, tool.description, isLastTool, `${parentPrefix}${childPrefix}`)
       })
     }
   } else {
@@ -191,17 +167,12 @@ function displayToolset(
   }
 }
 
-function displayTool(toolName: string, tools: Tool[], isLast: boolean, parentPrefix: string) {
+function displayTool(
+  toolName: string,
+  toolDescription: string,
+  isLast: boolean,
+  parentPrefix: string
+) {
   const prefix = isLast ? '└── ' : '├── '
-  const tool = tools.find((t) => t.name === toolName)
-
-  if (tool) {
-    console.log(`${parentPrefix}${prefix}${tool.name} (tool)`)
-    if (tool.description) {
-      console.log(`${parentPrefix}${isLast ? '    ' : '│   '}    ${tool.description}`)
-    }
-  } else {
-    // Tool not found, just display the name
-    console.log(`${parentPrefix}${prefix}${toolName} (tool) [not found]`)
-  }
+  console.log(`${parentPrefix}${prefix}${toolName} - ${toolDescription} (tool)`)
 }

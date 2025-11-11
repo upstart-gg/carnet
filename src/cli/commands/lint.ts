@@ -45,7 +45,7 @@ async function runLintCommand(options: {
   globalSkills?: string[]
   globalInitialSkills?: string[]
 }) {
-  const cwd = process.cwd()
+  const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd()
   const carnetDir = path.resolve(cwd, options.dir || './carnet')
   const fileConfig = await loadConfigFile(carnetDir)
 

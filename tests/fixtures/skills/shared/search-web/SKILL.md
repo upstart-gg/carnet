@@ -1,8 +1,8 @@
 ---
-name: bar
+name: search-web
 description: test skill
-toolsets: []
-content: markdown
+toolsets:
+    - search
 ---
 
 # Bar Skill

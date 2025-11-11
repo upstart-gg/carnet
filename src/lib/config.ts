@@ -48,11 +48,6 @@ export function loadEnvConfig(
 ): Partial<CarnetConfig> {
   const envConfig: Partial<CarnetConfig> = {}
 
-  // String options
-  if (processEnv.CARNET_OUTPUT) {
-    envConfig.output = processEnv.CARNET_OUTPUT
-  }
-
   // Array options (comma-separated)
   if (processEnv.CARNET_INCLUDE) {
     envConfig.include = processEnv.CARNET_INCLUDE.split(',').map((s) => s.trim())
