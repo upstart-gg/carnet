@@ -151,6 +151,7 @@ async function showSystemPrompt(carnet: Carnet, agentName: string) {
 
   console.log(colors.bold('─'.repeat(80)))
   console.log(colors.dimmed(`\nPrompt length: ${prompt.length} characters`))
+  console.log(colors.dimmed(`Approximate tokens: ${Math.ceil(prompt.length / 4)}`))
 }
 
 async function showSessionState(carnet: Carnet, agentName: string) {
