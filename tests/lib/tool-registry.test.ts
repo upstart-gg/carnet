@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { tool } from 'ai'
 import { z } from 'zod'
 import { ToolRegistry } from '../../src/lib/tool-registry'
@@ -140,11 +140,7 @@ describe('ToolRegistry', () => {
       const searchTool = createMockTool('Search')
       registry.register('search', { search: searchTool })
 
-      const result = registry.getToolsForToolsets([
-        'search',
-        'missing1',
-        'missing2',
-      ])
+      const result = registry.getToolsForToolsets(['search', 'missing1', 'missing2'])
       expect(Object.keys(result)).toEqual(['search'])
       expect(result.search).toBe(searchTool)
     })

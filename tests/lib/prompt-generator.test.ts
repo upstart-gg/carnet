@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { PromptGenerator } from '../../src/lib/prompt-generator'
 import type { Agent, Skill, SkillMetadata } from '../../src/lib/types'
 import { VariableInjector } from '../../src/lib/variable-injector'
@@ -185,7 +185,10 @@ describe('PromptGenerator', () => {
         {
           name: 'memory-toolset',
           description: 'Memory tools',
-          tools: ['read', 'write'],
+          tools: [
+            { name: 'read', description: 'Read memory' },
+            { name: 'write', description: 'Write memory' },
+          ],
         },
       ]
 
