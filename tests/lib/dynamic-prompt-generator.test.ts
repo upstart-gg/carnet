@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { beforeEach, describe, expect, it } from 'bun:test'
 import { tool } from 'ai'
 import { z } from 'zod'
 import { DynamicPromptGenerator } from '../../src/lib/dynamic-prompt-generator'
-import { VariableInjector } from '../../src/lib/variable-injector'
 import { ToolRegistry } from '../../src/lib/tool-registry'
-import type { CarnetSessionState, Skill, Manifest } from '../../src/lib/types'
+import type { CarnetSessionState, Manifest, Skill } from '../../src/lib/types'
+import { VariableInjector } from '../../src/lib/variable-injector'
 
 describe('DynamicPromptGenerator', () => {
   let generator: DynamicPromptGenerator
@@ -49,7 +49,6 @@ describe('DynamicPromptGenerator', () => {
     },
     skills: skills || {},
     toolsets: {},
-    tools: {},
   })
 
   beforeEach(() => {
@@ -422,21 +421,11 @@ describe('DynamicPromptGenerator', () => {
       const session = createMockSession({
         discoveredSkills: new Set(['webSearch', 'dataAnalysis']),
         loadedToolsets: new Set(['search', 'index', 'analysis']),
-        exposedDomainTools: new Set([
-          'googleSearch',
-          'bingSearch',
-          'analyze',
-        ]),
+        exposedDomainTools: new Set(['googleSearch', 'bingSearch', 'analyze']),
       })
 
-      const skillsSection = generator.generateLoadedSkillsSection(
-        session,
-        manifest
-      )
-      const toolsSection = generator.generateAvailableToolsSection(
-        session,
-        registry
-      )
+      const skillsSection = generator.generateLoadedSkillsSection(session, manifest)
+      const toolsSection = generator.generateAvailableToolsSection(session, registry)
 
       expect(skillsSection).toContain('webSearch')
       expect(skillsSection).toContain('dataAnalysis')

@@ -10,7 +10,6 @@ export function registerBuildCommand(program: Command): void {
     .command('build')
     .description('Build markdown files into JSON artifacts')
     .option('-d, --dir <dir>', 'Carnet project directory containing content (default: ./carnet)')
-    .option('-o, --output <dir>', 'output directory (default: ./dist)')
     .option('-w, --watch', 'watch for changes and rebuild')
     .option(
       '-v, --variables <key=value...>',
@@ -50,7 +49,8 @@ async function runBuildCommand(options: {
   globalSkills?: string[]
   globalInitialSkills?: string[]
 }) {
-  const carnetDir = path.resolve(process.cwd(), options.dir || './carnet')
+  const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd()
+  const carnetDir = path.resolve(cwd, options.dir || './carnet')
   const fileConfig = await loadConfigFile(carnetDir)
 
   // Parse CLI variables (format: "KEY=VALUE")
@@ -67,7 +67,6 @@ async function runBuildCommand(options: {
   // Build CLI config from options
   const cliConfig: Partial<typeof fileConfig> = {}
 
-  if (options.output) cliConfig.output = options.output
   if (Object.keys(cliVariables).length > 0) cliConfig.variables = cliVariables
   if (options.envPrefix) cliConfig.envPrefix = options.envPrefix
   if (options.include) cliConfig.include = options.include

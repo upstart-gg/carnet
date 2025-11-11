@@ -20,7 +20,7 @@ export function registerShowCommand(program: Command): void {
 }
 
 async function runShowCommand(type: string, name: string, options: { dir?: string }) {
-  const cwd = process.cwd()
+  const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd()
   const carnetDir = path.resolve(cwd, options.dir || './carnet')
   await loadConfigFile(carnetDir)
   let filePath: string

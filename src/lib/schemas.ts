@@ -37,7 +37,6 @@ export const configSchema: z.ZodObject<{
       >
     >
   >
-  output: z.ZodOptional<z.ZodDefault<z.ZodString>>
   variables: z.ZodOptional<z.ZodDefault<z.ZodRecord<z.ZodString, z.ZodString>>>
   envPrefix: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
   include: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodString>>>
@@ -174,13 +173,25 @@ export const skillSchema: z.ZodObject<{
 export const toolsetSchema: z.ZodObject<{
   name: z.ZodString
   description: z.ZodString
-  tools: z.ZodArray<z.ZodString>
+  tools: z.ZodArray<
+    z.ZodObject<{
+      name: z.ZodString
+      description: z.ZodString
+    }>
+  >
   content: z.ZodString
 }> = z
   .object({
     name: z.string().min(1).describe('The name of the toolset'),
     description: z.string().min(1).describe('A brief description of the toolset'),
-    tools: z.array(z.string()).describe('Tools included in the toolset'),
+    tools: z
+      .array(
+        z.object({
+          name: z.string().min(1).describe('The name of the tool'),
+          description: z.string().min(1).describe('A brief description of the tool'),
+        })
+      )
+      .describe('Tools included in the toolset'),
     content: z.string().describe('Full markdown content of the toolset'),
   })
   .describe('Toolset Schema')
@@ -232,18 +243,12 @@ export const manifestSchema: z.ZodObject<{
       {
         name: z.ZodString
         description: z.ZodString
-        tools: z.ZodArray<z.ZodString>
-        content: z.ZodString
-      },
-      z.core.$strip
-    >
-  >
-  tools: z.ZodRecord<
-    z.ZodString,
-    z.ZodObject<
-      {
-        name: z.ZodString
-        description: z.ZodString
+        tools: z.ZodArray<
+          z.ZodObject<{
+            name: z.ZodString
+            description: z.ZodString
+          }>
+        >
         content: z.ZodString
       },
       z.core.$strip
@@ -271,6 +276,5 @@ export const manifestSchema: z.ZodObject<{
       )
       .describe('Full list of skills'),
     toolsets: z.record(toolsetSchema.shape.name, toolsetSchema).describe('Full list of toolsets'),
-    tools: z.record(toolSchema.shape.name, toolSchema).describe('Full list of tools'),
   })
   .describe('Schema of the generated Carnet manifest')

@@ -37,7 +37,7 @@ export class PromptGenerator {
     availableSkills: SkillMetadata[],
     options: GenerateAgentPromptOptions = {}
   ): GeneratedPrompt {
-    const { variables = {}, includeInitialSkills = true, includeSkillCatalog = true } = options
+    const { variables = {}, includeInitialSkills = true } = options
 
     // Inject variables into agent prompt
     const agentPrompt = this.variableInjector.inject(agent.prompt, variables)
@@ -51,12 +51,12 @@ export class PromptGenerator {
     }
 
     // Add available skills catalog and loading instructions if requested
-    if (includeSkillCatalog && availableSkills.length > 0) {
+    if (availableSkills.length > 0) {
       sections.push(this.generateSkillCatalogSection(availableSkills))
       sections.push(this.generateSkillLoadingInstructions())
     }
 
-    const content = sections.join('\n\n')
+    const content = sections.join('\n\n---\n\n')
 
     return {
       content,
@@ -73,10 +73,10 @@ export class PromptGenerator {
   private generateInitialSkillsSection(skills: Skill[], variables: Record<string, string>): string {
     const skillSections = skills.map((skill) => {
       const skillContent = this.variableInjector.inject(skill.content, variables)
-      return `## Skill: ${skill.name}\n\n${skill.description}\n\n${skillContent}`
+      return `${skillContent}`
     })
 
-    return `## Initial Skills\n\nYou have the following skills available immediately:\n\n${skillSections.join('\n\n---\n\n')}`
+    return `## Skills\n\nYou have the following skills available immediately:\n\n${skillSections.join('\n\n---\n\n')}`
   }
 
   /**
@@ -88,7 +88,7 @@ export class PromptGenerator {
       .map((skill) => `- **${skill.name}**: ${skill.description}`)
       .join('\n')
 
-    return `## Available Skills (On-Demand)\n\nYou can load these skills on-demand by using the \`loadSkill\` tool:\n\n${skillLines}`
+    return `## On-Demand Skills\n\nYou can load these skills on-demand by using the \`loadSkill\` tool:\n\n${skillLines}`
   }
 
   /**
@@ -113,10 +113,10 @@ Example workflow:
 - Use the file content to inform your work
 
 Available tools for progressive loading:
-- \`loadSkill(skillName)\` - Load a skill and get access to its tools
-- \`loadSkillFile(skillName, path)\` - Load a specific file from a loaded skill
+- \`loadSkill()\` - Load a skill and get access to its tools
+- \`loadSkillFile()\` - Load a specific file from a loaded skill
 
-Note: You do not need to manually load toolsets or individual tools - they become available automatically when you load their parent skill.`
+Note: tools associated to skills are automatically available once the skill is loaded.`
   }
 
   /**
@@ -141,7 +141,9 @@ Note: You do not need to manually load toolsets or individual tools - they becom
    * Generate metadata sections for a toolset (name + description + tool catalog)
    */
   generateToolsetMetadataSection(toolset: ToolsetMetadata, tools: ToolMetadata[]): string {
-    const relevantTools = tools.filter((t) => toolset.tools.includes(t.name))
+    const relevantTools = tools.filter((t) =>
+      toolset.tools.some((toolsetTool) => toolsetTool.name === t.name)
+    )
 
     let content = `## Toolset: ${toolset.name}\n\n${toolset.description}`
 

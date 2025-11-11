@@ -33,7 +33,6 @@ export interface GenerateAgentPromptOptions {
   variables?: Record<string, string>
   tools?: DomainToolSet
   includeInitialSkills?: boolean // default: true
-  includeSkillCatalog?: boolean // default: true
   includeLoadedSkills?: boolean // default: true
   includeAvailableTools?: boolean // default: true
 }
@@ -49,10 +48,6 @@ export interface GeneratedPrompt {
 // Options for generating system prompts
 export interface PromptOptions {
   variables?: Record<string, string>
-  includeInitialSkills?: boolean // default: true
-  includeSkillCatalog?: boolean // default: true
-  includeLoadedSkills?: boolean // default: true
-  includeAvailableTools?: boolean // default: true
 }
 
 // Domain toolset type - a collection of executable Vercel AI SDK tools

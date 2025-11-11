@@ -61,7 +61,6 @@ Generate a system prompt for an agent.
 
 ```typescript
 const prompt = carnet.getSystemPrompt('researcher', {
-  includeSkillCatalog: true,      // Include available skills (default: true)
   includeInitialSkills: true,     // Include initial skill content (default: true)
   includeLoadedSkills: true,      // Include skills loaded in this session (default: true)
   includeAvailableTools: true,    // Include available domain tools (default: true)
@@ -385,7 +384,6 @@ const result = await streamText({
   model: openai('gpt-4'),
   system: carnet.getSystemPrompt('agent', {
     includeInitialSkills: true,   // Only initial skills have content
-    includeSkillCatalog: true     // Others are just listed
   }),
   tools: carnet.getTools('agent'), // Agent can load what it needs
   messages: [...]
@@ -416,7 +414,6 @@ Always use the default progressive loading pattern for production agents:
 // Metadata only in initial prompt
 const prompt = carnet.getSystemPrompt('agent', {
   includeInitialSkills: true,   // Initial skills have content
-  includeSkillCatalog: true     // Others are just listed
 })
 
 // Tools for on-demand loading

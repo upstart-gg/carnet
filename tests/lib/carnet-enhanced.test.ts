@@ -40,31 +40,17 @@ describe('Carnet - Enhanced API', () => {
         toolsetA: {
           name: 'toolsetA',
           description: 'Toolset A',
-          tools: ['toolA1', 'toolA2'],
+          tools: [
+            { name: 'toolA1', description: 'Tool A1' },
+            { name: 'toolA2', description: 'Tool A2' },
+          ],
           content: '# Toolset A\n\nToolset A content',
         },
         toolsetB: {
           name: 'toolsetB',
           description: 'Toolset B',
-          tools: ['toolB1'],
+          tools: [{ name: 'toolB1', description: 'Tool B1' }],
           content: '# Toolset B\n\nToolset B content',
-        },
-      },
-      tools: {
-        toolA1: {
-          name: 'toolA1',
-          description: 'Tool A1',
-          content: '# Tool A1 content',
-        },
-        toolA2: {
-          name: 'toolA2',
-          description: 'Tool A2',
-          content: '# Tool A2 content',
-        },
-        toolB1: {
-          name: 'toolB1',
-          description: 'Tool B1',
-          content: '# Tool B1 content',
         },
       },
     }
@@ -151,17 +137,6 @@ describe('Carnet - Enhanced API', () => {
     })
   })
 
-  describe('getToolContent', () => {
-    it('should return tool content', () => {
-      const content = carnet.getToolContent('toolA1')
-      expect(content).toContain('# Tool A1 content')
-    })
-
-    it('should throw error for non-existent tool', () => {
-      expect(() => carnet.getToolContent('non-existent')).toThrow('Tool not found')
-    })
-  })
-
   describe('getSkillMetadata', () => {
     it('should return skill metadata without full content', () => {
       const metadata = carnet.getSkillMetadata('skillA')
@@ -181,25 +156,15 @@ describe('Carnet - Enhanced API', () => {
       const metadata = carnet.getToolsetMetadata('toolsetA')
       expect(metadata.name).toBe('toolsetA')
       expect(metadata.description).toBe('Toolset A')
-      expect(metadata.tools).toEqual(['toolA1', 'toolA2'])
+      expect(metadata.tools).toEqual([
+        { name: 'toolA1', description: 'Tool A1' },
+        { name: 'toolA2', description: 'Tool A2' },
+      ])
       expect(metadata).not.toHaveProperty('content')
     })
 
     it('should throw error for non-existent toolset', () => {
       expect(() => carnet.getToolsetMetadata('non-existent')).toThrow('Toolset not found')
-    })
-  })
-
-  describe('getToolMetadata', () => {
-    it('should return tool metadata without full content', () => {
-      const metadata = carnet.getToolMetadata('toolA1')
-      expect(metadata.name).toBe('toolA1')
-      expect(metadata.description).toBe('Tool A1')
-      expect(metadata).not.toHaveProperty('content')
-    })
-
-    it('should throw error for non-existent tool', () => {
-      expect(() => carnet.getToolMetadata('non-existent')).toThrow('Tool not found')
     })
   })
 
@@ -313,9 +278,9 @@ describe('Carnet - Enhanced API', () => {
       const result = carnet.generateAgentPrompt('testAgent')
 
       expect(result.content).toContain('You are a test agent')
-      expect(result.content).toContain('## Initial Skills')
+      expect(result.content).toContain('## Skills')
       expect(result.content).toContain('Skill A')
-      expect(result.content).toContain('## Available Skills')
+      expect(result.content).toContain('## On-Demand Skills')
       expect(result.content).toContain('skillB')
       expect(result.content).toContain('How to Load Skills')
       expect(result.content).toContain('loadSkill')
@@ -330,17 +295,6 @@ describe('Carnet - Enhanced API', () => {
       // The VAR in skill-a should be injected
       expect(result.content).toContain('injected-value')
       expect(result.content).not.toContain('{{ VAR }}')
-    })
-
-    it('should respect includeInitialSkills option', () => {
-      const result = carnet.generateAgentPrompt('testAgent', { includeInitialSkills: false })
-      expect(result.content).not.toContain('## Initial Skills')
-    })
-
-    it('should respect includeSkillCatalog option', () => {
-      const result = carnet.generateAgentPrompt('testAgent', { includeSkillCatalog: false })
-      expect(result.content).not.toContain('## Available Skills')
-      expect(result.content).not.toContain('How to Load Skills')
     })
 
     it('should accept additional variables for prompt generation', () => {
@@ -372,8 +326,8 @@ describe('Carnet - Enhanced API', () => {
       const result = carnetTest.generateAgentPrompt('noInitialSkillsAgent')
 
       expect(result.content).toContain('Test agent')
-      expect(result.content).not.toContain('## Initial Skills')
-      expect(result.content).toContain('## Available Skills')
+      expect(result.content).not.toContain('## Skills')
+      expect(result.content).toContain('## On-Demand Skills')
     })
 
     it('should handle agent with no dynamic skills', () => {
@@ -393,9 +347,9 @@ describe('Carnet - Enhanced API', () => {
       const carnetTest = new Carnet(testManifest)
       const result = carnetTest.generateAgentPrompt('noDynamicSkillsAgent')
 
-      expect(result.content).toContain('## Initial Skills')
+      expect(result.content).toContain('## Skills')
       // Should still include skill catalog (with just initial skills listed)
-      expect(result.content).toContain('## Available Skills')
+      expect(result.content).toContain('## On-Demand Skills')
     })
   })
 
@@ -472,13 +426,6 @@ describe('Carnet - Enhanced API', () => {
       const toolset = carnet.getToolset('toolsetA')
       if (toolset) {
         expect(toolset.name).toBe('toolsetA')
-      }
-    })
-
-    it('should maintain original getTool method', () => {
-      const tool = carnet.getTool('toolA1')
-      if (tool) {
-        expect(tool.name).toBe('toolA1')
       }
     })
 

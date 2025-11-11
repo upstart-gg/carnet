@@ -1,37 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
 import { execSync } from 'node:child_process'
 import { existsSync, promises as fs } from 'node:fs'
 import path from 'node:path'
 
 describe('CLI Integration', () => {
   const cli = `node ${path.resolve(__dirname, '..', 'dist', 'cli', 'index.js')}`
-  const outputDir = path.join(__dirname, 'cli-output')
   const tempDir = path.join(__dirname, 'temp-project')
-
-  beforeEach(async () => {
-    // Clean up any existing output
-    try {
-      await fs.rm(outputDir, { recursive: true, force: true })
-    } catch {}
-    try {
-      await fs.rm(tempDir, { recursive: true, force: true })
-    } catch {}
-  })
-
-  afterEach(async () => {
-    // Clean up after each test
-    try {
-      await fs.rm(outputDir, { recursive: true, force: true })
-    } catch {}
-    try {
-      await fs.rm(tempDir, { recursive: true, force: true })
-    } catch {}
-  })
 
   describe('build command', () => {
     it('builds successfully with fixtures', async () => {
-      execSync(`${cli} build --dir tests/fixtures --output ${outputDir}`, { stdio: 'inherit' })
-      const manifestPath = path.join(outputDir, 'carnet.manifest.json')
+      execSync(`${cli} build --dir tests/fixtures`, { stdio: 'inherit' })
+      const manifestPath = path.join('tests/fixtures', 'carnet.manifest.json')
       expect(existsSync(manifestPath)).toBe(true)
 
       // Check manifest content
@@ -39,7 +18,7 @@ describe('CLI Integration', () => {
       expect(manifest.agents).toHaveProperty('test-agent')
       expect(manifest.agents['test-agent'].name).toBe('test-agent')
       expect(manifest.skills).toHaveProperty('foo')
-      expect(manifest.skills).toHaveProperty('bar')
+      expect(manifest.skills).toHaveProperty('search-web')
       expect(manifest.toolsets).toHaveProperty('foo')
     })
   })
@@ -81,14 +60,14 @@ describe('CLI Integration', () => {
       const output = execSync(`${cli} list --dir tests/fixtures`)
       const outputStr = output.toString()
       expect(outputStr).toContain('test-agent')
-      expect(outputStr).toContain('bar')
+      expect(outputStr).toContain('search-web')
     })
 
     it('lists specific agent with alias ls', () => {
       const output = execSync(`${cli} ls test-agent --dir tests/fixtures`)
       const outputStr = output.toString()
       expect(outputStr).toContain('test-agent')
-      expect(outputStr).toContain('bar')
+      expect(outputStr).toContain('search-web')
     })
 
     it('shows tree structure with skills and toolsets', () => {
@@ -96,7 +75,7 @@ describe('CLI Integration', () => {
       const outputStr = output.toString()
       // Should contain tree characters and the agent/skill/toolset names
       expect(outputStr).toContain('test-agent')
-      expect(outputStr).toContain('bar')
+      expect(outputStr).toContain('search-web')
     })
   })
 

@@ -75,53 +75,6 @@ When an agent loads a skill, all associated toolsets and tools become immediatel
 
 **Note:** The metadata inspection methods `listSkillToolsets()` and `listToolsetTools()` are for debugging and UI purposes only, not part of the LLM's typical workflow. Tools become available through the `loadSkill()` meta-tool automatically.
 
-## Best Practices
-
-### 1. Start with Metadata Catalog
-
-Always include the metadata catalog in the initial prompt so agents know what's available:
-
-```typescript
-const prompt = carnet.generateAgentPrompt('coder', {
-  includeSkillCatalog: true,  // ✅ Always include
-})
-```
-
-### 2. Use Descriptive Metadata
-
-Ensure metadata descriptions are clear and concise:
-
-```
-Good: "React component builder with JSX support"
-Bad: "React stuff"
-```
-
-### 3. Organize Content Logically
-
-Structure skills, toolsets, and tools to support discovery:
-
-```
-Agent
-  └─ React skill
-      └─ Components toolset
-          ├─ Button tool
-          ├─ Card tool
-          └─ Modal tool
-```
-
-### 4. Handle Missing Content Gracefully
-
-Always handle errors for non-existent items:
-
-```typescript
-try {
-  const content = carnet.getSkillContent(requestedSkill)
-} catch (error) {
-  // Skill doesn't exist, inform the agent
-  console.log(`Skill not found: ${requestedSkill}`)
-}
-```
-
 
 ## See Also
 

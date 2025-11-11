@@ -20,9 +20,8 @@ export function registerInitCommand(program: Command): void {
 }
 
 async function runInitCommand(dir: string = './carnet') {
-  const targetDir = path.resolve(dir)
-
-  const cwd = process.cwd()
+  const cwd = process.env.INIT_CWD ?? process.env.PWD ?? process.cwd()
+  const targetDir = path.resolve(cwd, dir)
 
   // If dir is ".", use current working directory directly
   if (targetDir === cwd) {

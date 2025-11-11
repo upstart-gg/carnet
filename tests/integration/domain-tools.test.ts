@@ -60,31 +60,17 @@ const manifest: Manifest = {
     search: {
       name: 'search',
       description: 'Tools for searching.',
-      tools: ['basicSearch', 'advancedSearch'],
+      tools: [
+        { name: 'basicSearch', description: 'Perform a basic web search' },
+        { name: 'advancedSearch', description: 'Perform an advanced search' },
+      ],
       content: 'This toolset contains search tools.',
     },
     analysis: {
       name: 'analysis',
       description: 'Tools for data analysis.',
-      tools: ['analyzeData'],
+      tools: [{ name: 'analyzeData', description: 'Analyze a dataset' }],
       content: 'This toolset contains analysis tools.',
-    },
-  },
-  tools: {
-    basicSearch: {
-      name: 'basicSearch',
-      description: 'Perform a basic web search',
-      content: 'Use this for simple searches.',
-    },
-    advancedSearch: {
-      name: 'advancedSearch',
-      description: 'Perform an advanced search',
-      content: 'Use this for complex searches.',
-    },
-    analyzeData: {
-      name: 'analyzeData',
-      description: 'Analyze a dataset',
-      content: 'Use this to perform data analysis.',
     },
   },
 }
@@ -132,15 +118,17 @@ describe('Domain Tools Integration', () => {
 
   it('should update the system prompt after loading a skill', () => {
     const initialPrompt = carnet.getSystemPrompt('researcher')
-    expect(initialPrompt).toContain('## Initial Skills')
-    expect(initialPrompt).toContain('Skill: webSearch')
+    expect(initialPrompt).toContain('## Skills')
+    expect(initialPrompt).toContain('## On-Demand Skills')
+
+    expect(initialPrompt).toContain('webSearch')
     // Adapted: code now uses 'webSearch' instead of 'basicSearch' and removes domain tools terminology
-    expect(initialPrompt).toContain('## Available Skills (On-Demand)')
+
     // Updated: basicSearch removed from implementation, only webSearch and dataAnalysis remain
     expect(initialPrompt).toContain('- **webSearch**: A skill for searching the web.')
     expect(initialPrompt).toContain('- **dataAnalysis**: A skill for analyzing data.')
-    // Removed: basicSearch no longer present in current system prompt implementation
-    expect(initialPrompt).not.toContain('## Currently Loaded Skills')
+    // Always includes loaded skills section now
+    expect(initialPrompt).toContain('## Currently Loaded Skills')
     expect(initialPrompt).not.toContain('analyzeData')
 
     // Simulate loading the dataAnalysis skill
@@ -148,7 +136,7 @@ describe('Domain Tools Integration', () => {
 
     const updatedPrompt = carnet.getSystemPrompt('researcher')
     // Adapted: Confirm new prompt format and content shown after loading dataAnalysis skill
-    expect(updatedPrompt).toContain('## Available Skills (On-Demand)')
+    expect(updatedPrompt).toContain('## On-Demand Skills')
     expect(updatedPrompt).toContain('- **dataAnalysis**: A skill for analyzing data.')
   })
 
@@ -178,7 +166,8 @@ describe('Domain Tools Integration', () => {
     expect(toolNames).not.toContain('analyzeData')
 
     const prompt = carnet.getSystemPrompt('researcher')
-    expect(prompt).not.toContain('## Currently Loaded Skills')
+    // Always includes loaded skills section now
+    expect(prompt).toContain('## Currently Loaded Skills')
     expect(prompt).not.toContain('analyzeData')
   })
 })

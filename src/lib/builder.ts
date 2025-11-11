@@ -1,10 +1,10 @@
 import { accessSync, constants, existsSync, promises as fs } from 'node:fs'
 import path from 'node:path'
-import { discoverAgents, discoverSkills, discoverTools, discoverToolsets } from './discovery'
+import { discoverAgents, discoverSkills, discoverToolsets } from './discovery'
 import { BuildError } from './errors'
-import { parseMarkdownFile, parseToolFile } from './parser'
+import { parseMarkdownFile } from './parser'
 import { agentSchema, type CarnetConfig, skillSchema, toolsetSchema } from './schemas'
-import type { Agent, Manifest, Skill, Tool, Toolset } from './types'
+import type { Agent, Manifest, Skill, Toolset } from './types'
 
 async function loadContent(contentDir: string) {
   const agents = new Map<string, Agent>()
@@ -21,33 +21,27 @@ async function loadContent(contentDir: string) {
   }
 
   const toolsets = new Map<string, Toolset>()
-  const tools = new Map<string, Tool>()
 
   for await (const file of discoverToolsets(contentDir)) {
     const toolset = await parseMarkdownFile(path.resolve(file), toolsetSchema)
     toolsets.set(toolset.name, toolset)
-
-    for await (const toolFile of discoverTools(path.dirname(file))) {
-      const tool = await parseToolFile(path.resolve(toolFile))
-      tools.set(tool.name, tool)
-    }
   }
 
-  return { agents, skills, toolsets, tools }
+  return { agents, skills, toolsets }
 }
 
 export async function validate(contentDir: string): Promise<void> {
-  const { agents, skills, toolsets, tools } = await loadContent(contentDir)
-  validateReferences(agents, skills, toolsets, tools)
+  const { agents, skills, toolsets } = await loadContent(contentDir)
+  validateReferences(agents, skills, toolsets)
 }
 
 export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
-  const { output = carnetDir, app = { globalInitialSkills: [], globalSkills: [] } } = options
+  const { app = { globalInitialSkills: [], globalSkills: [] } } = options
 
   try {
-    const { agents, skills, toolsets, tools } = await loadContent(carnetDir)
+    const { agents, skills, toolsets } = await loadContent(carnetDir)
 
-    validateReferences(agents, skills, toolsets, tools)
+    validateReferences(agents, skills, toolsets)
 
     // Validate file references exist and are accessible
     validateSkillFileReferences(skills, carnetDir)
@@ -61,20 +55,9 @@ export async function build(options: CarnetConfig, carnetDir: string = './carnet
       agents: Object.fromEntries(agents),
       skills: Object.fromEntries(skills),
       toolsets: Object.fromEntries(toolsets),
-      tools: Object.fromEntries(tools),
     }
 
-    try {
-      const stats = await fs.stat(output)
-      if (!stats.isDirectory()) {
-        await fs.mkdir(output, { recursive: true })
-      }
-    } catch {
-      // Directory doesn't exist, create it
-      await fs.mkdir(output, { recursive: true })
-    }
-
-    const manifestPath = path.join(output, 'carnet.manifest.json')
+    const manifestPath = path.join(carnetDir, 'carnet.manifest.json')
     await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
 
     console.log(`Build successful! Manifest written to ${manifestPath}`)
@@ -87,7 +70,7 @@ export async function build(options: CarnetConfig, carnetDir: string = './carnet
     throw new BuildError(
       `Build failed: ${error instanceof Error ? error.message : String(error)}`,
       'build',
-      { carnetDir, output }
+      { carnetDir }
     )
   }
 }
@@ -184,8 +167,7 @@ async function readSkillFileContents(
 function validateReferences(
   agents: Map<string, Agent>,
   skills: Map<string, Skill>,
-  toolsets: Map<string, Toolset>,
-  tools: Map<string, Tool>
+  toolsets: Map<string, Toolset>
 ) {
   for (const agent of agents.values()) {
     for (const skillName of [...agent.initialSkills, ...agent.skills]) {
@@ -205,17 +187,6 @@ function validateReferences(
           `Skill "${skill.name}" references non-existent toolset "${toolsetName}"`,
           'validation',
           { skill: skill.name, missingToolset: toolsetName }
-        )
-      }
-    }
-  }
-  for (const toolset of toolsets.values()) {
-    for (const toolName of toolset.tools) {
-      if (!tools.has(toolName)) {
-        throw new BuildError(
-          `Toolset "${toolset.name}" references non-existent tool "${toolName}"`,
-          'validation',
-          { toolset: toolset.name, missingTool: toolName }
         )
       }
     }

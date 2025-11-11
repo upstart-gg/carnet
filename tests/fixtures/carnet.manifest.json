@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "app": {
+    "globalInitialSkills": [],
+    "globalSkills": []
+  },
+  "agents": {
+    "test-agent": {
+      "name": "test-agent",
+      "description": "A test agent",
+      "initialSkills": [
+        "foo"
+      ],
+      "skills": [
+        "search-web"
+      ],
+      "prompt": "\nYou are a test agent. Use your skills to help the user.\n\nThis is a test agent with {{ TEST_VAR }}."
+    }
+  },
+  "skills": {
+    "foo": {
+      "name": "foo",
+      "description": "test skill",
+      "toolsets": [
+        "foo"
+      ],
+      "files": [],
+      "content": "\n# Foo Skill"
+    },
+    "search-web": {
+      "name": "search-web",
+      "description": "test skill",
+      "toolsets": [
+        "search"
+      ],
+      "files": [],
+      "content": "\n# Bar Skill"
+    }
+  },
+  "toolsets": {
+    "foo": {
+      "name": "foo",
+      "description": "test toolset",
+      "tools": [
+        {
+          "name": "toolFoo",
+          "description": "desc"
+        }
+      ],
+      "content": "\n# Foo Toolset"
+    },
+    "search": {
+      "name": "search",
+      "description": "Search the web for information and media.",
+      "tools": [],
+      "content": "\n# Search Toolset"
+    }
+  }
+}

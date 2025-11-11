@@ -2,8 +2,8 @@
 name: toolset-x
 description: desc
 tools:
-  - foo
-content: markdown
+  - name: foo
+    description: desc
 ---
 
 # Toolset X
