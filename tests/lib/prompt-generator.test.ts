@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
 import { PromptGenerator } from '../../src/lib/prompt-generator'
-import { VariableInjector } from '../../src/lib/variable-injector'
 import type { Agent, Skill, SkillMetadata } from '../../src/lib/types'
+import { VariableInjector } from '../../src/lib/variable-injector'
 
 describe('PromptGenerator', () => {
   let generator: PromptGenerator
@@ -91,12 +91,9 @@ describe('PromptGenerator', () => {
         },
       ]
 
-      const result = genWithVars.generateAgentPrompt(
-        agent,
-        initialSkills,
-        [],
-        { variables: { SKILL_VERSION: '3.0' } },
-      )
+      const result = genWithVars.generateAgentPrompt(agent, initialSkills, [], {
+        variables: { SKILL_VERSION: '3.0' },
+      })
 
       expect(result.content).toContain('Version: 3.0')
     })
@@ -119,12 +116,9 @@ describe('PromptGenerator', () => {
         },
       ]
 
-      const result = generator.generateAgentPrompt(
-        agent,
-        initialSkills,
-        [],
-        { includeInitialSkills: false },
-      )
+      const result = generator.generateAgentPrompt(agent, initialSkills, [], {
+        includeInitialSkills: false,
+      })
 
       expect(result.content).not.toContain('## Initial Skills')
       expect(result.content).not.toContain('# Skill Content')
@@ -143,12 +137,9 @@ describe('PromptGenerator', () => {
         { name: 'skill2', description: 'Second skill', toolsets: [] },
       ]
 
-      const result = generator.generateAgentPrompt(
-        agent,
-        [],
-        availableSkills,
-        { includeSkillCatalog: false },
-      )
+      const result = generator.generateAgentPrompt(agent, [], availableSkills, {
+        includeSkillCatalog: false,
+      })
 
       expect(result.content).not.toContain('## Available Skills')
       expect(result.content).not.toContain('How to Load Skills')
@@ -226,7 +217,10 @@ describe('PromptGenerator', () => {
       const toolsetMetadata = {
         name: 'memory',
         description: 'Memory management tools',
-        tools: ['read', 'write'],
+        tools: [
+          { name: 'read', description: 'Read memory' },
+          { name: 'write', description: 'Write memory' },
+        ],
       }
 
       const toolMetadata = [
@@ -301,7 +295,9 @@ describe('PromptGenerator', () => {
 
       // Check for correct explanation
       expect(result.content).toContain('automatically loaded')
-      expect(result.content).toContain('You do not need to manually load toolsets or individual tools')
+      expect(result.content).toContain(
+        'You do not need to manually load toolsets or individual tools'
+      )
     })
   })
 
@@ -332,7 +328,11 @@ Your role is to write clean, efficient, and well-tested code.`,
       const availableSkills: SkillMetadata[] = [
         { name: 'typescript', description: 'TypeScript coding skills', toolsets: ['type-system'] },
         { name: 'react', description: 'React framework expertise', toolsets: ['components'] },
-        { name: 'testing', description: 'Testing best practices', toolsets: ['unit', 'integration'] },
+        {
+          name: 'testing',
+          description: 'Testing best practices',
+          toolsets: ['unit', 'integration'],
+        },
       ]
 
       const result = generator.generateAgentPrompt(agent, initialSkills, availableSkills)

@@ -55,31 +55,17 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
         toolsetA: {
           name: 'toolsetA',
           description: 'Toolset A',
-          tools: ['toolA1', 'toolA2'],
+          tools: [
+            { name: 'toolA1', description: 'Tool A1 description' },
+            { name: 'toolA2', description: 'Tool A2 description' },
+          ],
           content: '# Toolset A\n\nToolset A content with instructions',
         },
         toolsetB: {
           name: 'toolsetB',
           description: 'Toolset B',
-          tools: ['toolB1'],
+          tools: [{ name: 'toolB1', description: 'Tool B1 description' }],
           content: '# Toolset B\n\nToolset B content',
-        },
-      },
-      tools: {
-        toolA1: {
-          name: 'toolA1',
-          description: 'Tool A1 description',
-          content: '# Tool A1\n\nDetailed documentation for Tool A1',
-        },
-        toolA2: {
-          name: 'toolA2',
-          description: 'Tool A2 description',
-          content: '# Tool A2\n\nDetailed documentation for Tool A2',
-        },
-        toolB1: {
-          name: 'toolB1',
-          description: 'Tool B1 description',
-          content: '# Tool B1\n\nDetailed documentation for Tool B1',
         },
       },
     }

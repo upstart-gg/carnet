@@ -7,11 +7,6 @@ describe('loadEnvConfig', () => {
     expect(config).toEqual({})
   })
 
-  it('should load CARNET_OUTPUT', () => {
-    const config = loadEnvConfig({ CARNET_OUTPUT: './build' })
-    expect(config.output).toBe('./build')
-  })
-
   it('should load CARNET_INCLUDE as comma-separated array', () => {
     const config = loadEnvConfig({ CARNET_INCLUDE: '**/*.md, src/**, tests/**' })
     expect(config.include).toEqual(['**/*.md', 'src/**', 'tests/**'])
@@ -65,7 +60,6 @@ describe('loadEnvConfig', () => {
       CARNET_GLOBAL_SKILLS: 'utils, logging',
     })
 
-    expect(config.output).toBe('./build')
     expect(config.include).toEqual(['src/**', 'tests/**'])
     expect(config.exclude).toEqual(['draft/**'])
     expect(config.app?.globalSkills).toEqual(['utils', 'logging'])
@@ -73,53 +67,22 @@ describe('loadEnvConfig', () => {
 
   it('should ignore unknown environment variables', () => {
     const config = loadEnvConfig({
-      CARNET_OUTPUT: './build',
       UNKNOWN_VAR: 'should be ignored',
       ANOTHER_VAR: 'also ignored',
     })
 
-    expect(config).toEqual({ output: './build' })
+    expect(config).toEqual({})
   })
 })
 
 describe('Configuration Precedence', () => {
-  it('should apply defaults when no config provided', () => {
-    const config = mergeConfigurations({}, {}, {})
-    expect(config.output).toBe('./carnet')
-  })
-
-  it('should override defaults with file config', () => {
-    const fileConfig = { output: './out' }
-    const config = mergeConfigurations(fileConfig, {}, {})
-
-    expect(config.output).toBe('./out')
-  })
-
-  it('should override file config with env config', () => {
-    const fileConfig = { output: './file-out' }
-    const envConfig = { output: './env-out' }
-    const config = mergeConfigurations(fileConfig, envConfig, {})
-
-    expect(config.output).toBe('./env-out')
-  })
-
-  it('should override env config with CLI config', () => {
-    const fileConfig = { output: './file-out' }
-    const envConfig = { output: './env-out' }
-    const cliConfig = { output: './cli' }
-    const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
-
-    expect(config.output).toBe('./cli')
-  })
-
   it('should follow full precedence: defaults < file < env < cli', () => {
     const fileConfig = { include: ['file-pattern'] }
     const envConfig = { output: './env-output', include: ['env-pattern'] }
-    const cliConfig = { output: './cli-output' }
+    const cliConfig = { variables: { FOO: 'BAR' } }
     const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
 
     // output: in env and cli, cli wins
-    expect(config.output).toBe('./cli-output')
     // include: in file and env, env wins
     expect(config.include).toEqual(['env-pattern'])
   })
@@ -152,15 +115,5 @@ describe('Configuration Precedence', () => {
       expect(config.app.globalSkills).toEqual(['cli-skill'])
       expect(config.app.globalInitialSkills).toEqual([])
     }
-  })
-
-  it('should handle mixed undefined values in precedence chain', () => {
-    const fileConfig = { output: './file' }
-    const envConfig = undefined
-    const cliConfig = { output: './cli' }
-
-    const config = mergeConfigurations(fileConfig, envConfig, cliConfig)
-
-    expect(config.output).toBe('./cli')
   })
 })

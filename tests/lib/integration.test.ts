@@ -74,7 +74,10 @@ Use this skill to quickly understand document content.`,
         searchTools: {
           name: 'searchTools',
           description: 'Tools for web searching',
-          tools: ['search', 'advancedSearch'],
+          tools: [
+            { name: 'search', description: 'Perform a basic web search' },
+            { name: 'advancedSearch', description: 'Perform an advanced web search with filters' },
+          ],
           content: `# Search Tools Toolset
 
 Provides tools for searching the web with various options.
@@ -86,7 +89,10 @@ Provides tools for searching the web with various options.
         analysisTools: {
           name: 'analysisTools',
           description: 'Tools for data analysis',
-          tools: ['statistics', 'visualization'],
+          tools: [
+            { name: 'statistics', description: 'Calculate statistical metrics' },
+            { name: 'visualization', description: 'Create data visualizations' },
+          ],
           content: `# Analysis Tools Toolset
 
 Provides tools for analyzing and visualizing data.
@@ -94,76 +100,6 @@ Provides tools for analyzing and visualizing data.
 ## Available Tools:
 - statistics: Calculate statistical metrics
 - visualization: Create data visualizations`,
-        },
-      },
-      tools: {
-        search: {
-          name: 'search',
-          description: 'Perform a basic web search',
-          content: `# Search Tool
-
-Searches the web for information.
-
-## Usage:
-\`\`\`
-search(query: string): Promise<SearchResult[]>
-\`\`\`
-
-## Parameters:
-- query: The search query string
-
-## Returns:
-Array of search results with URL, title, and snippet.`,
-        },
-        advancedSearch: {
-          name: 'advancedSearch',
-          description: 'Perform an advanced web search with filters',
-          content: `# Advanced Search Tool
-
-Searches the web with advanced filters and options.
-
-## Usage:
-\`\`\`
-advancedSearch(query: string, options: SearchOptions): Promise<SearchResult[]>
-\`\`\`
-
-## Parameters:
-- query: The search query string
-- options: Filter options (domain, language, date range)
-
-## Returns:
-Array of filtered search results.`,
-        },
-        statistics: {
-          name: 'statistics',
-          description: 'Calculate statistical metrics on data',
-          content: `# Statistics Tool
-
-Calculates various statistical metrics.
-
-## Usage:
-\`\`\`
-statistics(data: number[]): Promise<Stats>
-\`\`\`
-
-## Metrics:
-- mean
-- median
-- standard deviation
-- percentiles`,
-        },
-        visualization: {
-          name: 'visualization',
-          description: 'Create data visualizations',
-          content: `# Visualization Tool
-
-Creates charts and graphs from data.
-
-## Supported Types:
-- Line charts
-- Bar charts
-- Scatter plots
-- Pie charts`,
         },
       },
     }
@@ -416,7 +352,6 @@ Creates charts and graphs from data.
         },
         skills: manifest.skills,
         toolsets: manifest.toolsets,
-        tools: manifest.tools,
       }
 
       const carnet2 = new Carnet(manifest2)

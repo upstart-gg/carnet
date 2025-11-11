@@ -4,7 +4,7 @@ description: A test agent
 initialSkills:
   - foo
 skills:
-  - bar
+  - search-web
 ---
 
 You are a test agent. Use your skills to help the user.

@@ -1,0 +1,14 @@
+{
+  "app": {
+    "globalInitialSkills": [],
+    "globalSkills": []
+  },
+  "output": "./carnet",
+  "variables": {},
+  "envPrefix": [
+    "CARNET_",
+    "PUBLIC_"
+  ],
+  "include": [],
+  "exclude": []
+}

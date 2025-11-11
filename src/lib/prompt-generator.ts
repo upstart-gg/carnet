@@ -141,7 +141,9 @@ Note: You do not need to manually load toolsets or individual tools - they becom
    * Generate metadata sections for a toolset (name + description + tool catalog)
    */
   generateToolsetMetadataSection(toolset: ToolsetMetadata, tools: ToolMetadata[]): string {
-    const relevantTools = tools.filter((t) => toolset.tools.includes(t.name))
+    const relevantTools = tools.filter((t) =>
+      toolset.tools.some((toolsetTool) => toolsetTool.name === t.name)
+    )
 
     let content = `## Toolset: ${toolset.name}\n\n${toolset.description}`
 

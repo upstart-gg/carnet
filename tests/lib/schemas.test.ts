@@ -36,8 +36,8 @@ describe('toolsetSchema', () => {
     const data = {
       name: 'toolsetX',
       description: 'desc',
-      tools: ['foo'],
-      content: 'markdown',
+      tools: [{ name: 'foo', description: 'desc' }],
+      content: 'some markdown',
     }
     expect(() => toolsetSchema.parse(data)).not.toThrow()
   })

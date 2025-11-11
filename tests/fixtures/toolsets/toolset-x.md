@@ -2,7 +2,8 @@
 name: toolset-x
 description: desc
 tools:
-  - foo
+  - name: foo
+    description: desc
 ---
 
 # Toolset X

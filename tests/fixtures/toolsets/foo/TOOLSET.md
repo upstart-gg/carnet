@@ -2,8 +2,8 @@
 name: foo
 description: test toolset
 tools:
-  - toolFoo
-content: markdown
+  - name: toolFoo
+    description: desc
 ---
 
 # Foo Toolset

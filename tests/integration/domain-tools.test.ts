@@ -60,31 +60,17 @@ const manifest: Manifest = {
     search: {
       name: 'search',
       description: 'Tools for searching.',
-      tools: ['basicSearch', 'advancedSearch'],
+      tools: [
+        { name: 'basicSearch', description: 'Perform a basic web search' },
+        { name: 'advancedSearch', description: 'Perform an advanced search' },
+      ],
       content: 'This toolset contains search tools.',
     },
     analysis: {
       name: 'analysis',
       description: 'Tools for data analysis.',
-      tools: ['analyzeData'],
+      tools: [{ name: 'analyzeData', description: 'Analyze a dataset' }],
       content: 'This toolset contains analysis tools.',
-    },
-  },
-  tools: {
-    basicSearch: {
-      name: 'basicSearch',
-      description: 'Perform a basic web search',
-      content: 'Use this for simple searches.',
-    },
-    advancedSearch: {
-      name: 'advancedSearch',
-      description: 'Perform an advanced search',
-      content: 'Use this for complex searches.',
-    },
-    analyzeData: {
-      name: 'analyzeData',
-      description: 'Analyze a dataset',
-      content: 'Use this to perform data analysis.',
     },
   },
 }
