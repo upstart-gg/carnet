@@ -39,7 +39,6 @@ async function runSimulateCommand(
     const parsed = manifestSchema.safeParse(manifestData)
 
     if (!parsed.success) {
-      console.dir(parsed)
       console.error(colors.error('Invalid manifest format:'))
       console.error(colors.error(parsed.error.message))
       process.exit(1)
