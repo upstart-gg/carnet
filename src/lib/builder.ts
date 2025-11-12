@@ -15,9 +15,12 @@ async function loadContent(contentDir: string) {
   }
 
   const skills = new Map<string, Skill>()
+  const skillFilePaths = new Map<string, string>()
   for await (const file of discoverSkills(contentDir)) {
     const skill = await parseMarkdownFile(path.resolve(file), skillSchema)
     skills.set(skill.name, skill)
+    // Store the file path for each skill to support nested directories
+    skillFilePaths.set(skill.name, file)
   }
 
   const toolsets = new Map<string, Toolset>()
@@ -27,27 +30,28 @@ async function loadContent(contentDir: string) {
     toolsets.set(toolset.name, toolset)
   }
 
-  return { agents, skills, toolsets }
+  return { agents, skills, toolsets, skillFilePaths }
 }
 
 export async function validate(contentDir: string): Promise<void> {
-  const { agents, skills, toolsets } = await loadContent(contentDir)
+  const { agents, skills, toolsets, skillFilePaths } = await loadContent(contentDir)
   validateReferences(agents, skills, toolsets)
+  validateSkillFileReferences(skills, skillFilePaths, contentDir)
 }
 
 export async function build(options: CarnetConfig, carnetDir: string = './carnet'): Promise<void> {
   const { app = { globalInitialSkills: [], globalSkills: [] } } = options
 
   try {
-    const { agents, skills, toolsets } = await loadContent(carnetDir)
+    const { agents, skills, toolsets, skillFilePaths } = await loadContent(carnetDir)
 
     validateReferences(agents, skills, toolsets)
 
     // Validate file references exist and are accessible
-    validateSkillFileReferences(skills, carnetDir)
+    validateSkillFileReferences(skills, skillFilePaths, carnetDir)
 
     // Read and embed file contents
-    await readSkillFileContents(skills, carnetDir)
+    await readSkillFileContents(skills, skillFilePaths, carnetDir)
 
     const manifest: Manifest = {
       version: 1,
@@ -78,13 +82,28 @@ export async function build(options: CarnetConfig, carnetDir: string = './carnet
 /**
  * Validate that all file references in skills exist and are accessible
  */
-function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: string): void {
+function validateSkillFileReferences(
+  skills: Map<string, Skill>,
+  skillFilePaths: Map<string, string>,
+  contentDir: string
+): void {
   for (const skill of skills.values()) {
     if (!skill.files || skill.files.length === 0) {
       continue
     }
 
-    const skillDir = path.join(contentDir, 'skills', skill.name)
+    // Get the original file path and derive the skill directory from it
+    const skillFilePath = skillFilePaths.get(skill.name)
+    if (!skillFilePath) {
+      throw new BuildError(
+        `Internal error: could not find file path for skill "${skill.name}"`,
+        'validation',
+        { skill: skill.name }
+      )
+    }
+
+    // The skill directory is the directory containing the SKILL.md file
+    const skillDir = path.dirname(path.resolve(contentDir, skillFilePath))
 
     for (const fileRef of skill.files) {
       // Ensure path doesn't start with ./ (normalize)
@@ -138,6 +157,7 @@ function validateSkillFileReferences(skills: Map<string, Skill>, contentDir: str
  */
 async function readSkillFileContents(
   skills: Map<string, Skill>,
+  skillFilePaths: Map<string, string>,
   contentDir: string
 ): Promise<void> {
   for (const skill of skills.values()) {
@@ -145,7 +165,18 @@ async function readSkillFileContents(
       continue
     }
 
-    const skillDir = path.join(contentDir, 'skills', skill.name)
+    // Get the original file path and derive the skill directory from it
+    const skillFilePath = skillFilePaths.get(skill.name)
+    if (!skillFilePath) {
+      throw new BuildError(
+        `Internal error: could not find file path for skill "${skill.name}"`,
+        'file-read',
+        { skill: skill.name }
+      )
+    }
+
+    // The skill directory is the directory containing the SKILL.md file
+    const skillDir = path.dirname(path.resolve(contentDir, skillFilePath))
 
     for (const fileRef of skill.files) {
       const absolutePath = path.resolve(skillDir, fileRef.path)
