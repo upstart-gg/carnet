@@ -51,8 +51,12 @@ export class PromptGenerator {
     }
 
     // Add available skills catalog and loading instructions if requested
-    if (availableSkills.length > 0) {
-      sections.push(this.generateSkillCatalogSection(availableSkills))
+    // Filter out initial skills that are already loaded
+    const initialSkillNames = new Set(initialSkills.map((skill) => skill.name))
+    const skillsToLoad = availableSkills.filter((skill) => !initialSkillNames.has(skill.name))
+
+    if (skillsToLoad.length > 0) {
+      sections.push(this.generateSkillCatalogSection(skillsToLoad))
       sections.push(this.generateSkillLoadingInstructions())
     }
 
