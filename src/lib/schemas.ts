@@ -138,7 +138,7 @@ export const agentManifestSchema: z.ZodObject<{
 export const skillFileReferenceSchema: z.ZodObject<{
   path: z.ZodString
   description: z.ZodString
-  content: z.ZodString
+  content: z.ZodOptional<z.ZodString>
 }> = z
   .object({
     path: z.string().min(1).describe('Path relative to skill root directory (no ./ prefix)'),
@@ -146,7 +146,7 @@ export const skillFileReferenceSchema: z.ZodObject<{
       .string()
       .min(1)
       .describe('Description to help LLM decide when to load this file'),
-    content: z.string().describe('File content embedded at build time'),
+    content: z.string().optional().describe('File content embedded at build time'),
   })
   .describe('Skill File Reference Schema')
 

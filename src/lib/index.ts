@@ -264,7 +264,7 @@ export class Carnet {
     }
 
     // Return embedded content from manifest
-    return fileRef.content
+    return fileRef.content as string
   }
 
   /**

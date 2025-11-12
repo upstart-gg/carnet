@@ -88,7 +88,7 @@ async function runBuildCommand(options: {
     try {
       await build(buildConfig, carnetDir)
     } catch (error) {
-      console.error(colors.error(`Build failed: ${(error as Error).message}`))
+      console.error(colors.error(`${(error as Error).message}`))
     }
   }
 

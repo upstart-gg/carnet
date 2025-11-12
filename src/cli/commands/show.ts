@@ -1,7 +1,9 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import type { Command } from 'commander'
 import type { z } from 'zod'
 import { loadConfigFile } from '../../lib/config'
+import type { Manifest } from '../../lib/index'
 import { parseMarkdownFile } from '../../lib/parser'
 import { agentSchema, skillSchema, toolsetSchema } from '../../lib/schemas'
 import { colors } from '../colors'
@@ -41,6 +43,16 @@ async function runShowCommand(type: string, name: string, options: { dir?: strin
       filePath = path.join(carnetDir, 'toolsets', name, 'TOOLSET.md')
       schema = toolsetSchema
       break
+
+    case 'agent:prompt': {
+      const { Carnet } = await import('../../lib/index')
+      const manifestPath = path.join(carnetDir, 'carnet.manifest.json')
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as Manifest
+      const carnet = new Carnet(manifest)
+      console.log(carnet.getSystemPrompt(name))
+      return
+    }
+
     default:
       console.error(colors.error(`Unknown entity type: ${type}`))
       process.exit(1)
