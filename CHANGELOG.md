@@ -1,5 +1,15 @@
 # @upstart.gg/carnet
 
+## 0.3.1
+
+### Patch Changes
+
+- [#52](https://github.com/upstart-gg/carnet/pull/52) [`a495327`](https://github.com/upstart-gg/carnet/commit/a49532795d09c157e839fe836710116ca58b5b58) Thanks [@mattallty](https://github.com/mattallty)! - Various fixes
+
+- [#56](https://github.com/upstart-gg/carnet/pull/56) [`dcd1fe7`](https://github.com/upstart-gg/carnet/commit/dcd1fe78539cf86ebb181bca5a282e0d2bb9068b) Thanks [@mattallty](https://github.com/mattallty)! - Fix skill catalog to exclude initial skills that are already loaded. The `generateSkillCatalogSection()` now filters out initial skills from the "On-Demand Skills" catalog, preventing redundant listings since initial skills are automatically loaded when the agent starts.
+
+- [#55](https://github.com/upstart-gg/carnet/pull/55) [`f8f1d1b`](https://github.com/upstart-gg/carnet/commit/f8f1d1b5198f6087d68c285d2d580401659f4de1) Thanks [@mattallty](https://github.com/mattallty)! - Fix file path resolution for nested skills. The `files` property in `SKILL.md` files now works correctly when skills are located in nested directories (e.g., `skills/nested/dir/my-skill/`). Previously, file references would fail with "file not found" errors because the builder was incorrectly constructing paths using only the skill name instead of the full nested path.
+
 ## 0.3.0
 
 ### Minor Changes
