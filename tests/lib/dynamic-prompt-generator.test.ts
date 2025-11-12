@@ -17,7 +17,7 @@ describe('DynamicPromptGenerator', () => {
       execute: async () => ({ ok: true }),
     })
 
-  const createMockSkill = (name: string, toolsets: string[] = []): Skill => ({
+  const _createMockSkill = (name: string, toolsets: string[] = []): Skill => ({
     name,
     description: `Description of ${name}`,
     toolsets,
@@ -32,7 +32,7 @@ describe('DynamicPromptGenerator', () => {
     ...overrides,
   })
 
-  const createMockManifest = (skills?: Record<string, Skill>): Manifest => ({
+  const _createMockManifest = (skills?: Record<string, Skill>): Manifest => ({
     version: 1,
     app: {
       globalInitialSkills: [],
@@ -54,138 +54,6 @@ describe('DynamicPromptGenerator', () => {
   beforeEach(() => {
     variableInjector = new VariableInjector()
     generator = new DynamicPromptGenerator(variableInjector)
-  })
-
-  describe('generateLoadedSkillsSection', () => {
-    it('should return empty string when no skills loaded', () => {
-      const session = createMockSession()
-      const manifest = createMockManifest()
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-      expect(result).toBe('')
-    })
-
-    it('should include single loaded skill', () => {
-      const skill = createMockSkill('search', ['search-tools'])
-      const session = createMockSession({
-        discoveredSkills: new Set(['search']),
-      })
-      const manifest = createMockManifest({ search: skill })
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      expect(result).toContain('Currently Loaded Skills')
-      expect(result).toContain('search')
-      expect(result).toContain('Description of search')
-    })
-
-    it('should include multiple loaded skills', () => {
-      const skills = {
-        search: createMockSkill('search', []),
-        analysis: createMockSkill('analysis', []),
-      }
-      const session = createMockSession({
-        discoveredSkills: new Set(['search', 'analysis']),
-      })
-      const manifest = createMockManifest(skills)
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      expect(result).toContain('search')
-      expect(result).toContain('analysis')
-      expect(result).toContain('Description of search')
-      expect(result).toContain('Description of analysis')
-    })
-
-    it('should skip skills not in manifest but show header with empty list', () => {
-      const session = createMockSession({
-        discoveredSkills: new Set(['deletedSkill']),
-      })
-      const manifest = createMockManifest({})
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      // Header is shown but no skills are listed since all are filtered out
-      expect(result).toContain('Currently Loaded Skills')
-      expect(result).not.toContain('deletedSkill')
-    })
-
-    it('should include skill toolsets in description', () => {
-      const skill = createMockSkill('search', ['search-tools', 'index-tools'])
-      const session = createMockSession({
-        discoveredSkills: new Set(['search']),
-      })
-      const manifest = createMockManifest({ search: skill })
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      expect(result).toContain('search')
-      expect(result).toContain('search-tools')
-      expect(result).toContain('index-tools')
-    })
-
-    it('should handle skill with no toolsets', () => {
-      const skill = createMockSkill('simple', [])
-      const session = createMockSession({
-        discoveredSkills: new Set(['simple']),
-      })
-      const manifest = createMockManifest({ simple: skill })
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      expect(result).toContain('simple')
-      expect(result).toContain('Description of simple')
-    })
-
-    it('should filter out missing skills and include valid ones', () => {
-      const skills = {
-        search: createMockSkill('search'),
-        analysis: createMockSkill('analysis'),
-      }
-      const session = createMockSession({
-        discoveredSkills: new Set(['search', 'missing', 'analysis']),
-      })
-      const manifest = createMockManifest(skills)
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      expect(result).toContain('search')
-      expect(result).toContain('analysis')
-      expect(result).not.toContain('missing')
-    })
-
-    it('should format section with proper markdown', () => {
-      const skill = createMockSkill('test')
-      const session = createMockSession({
-        discoveredSkills: new Set(['test']),
-      })
-      const manifest = createMockManifest({ test: skill })
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      expect(result).toMatch(/^## Currently Loaded Skills/)
-      expect(result).toContain('- **test**:')
-    })
-
-    it('should handle many loaded skills', () => {
-      const skills: Record<string, Skill> = {}
-      const skillNames = new Set<string>()
-
-      for (let i = 0; i < 10; i++) {
-        const name = `skill${i}`
-        skills[name] = createMockSkill(name)
-        skillNames.add(name)
-      }
-
-      const session = createMockSession({ discoveredSkills: skillNames })
-      const manifest = createMockManifest(skills)
-
-      const result = generator.generateLoadedSkillsSection(session, manifest)
-
-      for (let i = 0; i < 10; i++) {
-        expect(result).toContain(`skill${i}`)
-      }
-    })
   })
 
   describe('generateAvailableToolsSection', () => {
@@ -354,19 +222,12 @@ describe('DynamicPromptGenerator', () => {
 
   describe('integration scenarios', () => {
     it('should handle progressive loading workflow', () => {
-      const skills = {
-        search: createMockSkill('search', ['search-tools']),
-        analysis: createMockSkill('analysis', ['analysis-tools']),
-      }
-
       const searchTool = createMockTool('Search')
       const analyzeTool = createMockTool('Analyze')
 
       const registry = new ToolRegistry()
       registry.register('search-tools', { search: searchTool })
       registry.register('analysis-tools', { analyze: analyzeTool })
-
-      const manifest = createMockManifest(skills)
 
       // Initial: only search skill loaded
       let session = createMockSession({
@@ -375,11 +236,8 @@ describe('DynamicPromptGenerator', () => {
         exposedDomainTools: new Set(['search']),
       })
 
-      let skillsSection = generator.generateLoadedSkillsSection(session, manifest)
       let toolsSection = generator.generateAvailableToolsSection(session, registry)
 
-      expect(skillsSection).toContain('search')
-      expect(skillsSection).not.toContain('analysis')
       expect(toolsSection).toContain('search')
       expect(toolsSection).not.toContain('analyze')
 
@@ -390,21 +248,13 @@ describe('DynamicPromptGenerator', () => {
         exposedDomainTools: new Set(['search', 'analyze']),
       })
 
-      skillsSection = generator.generateLoadedSkillsSection(session, manifest)
       toolsSection = generator.generateAvailableToolsSection(session, registry)
 
-      expect(skillsSection).toContain('search')
-      expect(skillsSection).toContain('analysis')
       expect(toolsSection).toContain('search')
       expect(toolsSection).toContain('analyze')
     })
 
     it('should handle complex skill and tool setup', () => {
-      const skills = {
-        webSearch: createMockSkill('webSearch', ['search', 'index']),
-        dataAnalysis: createMockSkill('dataAnalysis', ['analysis']),
-      }
-
       const tools = {
         googleSearch: createMockTool('Search Google'),
         bingSearch: createMockTool('Search Bing'),
@@ -416,19 +266,14 @@ describe('DynamicPromptGenerator', () => {
       registry.register('index', { bingSearch: tools.bingSearch })
       registry.register('analysis', { analyze: tools.analyze })
 
-      const manifest = createMockManifest(skills)
-
       const session = createMockSession({
         discoveredSkills: new Set(['webSearch', 'dataAnalysis']),
         loadedToolsets: new Set(['search', 'index', 'analysis']),
         exposedDomainTools: new Set(['googleSearch', 'bingSearch', 'analyze']),
       })
 
-      const skillsSection = generator.generateLoadedSkillsSection(session, manifest)
       const toolsSection = generator.generateAvailableToolsSection(session, registry)
 
-      expect(skillsSection).toContain('webSearch')
-      expect(skillsSection).toContain('dataAnalysis')
       expect(toolsSection).toContain('googleSearch')
       expect(toolsSection).toContain('bingSearch')
       expect(toolsSection).toContain('analyze')

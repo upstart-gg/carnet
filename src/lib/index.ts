@@ -442,13 +442,7 @@ export class Carnet {
     )
 
     const dynamicSections = []
-    // Always include loaded skills section
-    dynamicSections.push(
-      (this.promptGenerator as DynamicPromptGenerator).generateLoadedSkillsSection(
-        session,
-        this.manifest
-      )
-    )
+
     // Always include available tools section
     // Convert flat domain tools to ToolRegistry
     // Only include tools that match the currently exposed domain tools

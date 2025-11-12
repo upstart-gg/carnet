@@ -325,8 +325,8 @@ describe('Carnet Tools - Vercel AI SDK Integration', () => {
       // Skills are discovered via the system prompt's skill catalog
       const prompt = carnet.getSystemPrompt('testAgent')
       expect(prompt).toContain('Available Skills')
-      expect(prompt).toContain('skillA')
-      expect(prompt).toContain('skillB')
+      expect(prompt).toContain('Skill A content')
+      expect(prompt).not.toContain('Skill B content')
 
       // Load a specific skill when needed
       if (!tools.loadSkill.execute) {

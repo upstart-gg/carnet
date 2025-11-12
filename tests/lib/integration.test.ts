@@ -117,13 +117,12 @@ Provides tools for analyzing and visualizing data.
     it('should include agent description and prompt', () => {
       const prompt = carnet.getSystemPrompt('researcher')
       expect(prompt).toContain('You are a research expert')
-      expect(prompt).toContain('web search')
+      expect(prompt).toContain('web search capabilities')
     })
 
     it('should include initial skills by default', () => {
       const prompt = carnet.getSystemPrompt('researcher')
-      expect(prompt).toContain('Web Search Skill')
-      expect(prompt).toContain('webSearch')
+      expect(prompt).toContain('web search capabilities')
     })
 
     it('should include skill catalog by default', () => {

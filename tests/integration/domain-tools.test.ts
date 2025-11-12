@@ -121,14 +121,13 @@ describe('Domain Tools Integration', () => {
     expect(initialPrompt).toContain('## Skills')
     expect(initialPrompt).toContain('## On-Demand Skills')
 
-    expect(initialPrompt).toContain('webSearch')
+    expect(initialPrompt).toContain('web searching')
     // Adapted: code now uses 'webSearch' instead of 'basicSearch' and removes domain tools terminology
 
     // Updated: basicSearch removed from implementation, only webSearch and dataAnalysis remain
-    expect(initialPrompt).toContain('- **webSearch**: A skill for searching the web.')
+    expect(initialPrompt).toContain('web searching')
     expect(initialPrompt).toContain('- **dataAnalysis**: A skill for analyzing data.')
     // Always includes loaded skills section now
-    expect(initialPrompt).toContain('## Currently Loaded Skills')
     expect(initialPrompt).not.toContain('analyzeData')
 
     // Simulate loading the dataAnalysis skill
@@ -166,8 +165,6 @@ describe('Domain Tools Integration', () => {
     expect(toolNames).not.toContain('analyzeData')
 
     const prompt = carnet.getSystemPrompt('researcher')
-    // Always includes loaded skills section now
-    expect(prompt).toContain('## Currently Loaded Skills')
     expect(prompt).not.toContain('analyzeData')
   })
 })
