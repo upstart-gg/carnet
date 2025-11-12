@@ -18,6 +18,24 @@
     }
   },
   "skills": {
+    "nested-test-skill": {
+      "name": "nested-test-skill",
+      "description": "A test skill in a nested directory with file references",
+      "toolsets": [],
+      "files": [
+        {
+          "path": "examples/example1.md",
+          "description": "First example file in nested skill",
+          "content": "# Example 1\n\nThis is an example file for testing nested skill file references.\n"
+        },
+        {
+          "path": "examples/example2.md",
+          "description": "Second example file in nested skill",
+          "content": "# Example 2\n\nThis is another example file for testing nested skill file references.\n"
+        }
+      ],
+      "content": "\n# Nested Test Skill\n\nThis skill is used to test that file references work correctly in nested skill directories.\n"
+    },
     "foo": {
       "name": "foo",
       "description": "test skill",

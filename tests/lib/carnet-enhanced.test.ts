@@ -338,7 +338,7 @@ describe('Carnet - Enhanced API', () => {
             name: 'noDynamicSkillsAgent',
             description: 'Agent',
             initialSkills: ['skillA'],
-            skills: [],
+            skills: ['skillB'],
             prompt: 'Test agent',
           },
         },
